@@ -1,0 +1,24 @@
+{
+  "muu": {
+    "total_shares": 1150,
+    "core_shares": 1100,
+    "swing_shares": 50,
+    "swing_cost": 24.49,
+    "swing_target_min": 25.80,
+    "swing_target_max": 26.80,
+    "total_cost_usd": 41893.20,
+    "avg_cost_usd": 36.429
+  },
+  "tw2059": {
+    "shares": 17,
+    "total_cost_twd": 200267,
+    "avg_cost_twd": 11780.41
+  },
+  "levels": {
+    "mu_defense": 856.49,
+    "mu_support1": 861.59,
+    "mu_res1_min": 905.00,
+    "mu_res1_max": 920.00,
+    "mu_50ma": 983.23
+  }
+}
