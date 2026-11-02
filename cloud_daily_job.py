@@ -4,8 +4,8 @@
 ☁️ 美股記憶體 (MU / MUU) 與 2059 川湖 — GitHub Actions 雲端每日全自動戰情腳本
 功能：
 1. 自動抓取 Yahoo Finance 最新收盤價、高低點與漲跌幅 (MU, MUU, 2059.TW, NVDA, AMD)
-2. 自動抓取 Google News 繁體中文最新新聞 (美光 MU / HBM / 2059 川湖)
-3. (選配) 若有設定 GEMINI_API_KEY，自動呼叫 Gemini 生成繁體中文新聞洞察；否則使用內建智慧戰術引擎
+2. 自動抓取 Google News 繁體中文最新新聞 + Yahoo Finance 英文外電 (美光 MU / HBM / 2059 川湖)
+3. 自動呼叫 Gemini (gemini-2.5-flash) 翻譯外電並結合當日股價與持倉撰寫繁體中文戰情洞察
 4. 自動更新 iOS 戰情室 (index.html 與 MU_MUU_Widget.js) 基準數據
 5. 自動透過 LINE Messaging API 發送每日早晨戰情推播至手機
 """
@@ -73,7 +73,6 @@ def fetch_google_news_tw(query, max_items=3):
         items = []
         for item in root.findall("./channel/item")[:max_items]:
             title = item.findtext("title") or ""
-            # 移除尾端媒體名稱以精簡標題
             title_clean = re.sub(r"\s*-\s*[^-]+$", "", title).strip()
             link = item.findtext("link") or ""
             if title_clean:
@@ -84,22 +83,48 @@ def fetch_google_news_tw(query, max_items=3):
         return []
 
 
+def fetch_yahoo_us_rss(symbols="MU,NVDA,AMD", max_items=3):
+    rss_url = f"https://feeds.finance.yahoo.com/rss/2.0/headline?s={symbols}&region=US&lang=en-US"
+    try:
+        req = urllib.request.Request(rss_url, headers=HEADERS)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            xml_bytes = resp.read()
+        root = ET.fromstring(xml_bytes)
+        items = []
+        for item in root.findall("./channel/item")[:max_items]:
+            title = (item.findtext("title") or "").strip()
+            link = item.findtext("link") or ""
+            if title:
+                items.append({"title": title, "link": link})
+        return items
+    except Exception as e:
+        print(f"[WARN] Yahoo US RSS failed: {e}")
+        return []
+
+
 def generate_gemini_summary(mu, muu, tw2059, news_items, cfg):
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
         return None
 
     headlines_text = "\n".join([f"- {n['title']}" for n in news_items]) if news_items else "無最新標題"
-    prompt = f"""你是美股記憶體 (MU/MUU) 戰情分析師。請根據以下今日最新數據，用繁體中文撰寫 2 點極簡短（每點不超過 60 字）的「今日關鍵基本面與技術面解讀」，不要寒暄：
-- MU 收盤：${mu['price']} ({mu['change_pct']:+.2f}%)，盤中高 ${mu['high']} / 低 ${mu['low']}（波段前低防守線 ${cfg['levels']['mu_defense']}，頸線反壓 $905~$920）
-- MUU 收盤：${muu['price']} ({muu['change_pct']:+.2f}%)，目前持有 1,150 股（含 50 股 @$24.49 游擊倉）
-- 最新相關新聞標題：
+    p_muu = cfg["muu"]
+    prompt = f"""你是專業的美股記憶體 (MU/MUU) 雙層戰情分析師。請根據以下今日最新市場數據與外電標題，用繁體中文撰寫 3 點精簡扼要（每點約 45~65 字）的晨間分析（不要加開場白）：
+1. 【行情與外電重點】：結合今日 MU 走勢與最新外電/台股新聞提煉關鍵驅動因素。
+2. 【技術面關鍵價位】：評估 MU 收盤 (${mu['price']}) 相對於波段前低防守線 (${cfg['levels']['mu_defense']}) 與第一頸線壓力 ($905~$920) 的多空強弱。
+3. 【MUU 做T與游擊倉建議】：針對目前持有的 {p_muu['total_shares']} 股 MUU（實質均價 ${p_muu['avg_cost_usd']}，含 {p_muu['swing_shares']} 股 @${p_muu['swing_cost']} 游擊倉）給出今日明確操作建議。
+
+今日數據：
+- MU 收盤：${mu['price']} ({mu['change_pct']:+.2f}%)，盤中高 ${mu['high']} / 低 ${mu['low']}
+- MUU 收盤：${muu['price']} ({muu['change_pct']:+.2f}%)，盤中高 ${muu['high']} / 低 ${muu['low']}
+- 川湖 (2059.TW) 收盤：{tw2059['price']} 元 ({tw2059['change_pct']:+.2f}%)
+- 最新國內外新聞標題：
 {headlines_text}
 """
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 300}
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 450}
     }
     try:
         req = urllib.request.Request(
@@ -108,7 +133,7 @@ def generate_gemini_summary(mu, muu, tw2059, news_items, cfg):
             headers={"Content-Type": "application/json"},
             method="POST"
         )
-        with urllib.request.urlopen(req, timeout=15) as resp:
+        with urllib.request.urlopen(req, timeout=20) as resp:
             res_data = json.loads(resp.read().decode("utf-8"))
         text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
         return text
@@ -121,7 +146,7 @@ def build_tactical_commentary(mu, muu, cfg):
     defense = cfg["levels"]["mu_defense"]
     res1_min = cfg["levels"]["mu_res1_min"]
     if mu["price"] >= res1_min:
-        return f"👉 MU 成功站上 ${res1_min:.0f} 頸線反壓區！短線多頭動能轉強，游擊 50 股 (@${cfg['muu']['swing_cost']}) 可於 $25.80~$26.80 擇機分批獲利收割。"
+        return f"👉 MU 成功站上 ${res1_min:.0f} 頸線反壓區！短線多頭動能轉強，游擊 {cfg['muu']['swing_shares']} 股 (@${cfg['muu']['swing_cost']}) 可於 $25.80~$26.80 擇機分批獲利收割。"
     elif mu["price"] >= defense:
         return f"👉 MU 低點守穩波段防守線 (${defense}) 之上，底層雙底結構完整，拉回不破前低皆以續抱與游擊倉等待反彈 ($905~$920) 為主。"
     else:
@@ -129,7 +154,6 @@ def build_tactical_commentary(mu, muu, cfg):
 
 
 def update_frontend_files(mu, muu, headline):
-    # 更新 index.html 內的 STATE 預設報價與頭條快訊
     if os.path.exists(INDEX_PATH):
         with open(INDEX_PATH, "r", encoding="utf-8") as f:
             html = f.read()
@@ -144,7 +168,6 @@ def update_frontend_files(mu, muu, headline):
         with open(INDEX_PATH, "w", encoding="utf-8") as f:
             f.write(html)
 
-    # 更新 MU_MUU_Widget.js 內的 FALLBACK_DATA
     if os.path.exists(WIDGET_PATH):
         with open(WIDGET_PATH, "r", encoding="utf-8") as f:
             js = f.read()
@@ -204,14 +227,13 @@ def main():
 
     mu_news = fetch_google_news_tw("美光 MU OR HBM 記憶體", max_items=2)
     tw_news = fetch_google_news_tw("2059 川湖", max_items=1)
-    all_news = mu_news + tw_news
+    us_news = fetch_yahoo_us_rss("MU,NVDA,AMD", max_items=2)
+    all_news = mu_news + tw_news + us_news
 
-    top_headline = all_news[0]["title"] if all_news else "美光大幅調升2027 HBM合約價！花旗上調MU目標價至$1300"
+    top_headline = mu_news[0]["title"] if mu_news else "美光大幅調升2027 HBM合約價！花旗上調MU目標價至$1300"
 
-    # 更新前端檔案
     update_frontend_files(mu, muu, top_headline)
 
-    # 計算部位損益
     p_muu = cfg["muu"]
     mkt_val = round(muu["price"] * p_muu["total_shares"], 2)
     unrealized_usd = round(mkt_val - p_muu["total_cost_usd"], 2)
@@ -226,19 +248,19 @@ def main():
     if gemini_insight:
         news_block = gemini_insight
     elif all_news:
-        news_block = "\n".join([f"{i+1}. {n['title']}" for i, n in enumerate(all_news)])
+        news_block = "\n".join([f"{i+1}. {n['title']}" for i, n in enumerate(all_news[:4])])
     else:
         news_block = "1. 美光 2026 HBM 全數售罄並調漲 2027 長約價，花旗看多目標價 $1,300。\n2. 川湖 (2059) 啟動百億 CB 募資擴建全球最大導軌廠。"
 
-    line_msg = f"""☀️【MU / MUU 雲端自動戰情日報】
-📅 日期：{TODAY_STR}（GitHub 雲端自動結算）
+    line_msg = f"""☀️【MU / MUU 雲端 AI 戰情日報】
+📅 日期：{TODAY_STR}（GitHub + Gemini 自動結算）
 ━━━━━━━━━━━━━━
 📈 美股最新收盤行情：
 • MU 收盤：${mu['price']:.2f} ({mu['change_pct']:+.2f}%) 高${mu['high']:.2f} / 低${mu['low']:.2f}
 • MUU收盤：${muu['price']:.2f} ({muu['change_pct']:+.2f}%) 高${muu['high']:.2f} / 低${muu['low']:.2f}
 {tactical_line}
 
-📰 最新重點新聞與 AI 洞察：
+🧠 Gemini AI 晨間戰情與新聞洞察：
 {news_block}
 
 💼 您的最新持倉結算（共 {p_muu['total_shares']:,} 股）：
@@ -246,7 +268,7 @@ def main():
 • 實質總成本：${p_muu['total_cost_usd']:,.2f} (均價 ${p_muu['avg_cost_usd']:.3f})
 • 最新總市值：${mkt_val:,.2f} USD
 • 總未實現損益：{unrealized_usd:+,.2f} USD ({unrealized_pct:+.2f}%)
-• ⚡ 游擊50股損益：{swing_diff_usd:+.2f} USD ({swing_diff_pct:+.2f}%，停利目標 $25.8~$26.8)
+• ⚡ 游擊{p_muu['swing_shares']}股損益：{swing_diff_usd:+.2f} USD ({swing_diff_pct:+.2f}%，停利目標 $25.8~$26.8)
 • 🏭 川湖 (2059.TW)：收盤 {tw2059['price']:,.0f} 元 ({tw2059['change_pct']:+.2f}%)｜持有 {cfg['tw2059']['shares']} 股 (均價 {cfg['tw2059']['avg_cost_twd']:,.0f} 元)
 
 📱 iOS 戰情室已同步更新：
