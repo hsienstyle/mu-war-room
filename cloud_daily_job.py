@@ -272,10 +272,20 @@ def main():
 • 🏭 川湖 (2059.TW)：收盤 {tw2059['price']:,.0f} 元 ({tw2059['change_pct']:+.2f}%)｜持有 {cfg['tw2059']['shares']} 股 (均價 {cfg['tw2059']['avg_cost_twd']:,.0f} 元)
 
 📱 iOS 戰情室已同步更新：
-https://hsienstyle.github.io/mu-war-room/"""
+• 戰情室主頁：https://hsienstyle.github.io/mu-war-room/
+• 120日耗損與RSI儀表板：https://hsienstyle.github.io/mu-war-room/dashboard.html"""
 
     print(line_msg)
     send_line_push(line_msg)
+
+    # 同步產生原 NAS 版 120 日量化與波動率耗損儀表板 (dashboard.html)
+    try:
+        import subprocess
+        import nas_dashboard
+        nas_dashboard.main()
+        subprocess.run(["git", "add", "dashboard.html"], cwd=BASE_DIR, check=False)
+    except Exception as e:
+        print(f"[WARN] nas_dashboard generation skipped: {e}")
 
 
 if __name__ == "__main__":

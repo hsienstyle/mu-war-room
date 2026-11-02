@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>MU / MUU 120日量化與耗損儀表板</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Microsoft JhengHei", sans-serif;
+      background: #090D16;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 16px;
+      padding-top: calc(env(safe-area-inset-top, 16px) + 12px);
+      padding-bottom: 40px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1e293b;
+      color: #38bdf8;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #334155;
+      white-space: nowrap;
+    }
+    h1 { font-size: 19px; margin: 0 0 4px; color: #fff; }
+    h2 { font-size: 15px; margin: 22px 0 8px; color: #38bdf8; }
+    .sub { color: #94a3b8; font-size: 12px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+    .card {
+      background: rgba(30, 41, 59, 0.75);
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    .card b { font-size: 17px; color: #fff; }
+    .row { display: flex; justify-content: space-between; font-size: 13px; margin-top: 6px; }
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    table { width: 100%; border-collapse: collapse; background: rgba(30, 41, 59, 0.75); font-size: 13px; white-space: nowrap; }
+    th, td { padding: 9px 10px; text-align: right; border-bottom: 1px solid #334155; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: #0f172a; color: #94a3b8; font-weight: 600; }
+    .up { color: #10b981; }
+    .down { color: #f43f5e; }
+    .box {
+      background: rgba(30, 41, 59, 0.75);
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    .note { font-size: 12px; color: #94a3b8; margin-top: 8px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>📊 MU / MUU 量化與耗損儀表板 (雲端版)</h1>
+      <div class="sub" id="updated-time">資料來源：Yahoo Finance (已取代原 NAS 儀表板，支援手機與電腦外網直接查看)</div>
+    </div>
+    <a href="./index.html" class="back-btn">⬅️ 返回戰情室</a>
+  </div>
+
+  <h2>💼 持倉與回本漲幅試算 (自動同步 trades.csv / App 持倉)</h2>
+  <div class="cards" id="pos"></div>
+
+  <h2>📈 產業鏈觀察清單 (20日報酬 / 50MA乖離 / RSI14)</h2>
+  <div class="table-wrap"><table id="watch"></table></div>
+
+  <h2>📉 MU vs MUU vs 2×MU 走勢對比（起點 = 100 標準化）</h2>
+  <div class="box"><canvas id="chart" height="130"></canvas></div>
+
+  <h2>⚖️ MUU 多週期波動率耗損追蹤 (5 / 20 / 60 / 120日)</h2>
+  <div class="table-wrap"><table id="decay"></table></div>
+  <div class="note">
+    • 「耗損落差」= MUU 實際報酬 − 2 × MU 報酬。負值代表每日重設、波動率耗損與內扣費用（約 1.01%/年）造成的損失。<br/>
+    • MU 年化波動率越高、走勢越震盪，落差通常越大；單邊強趨勢時落差也可能是正的（複利效果）。
+  </div>
+
+  <script>
+    // 預設基準數據（當雲端每日排程執行 nas_dashboard.py 時會自動覆寫最新 120 日數據）
+    const D = {
+      positions: [
+        { symbol: "MUU", shares: 1150, ccy: "USD", avg: 36.429, price: 24.08, value: 27692.00, pnl: -14201.20, pnl_pct: -33.90, breakeven: 51.28 },
+        { symbol: "2059.TW (川湖)", shares: 17, ccy: "TWD", avg: 11780.41, price: 9880.00, value: 167960.00, pnl: -32307.00, pnl_pct: -16.13, breakeven: 19.23 }
+      ],
+      watch: [
+        { symbol: "MU", date: "2026-10-30", price: 884.74, d1: -5.30, d20: -1.85, ma50_gap: -9.82, rsi: 46.2 },
+        { symbol: "MUU", date: "2026-10-30", price: 24.08, d1: -10.82, d20: -6.40, ma50_gap: -21.50, rsi: 44.1 },
+        { symbol: "2059.TW", date: "2026-10-30", price: 9880.00, d1: -2.66, d20: 4.12, ma50_gap: -1.25, rsi: 51.8 },
+        { symbol: "NVDA", date: "2026-10-30", price: 138.60, d1: -1.45, d20: 6.80, ma50_gap: 4.90, rsi: 56.4 },
+        { symbol: "AMD", date: "2026-10-30", price: 156.20, d1: -2.10, d20: -3.20, ma50_gap: -4.10, rsi: 45.0 },
+        { symbol: "WDC", date: "2026-10-30", price: 68.40, d1: -1.80, d20: 3.50, ma50_gap: 1.90, rsi: 52.3 }
+      ],
+      decay: [
+        { days: 5, start: "2026-10-23", mu: 0.82, two_x: 1.64, muu: 0.29, gap: -1.35, vol: 68.4 },
+        { days: 10, start: "2026-10-20", mu: -1.26, two_x: -2.53, muu: -4.63, gap: -2.10, vol: 64.2 },
+        { days: 20, start: "2026-10-02", mu: -1.85, two_x: -3.70, muu: -6.40, gap: -2.70, vol: 58.9 },
+        { days: 60, start: "2026-08-06", mu: 8.40, two_x: 16.80, muu: 11.20, gap: -5.60, vol: 61.5 }
+      ],
+      chart: {
+        dates: ["10/20", "10/21", "10/22", "10/23", "10/26", "10/27", "10/28", "10/29", "10/30"],
+        mu: [100.0, 101.96, 95.58, 97.93, 100.85, 103.65, 109.73, 104.26, 98.74],
+        muu: [100.0, 103.88, 90.73, 95.09, 100.71, 106.42, 116.28, 111.33, 95.37],
+        two_x: [100.0, 103.93, 91.17, 95.87, 101.70, 107.30, 119.45, 108.53, 97.47]
+      }
+    };
+
+    // 若使用者在 iOS 戰情室 App 內有修改持倉，自動連動讀取 localStorage
+    try {
+      const saved = localStorage.getItem('mu_war_room_portfolio_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.totalShares > 0) {
+          const price = D.positions[0].price;
+          const avg = parsed.totalCost / parsed.totalShares;
+          const val = parsed.totalShares * price;
+          const pnl = val - parsed.totalCost;
+          D.positions[0].shares = parsed.totalShares;
+          D.positions[0].avg = avg;
+          D.positions[0].value = val;
+          D.positions[0].pnl = pnl;
+          D.positions[0].pnl_pct = (pnl / parsed.totalCost) * 100;
+          D.positions[0].breakeven = ((avg / price) - 1) * 100;
+        }
+      }
+    } catch (e) {}
+
+    const f = (v, d=2) => v==null ? "-" : Number(v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
+    const c = v => v==null ? "" : (v>=0 ? "up" : "down");
+    const s = v => v==null ? "-" : (v>=0?"+":"") + f(v) + "%";
+
+    document.getElementById("pos").innerHTML = D.positions.map(p => `
+      <div class="card"><b>${p.symbol}</b> <span class="sub">${f(p.shares,0)} 股 · ${p.ccy}</span>
+        <div class="row"><span>實質均價</span><span>${f(p.avg,3)}</span></div>
+        <div class="row"><span>最新現價</span><span>${f(p.price)}</span></div>
+        <div class="row"><span>目前市值</span><span>${f(p.value)}</span></div>
+        <div class="row"><span>未實現損益</span><span class="${c(p.pnl)}">${f(p.pnl)}（${s(p.pnl_pct)}）</span></div>
+        <div class="row"><span>回本還需漲幅</span><span style="color:#fbbf24;font-weight:bold">${p.breakeven>0 ? s(p.breakeven) : "已獲利"}</span></div>
+      </div>`).join("");
+
+    document.getElementById("watch").innerHTML =
+      "<tr><th>代號</th><th>日期</th><th>收盤</th><th>日漲跌</th><th>20日累積</th><th>50MA 乖離</th><th>RSI14</th></tr>" +
+      D.watch.map(w => `<tr><td><b>${w.symbol}</b></td><td>${w.date}</td><td>${f(w.price)}</td>
+        <td class="${c(w.d1)}">${s(w.d1)}</td><td class="${c(w.d20)}">${s(w.d20)}</td>
+        <td class="${c(w.ma50_gap)}">${s(w.ma50_gap)}</td><td>${f(w.rsi,1)}</td></tr>`).join("");
+
+    document.getElementById("decay").innerHTML =
+      "<tr><th>區間</th><th>起始日</th><th>MU</th><th>2×MU</th><th>MUU 實際</th><th>耗損落差</th><th>MU 年化波動</th></tr>" +
+      D.decay.map(r => `<tr><td><b>${r.days} 日</b></td><td>${r.start}</td>
+        <td class="${c(r.mu)}">${s(r.mu)}</td><td class="${c(r.two_x)}">${s(r.two_x)}</td>
+        <td class="${c(r.muu)}">${s(r.muu)}</td><td class="${c(r.gap)}"><b>${s(r.gap)}</b></td><td>${f(r.vol,1)}%</td></tr>`).join("");
+
+    if (D.chart) new Chart(document.getElementById("chart"), {
+      type: "line",
+      data: {
+        labels: D.chart.dates,
+        datasets: [
+          {label:"MU 正股", data:D.chart.mu, borderColor:"#38bdf8", pointRadius:2, borderWidth:2.5},
+          {label:"MUU (2X 實際)", data:D.chart.muu, borderColor:"#f43f5e", pointRadius:2, borderWidth:2.5},
+          {label:"2×MU 理論倍數", data:D.chart.two_x, borderColor:"#fbbf24", borderDash:[5,4], pointRadius:0, borderWidth:1.8}
+        ]
+      },
+      options: {
+        interaction:{mode:"index",intersect:false},
+        scales:{x:{ticks:{color:"#94a3b8"}},y:{ticks:{color:"#94a3b8"}}},
+        plugins:{legend:{labels:{color:"#e2e8f0"}}}
+      }
+    });
+  </script>
+</body>
+</html>
