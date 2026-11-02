@@ -20,9 +20,9 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 884.74, prevClose: 934.27, changePct: -5.30 },
-  MUU: { price: 24.08, prevClose: 27.00, changePct: -10.82 },
-  headline: "美光大幅調升2027 HBM合約價！花旗上調MU目標價至$1300"
+  MU: { price: 884.74, prevClose: 934.27, changePct: -5.3 },
+  MUU: { price: 24.08, prevClose: 27.0, changePct: -10.82 },
+  headline: "美光下挫5%！記憶體股面臨「高標」考驗 三星財報亮眼仍難滿足市場"
 };
 
 async function fetchQuote(symbol, fallback) {
