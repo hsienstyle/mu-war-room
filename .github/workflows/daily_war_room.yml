@@ -1,0 +1,41 @@
+name: Daily MU/MUU Cloud War Room & LINE Push
+
+on:
+  schedule:
+    # 台灣時間週二至週六早上 08:00 (對應 UTC 00:00，美股收盤後自動執行)
+    - cron: '0 0 * * 2-6'
+  workflow_dispatch: # 支援手動一鍵觸發測試
+
+permissions:
+  contents: write
+
+jobs:
+  run-war-room:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Cloud War Room Update & LINE Push
+        env:
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python cloud_daily_job.py
+
+      - name: Commit and Push updated iOS War Room to GitHub Pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html MU_MUU_Widget.js
+          if git diff --staged --quiet; then
+            echo "No price changes to commit."
+          else
+            git commit -m "chore(cloud): Auto-update daily MU/MUU war room data"
+            git push origin main
+          fi
