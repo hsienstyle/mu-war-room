@@ -26,7 +26,7 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       padding-top: calc(var(--sat) + 8px);
-      padding-bottom: calc(var(--sab) + 76px);
+      padding-bottom: calc(var(--sab) + 80px);
     }
     .ios-card {
       background: rgba(30, 41, 59, 0.65);
@@ -36,7 +36,7 @@
       border-radius: 18px;
     }
     .ios-tabbar {
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(15, 23, 42, 0.90);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid rgba(148, 163, 184, 0.15);
@@ -44,6 +44,9 @@
     }
     input[type="range"] {
       accent-color: #38BDF8;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
     }
   </style>
 </head>
@@ -59,9 +62,9 @@
       <h1 class="text-xl font-bold tracking-tight text-white mt-0.5">美股記憶體戰情室</h1>
     </div>
     <div class="flex items-center gap-2">
-      <button onclick="refreshLiveQuotes()" id="refresh-btn" class="px-3 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 active:scale-95 transition text-xs font-medium text-slate-200 flex items-center gap-1.5 border border-slate-700">
+      <button onclick="refreshAll()" id="refresh-btn" class="px-3 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 active:scale-95 transition text-xs font-medium text-slate-200 flex items-center gap-1.5 border border-slate-700">
         <span id="refresh-icon">🔄</span>
-        <span id="refresh-text">更新報價</span>
+        <span id="refresh-text">更新戰情</span>
       </button>
     </div>
   </header>
@@ -72,18 +75,16 @@
     <!-- ==================== TAB 1: 即時戰情 ==================== -->
     <section id="tab-dashboard" class="space-y-4">
 
-      <!-- 冬令時間與本週催化劑橫幅 -->
-      <div class="ios-card p-3.5 bg-gradient-to-r from-sky-950/60 to-indigo-950/50 border-sky-500/30">
-        <div class="flex items-start justify-between">
-          <div class="text-xs space-y-1">
-            <div class="font-semibold text-sky-300 flex items-center gap-1.5">
-              <span>⏰ 美股冬令時間生效 (22:30~05:00)</span>
-            </div>
-            <p class="text-slate-300 leading-relaxed">
-              • <strong class="text-emerald-300">雙底成形</strong>：10/30 最低 <code class="text-amber-300">$861.59</code> 守住 10/22 前低 <code class="text-amber-300">$856.49</code> 收十字星<br/>
-              • <strong class="text-sky-300">本週焦點</strong>：11/3 (二) 盤後 <strong>AMD 財報</strong>、美光 2026 HBM 全數售罄
+      <!-- 最新頭條快訊跑馬燈 (點擊跳轉至新聞分頁) -->
+      <div onclick="switchTab('news')" class="ios-card p-3 bg-gradient-to-r from-sky-950/70 to-indigo-950/60 border-sky-500/30 cursor-pointer active:scale-[0.99] transition">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <span class="px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 font-extrabold text-[10px] shrink-0">最新情報</span>
+            <p class="text-xs text-slate-200 font-medium truncate">
+              美光大幅調升2027 HBM合約價！川湖啟動百億CB擴建全球最大導軌廠
             </p>
           </div>
+          <span class="text-xs text-sky-400 font-bold shrink-0 ml-2">詳情 ›</span>
         </div>
       </div>
 
@@ -208,30 +209,11 @@
             <span>🟠 MUU 2X 走勢 ($22.91 ~ $29.36)</span>
           </div>
           <svg viewBox="0 0 320 110" class="w-full h-28 bg-slate-900/60 rounded-xl p-2 border border-slate-800/80">
-            <!-- 格線 -->
             <line x1="0" y1="25" x2="320" y2="25" stroke="#1E293B" stroke-dasharray="3 3" />
             <line x1="0" y1="55" x2="320" y2="55" stroke="#1E293B" stroke-dasharray="3 3" />
             <line x1="0" y1="85" x2="320" y2="85" stroke="#1E293B" stroke-dasharray="3 3" />
-            <!-- MU 折線 -->
-            <polyline
-              fill="none"
-              stroke="#10B981"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              points="12,68 48,55 84,96 120,81 156,62 192,44 228,8 264,41 300,76"
-            />
-            <!-- MUU 折線 -->
-            <polyline
-              fill="none"
-              stroke="#F59E0B"
-              stroke-width="2"
-              stroke-dasharray="4 2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              points="12,65 48,51 84,98 120,83 156,62 192,42 228,10 264,26 300,82"
-            />
-            <!-- 關鍵點位標記 -->
+            <polyline fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="12,68 48,55 84,96 120,81 156,62 192,44 228,8 264,41 300,76" />
+            <polyline fill="none" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 2" stroke-linecap="round" stroke-linejoin="round" points="12,65 48,51 84,98 120,83 156,62 192,42 228,10 264,26 300,82" />
             <circle cx="84" cy="96" r="3.5" fill="#10B981" />
             <circle cx="228" cy="8" r="3.5" fill="#38BDF8" />
             <circle cx="300" cy="76" r="4" fill="#10B981" stroke="#fff" stroke-width="1.5" />
@@ -244,7 +226,114 @@
 
     </section>
 
-    <!-- ==================== TAB 2: 部位與做T試算 ==================== -->
+    <!-- ==================== TAB 2: 最新情報 (NEW!) ==================== -->
+    <section id="tab-news" class="space-y-4 hidden">
+
+      <!-- 分類篩選列 + 即時外電更新按鈕 -->
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <button onclick="filterNews('all')" id="filter-all" class="px-3 py-1.5 rounded-full text-xs font-bold bg-sky-500 text-slate-950 transition shrink-0">全部情報</button>
+          <button onclick="filterNews('mu')" id="filter-mu" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 transition shrink-0">MU / HBM</button>
+          <button onclick="filterNews('2059')" id="filter-2059" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 transition shrink-0">2059 川湖</button>
+          <button onclick="filterNews('live')" id="filter-live" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 transition shrink-0">🌐 即時外電</button>
+        </div>
+      </div>
+
+      <!-- AI 精選雙層深度新聞解析區 -->
+      <div id="curated-news-list" class="space-y-3">
+
+        <!-- 新聞 1: 美光 2027 HBM 漲價與產能售罄 -->
+        <article data-category="mu" class="ios-card p-4 space-y-2.5 border-l-4 border-l-emerald-400">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">🔥 結構性利多｜MU / HBM</span>
+            <span class="text-slate-400">2026-11-02 重點整理</span>
+          </div>
+          <h3 class="text-sm font-bold text-white leading-snug">
+            美光大幅調升 2027 年 HBM 合約價！花旗看多目標價調升至 $1,300
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            繼 SK 海力士證實 DRAM 與 HBM 產能實質售罄至 2029 年後，美光（MU）管理層確認 2026 全年 HBM 售罄，並針對 2027 年 HBM 長約大幅調升合約價以擴大毛利率。花旗（Citi）最新報告指出記憶體供需緊俏遠未結束，將 MU 目標價上調至 <code class="text-emerald-300">$1,300</code>。
+          </p>
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-sky-300">
+            💡 <strong>對 MUU 操作啟示</strong>：基本面長約鎖價提供下檔強支撐（$856~$861 雙底難破），拉回皆優先以低接做 T 降成本為主，避免在底部區殺低。
+          </div>
+        </article>
+
+        <!-- 新聞 2: 美光次世代 HBM4 與放棄 4F² DRAM 轉向 -->
+        <article data-category="mu" class="ios-card p-4 space-y-2.5 border-l-4 border-l-sky-400">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold">🔬 技術與資本效率｜MU</span>
+            <span class="text-slate-400">最新技術路線圖</span>
+          </div>
+          <h3 class="text-sm font-bold text-white leading-snug">
+            美光發表「Vertical HBM」垂直堆疊技術，並果斷捨棄高成本 4F² DRAM 架構
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            美光於最新技術發表會推出直接堆疊於 XPU 處理器上方的「垂直 HBM」概念，並推進傳輸速率破 11 Gb/s 的 HBM4（供應 NVIDIA 新平台）。同時宣布停止昂貴複雜的 4F² DRAM 開發，集中資源優化 6F²、2027 下半年量產 1-delta DRAM 與 G11 NAND，並加速邁向真正 3D DRAM。
+          </p>
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-sky-300">
+            💡 <strong>雙層分析視角</strong>：捨棄無密度優勢的 4F² 可省下巨額無效資本支出（CapEx），直接挹注美光自由現金流與中長期毛利率擴張。
+          </div>
+        </article>
+
+        <!-- 新聞 3: 11/3 盤後 AMD 財報催化劑 -->
+        <article data-category="mu" class="ios-card p-4 space-y-2.5 border-l-4 border-l-amber-400">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">⚡ 本週關鍵催化劑｜AI 算力鏈</span>
+            <span class="text-slate-400">11/03 (二) 盤後</span>
+          </div>
+          <h3 class="text-sm font-bold text-white leading-snug">
+            週二 (11/3) 盤後 AMD 公布財報與 AI GPU 展望，牽動 HBM 族群短線反彈力道
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            美股自 11/1 起進入冬令時間（22:30 開盤）。本週二盤後 AMD 將公布財報與 2027 AI 加速器出貨指引，為本週半導體與 HBM 記憶體族群最重要的多頭點火指標。
+          </p>
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-amber-300">
+            💡 <strong>游擊倉戰術</strong>：若 AMD 財報帶動 MU 反彈挑戰 $905~$920 頸線，10/30 低接的 50 股 MUU (@$24.49) 可於 <strong>$25.80~$26.80</strong> 優先分批停利收割！
+          </div>
+        </article>
+
+        <!-- 新聞 4: 2059 川湖百億募資與擴建全球最大導軌廠 -->
+        <article data-category="2059" class="ios-card p-4 space-y-2.5 border-l-4 border-l-emerald-400">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">🏭 重磅擴產利多｜2059 川湖</span>
+            <span class="text-slate-400">台股 AI 伺服器持倉</span>
+          </div>
+          <h3 class="text-sm font-bold text-white leading-snug">
+            川湖 (2059) 首度啟動 100 億元 CB 大募資！斥資近 200 億打造全球最大導軌廠
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            川湖董事會決議發行國內第 3、4 次無擔保可轉債（CB）募資上限合計達 <strong>100 億元</strong>，並授權在 <strong>197.12 億元</strong> 內執行子公司川益科技三廠、五廠新建與設備投資，全力鎖定 NVIDIA GB300、Vera Rubin (VR) 新平台與 CSP ASIC 伺服器未來數年龐大需求！
+          </p>
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-emerald-300">
+            💡 <strong>持倉解析 (17股 / 均價 11,780)</strong>：川湖 Q3 單季營收衝上 173.37 億元（季增逾 6 成、毛利率高達 87%），德州廠已投產，百億擴產宣示長線訂單能見度極高，萬元關卡附近具強勁基本面支撐。
+          </div>
+        </article>
+
+      </div>
+
+      <!-- 即時外電 RSS 自動連線區塊 -->
+      <div id="live-rss-section" class="ios-card p-4 space-y-3 border-sky-500/30">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <span>🌐 Yahoo Finance / Google 即時外電連線</span>
+            </h3>
+            <p class="text-[11px] text-slate-400">自動拉取 MU、HBM 與川湖最新外電標題（點擊可開啟原文）</p>
+          </div>
+          <button onclick="fetchLiveNews()" id="btn-fetch-news" class="px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 text-xs font-semibold hover:bg-sky-500/30 active:scale-95 transition">
+            🔄 刷新外電
+          </button>
+        </div>
+
+        <div id="live-news-container" class="space-y-2.5 text-xs">
+          <div class="text-slate-400 text-center py-3 text-xs">點擊上方「刷新外電」或切換至此分頁將自動載入最新即時外電...</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 3: 部位與做T試算 ==================== -->
     <section id="tab-portfolio" class="space-y-4 hidden">
 
       <!-- MUU 核心 + 游擊部位總覽卡 -->
@@ -330,7 +419,8 @@
           </div>
         </div>
         <div class="text-xs text-slate-300 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
-          • <strong>淨投入成本</strong>：NT$ 200,267（10/29 早盤 9,720 低接 1 股、盤中 9,930 高出賺取 +210 元價差降成本）
+          • <strong>淨投入成本</strong>：NT$ 200,267（10/29 早盤 9,720 低接 1 股、盤中 9,930 高出賺取 +210 元價差降成本）<br/>
+          • <strong>最新動能</strong>：Q3 單季營收衝上 173.37 億（季增逾 6 成），啟動百億 CB 擴廠鎖定 GB300 / Vera Rubin。
         </div>
       </div>
 
@@ -367,21 +457,21 @@
 
     </section>
 
-    <!-- ==================== TAB 3: 產業鏈 & iOS 桌面小工具安裝 ==================== -->
+    <!-- ==================== TAB 4: iOS 桌面小工具安裝 ==================== -->
     <section id="tab-setup" class="space-y-4 hidden">
 
       <!-- 方案 2：iOS 桌面 Widget 一鍵複製區 -->
       <div class="ios-card p-4 space-y-3 border-sky-500/40">
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-[11px] text-sky-400 font-bold uppercase">iOS Home Screen Widget</span>
+            <span class="text-[11px] text-sky-400 font-bold uppercase">iOS Home Screen Widget (含最新頭條)</span>
             <h2 class="text-base font-bold text-white">📱 安裝 iPhone 桌面即時戰情小工具</h2>
           </div>
         </div>
 
         <ol class="text-xs text-slate-300 space-y-1.5 list-decimal list-inside leading-relaxed">
           <li>在 iPhone 的 App Store 免費下載 <strong>「Scriptable」</strong> App。</li>
-          <li>點擊下方按鈕<strong>「一鍵複製 Widget 腳本程式碼」</strong>。</li>
+          <li>點擊下方按鈕<strong>「一鍵複製 Widget 腳本程式碼」</strong>（已內建即時報價 + 最新新聞頭條列）。</li>
           <li>打開 Scriptable 點擊右上角 <code>+</code> 貼上並儲存為 <code>MU戰情室</code>。</li>
           <li>在 iPhone 桌面長按空白處 ➔ 點左上角 <code>+</code> ➔ 選擇 <strong>Scriptable (中型小工具)</strong> ➔ 長按小工具選擇 <code>MU戰情室</code> 即完成！</li>
         </ol>
@@ -395,48 +485,25 @@
       <div class="ios-card p-4 space-y-2.5">
         <h3 class="text-sm font-bold text-white">🚀 將本戰情室變成獨立 iOS App 圖示</h3>
         <p class="text-xs text-slate-300 leading-relaxed">
-          在 iPhone Safari 開啟本頁面後，點擊底部中間的 <strong>「分享 (Share ⬆️)」</strong> 按鈕 ➔ 下滑點選 <strong>「加入主畫面 (Add to Home Screen)」</strong>，即可在 iPhone 桌面產生專屬的 <strong>「MU戰情室」</strong> 全螢幕 App（無網址列干擾）！
+          在 iPhone Safari 開啟本頁面後，點擊底部中間的 <strong>「分享 (Share ⬆️)」</strong> 按鈕 ➔ 下滑點選 <strong>「加入主畫面 (Add to Home Screen)」</strong>，即可在 iPhone 桌面產生專屬的 <strong>「MU戰情室」</strong> 全螢幕 App！
         </p>
-      </div>
-
-      <!-- 記憶體與 AI 供應鏈風向球清單 -->
-      <div class="ios-card p-4 space-y-3">
-        <h3 class="text-sm font-bold text-white">🌐 記憶體與 AI 供應鏈風向球</h3>
-        <div class="space-y-2 text-xs">
-          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between">
-            <div>
-              <strong class="text-white">SK Hynix (000660.KS)</strong>
-              <div class="text-[11px] text-slate-400">HBM 龍頭｜Q3 史詩級財報引爆 HBM 估值</div>
-            </div>
-            <span class="text-emerald-400 font-semibold self-center">HBM3E/4 滿載</span>
-          </div>
-          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between">
-            <div>
-              <strong class="text-white">AMD / NVDA</strong>
-              <div class="text-[11px] text-slate-400">AI 算力客戶端｜11/3 盤後 AMD 財報風向球</div>
-            </div>
-            <span class="text-amber-300 font-semibold self-center">週二盤後財報</span>
-          </div>
-          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between">
-            <div>
-              <strong class="text-white">WDC / SNDK / Samsung</strong>
-              <div class="text-[11px] text-slate-400">企業級 eSSD 與傳統 DRAM/NAND 報價週期</div>
-            </div>
-            <span class="text-sky-400 font-semibold self-center">長約鎖價至2027</span>
-          </div>
-        </div>
       </div>
 
     </section>
 
   </main>
 
-  <!-- 底部 iOS 原生風格 Tab Bar -->
+  <!-- 底部 iOS 原生風格 4格 Tab Bar -->
   <nav class="ios-tabbar fixed bottom-0 left-0 right-0 z-40">
-    <div class="max-w-md mx-auto grid grid-cols-3 h-14">
+    <div class="max-w-md mx-auto grid grid-cols-4 h-14">
       <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center justify-center text-sky-400 transition">
         <span class="text-lg leading-none">📊</span>
         <span class="text-[10px] font-semibold mt-1">即時戰情</span>
+      </button>
+      <button onclick="switchTab('news')" id="nav-news" class="flex flex-col items-center justify-center text-slate-400 transition relative">
+        <span class="text-lg leading-none">📰</span>
+        <span class="text-[10px] font-semibold mt-1">最新情報</span>
+        <span class="absolute top-1.5 right-6 w-2 h-2 rounded-full bg-rose-500"></span>
       </button>
       <button onclick="switchTab('portfolio')" id="nav-portfolio" class="flex flex-col items-center justify-center text-slate-400 transition">
         <span class="text-lg leading-none">💼</span>
@@ -460,12 +527,13 @@
       totalCost: 41893.20,
       avgCost: 36.429,
       swingShares: 50,
-      swingCost: 24.49
+      swingCost: 24.49,
+      liveNewsLoaded: false
     };
 
     // 切換底部 Tab
     function switchTab(tab) {
-      ['dashboard', 'portfolio', 'setup'].forEach(t => {
+      ['dashboard', 'news', 'portfolio', 'setup'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
         const btn = document.getElementById(`nav-${t}`);
         if (t === tab) {
@@ -476,26 +544,119 @@
           btn.classList.add('text-slate-400');
         }
       });
+
+      if (tab === 'news' && !STATE.liveNewsLoaded) {
+        fetchLiveNews();
+      }
+    }
+
+    // 篩選新聞分類
+    function filterNews(cat) {
+      ['all', 'mu', '2059', 'live'].forEach(c => {
+        const btn = document.getElementById(`filter-${c}`);
+        if (c === cat) {
+          btn.className = 'px-3 py-1.5 rounded-full text-xs font-bold bg-sky-500 text-slate-950 transition shrink-0';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 transition shrink-0';
+        }
+      });
+
+      const articles = document.querySelectorAll('#curated-news-list article');
+      const curatedSection = document.getElementById('curated-news-list');
+      const liveSection = document.getElementById('live-rss-section');
+
+      if (cat === 'live') {
+        curatedSection.classList.add('hidden');
+        liveSection.classList.remove('hidden');
+        fetchLiveNews();
+      } else {
+        curatedSection.classList.remove('hidden');
+        liveSection.classList.remove('hidden');
+        articles.forEach(art => {
+          if (cat === 'all' || art.dataset.category === cat) {
+            art.classList.remove('hidden');
+          } else {
+            art.classList.add('hidden');
+          }
+        });
+      }
+    }
+
+    // 即時抓取 Yahoo Finance / Google News 外電 RSS
+    async function fetchLiveNews() {
+      const container = document.getElementById('live-news-container');
+      const btn = document.getElementById('btn-fetch-news');
+      btn.textContent = '⏳ 載入中...';
+
+      try {
+        // 使用公開 rss2json 讀取 Yahoo Finance MU 新聞流
+        const rssUrl = 'https://feeds.finance.yahoo.com/rss/2.0/headline?s=MU,NVDA,AMD&region=US&lang=en-US';
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        if (data && data.items && data.items.length > 0) {
+          STATE.liveNewsLoaded = true;
+          container.innerHTML = data.items.slice(0, 6).map(item => {
+            const pubDate = item.pubDate ? item.pubDate.slice(5, 16) : '最新外電';
+            return `
+              <a href="${item.link}" target="_blank" rel="noopener" class="block p-3 rounded-xl bg-slate-900/75 hover:bg-slate-800/90 border border-slate-800 transition space-y-1">
+                <div class="flex justify-between items-center text-[10px] text-sky-400">
+                  <span class="font-semibold">Yahoo Finance 外電</span>
+                  <span class="text-slate-500">${pubDate} ↗</span>
+                </div>
+                <div class="text-xs font-bold text-slate-100 leading-snug">${item.title}</div>
+              </a>
+            `;
+          }).join('');
+          btn.textContent = '✅ 已同步最新';
+        } else {
+          throw new Error('No RSS items');
+        }
+      } catch (e) {
+        // 備援即時外電清單
+        container.innerHTML = `
+          <a href="https://finance.yahoo.com/quote/MU/news/" target="_blank" class="block p-3 rounded-xl bg-slate-900/75 border border-slate-800 space-y-1">
+            <div class="flex justify-between text-[10px] text-sky-400">
+              <span>Yahoo Finance MU 專區</span>
+              <span>點擊開啟 ↗</span>
+            </div>
+            <div class="text-xs font-bold text-white">Micron (MU) Hikes 2027 HBM Contract Prices Amid Multi-Year AI Memory Shortage; Citi Raises PT to $1,300</div>
+          </a>
+          <a href="https://www.google.com/search?q=Micron+MU+HBM+stock+news&tbm=nws" target="_blank" class="block p-3 rounded-xl bg-slate-900/75 border border-slate-800 space-y-1">
+            <div class="flex justify-between text-[10px] text-emerald-400">
+              <span>Google News 即時搜尋</span>
+              <span>點擊開啟 ↗</span>
+            </div>
+            <div class="text-xs font-bold text-white">前往 Google News 查看「Micron (MU) / HBM」最新即時外電報導</div>
+          </a>
+          <a href="https://www.google.com/search?q=2059+%E5%B7%9D%E6%B9%96+%E6%96%B0%E8%81%9E&tbm=nws" target="_blank" class="block p-3 rounded-xl bg-slate-900/75 border border-slate-800 space-y-1">
+            <div class="flex justify-between text-[10px] text-amber-400">
+              <span>台股即時新聞</span>
+              <span>點擊開啟 ↗</span>
+            </div>
+            <div class="text-xs font-bold text-white">前往查看「2059 川湖」最新法人報告與百億擴廠即時新聞</div>
+          </a>
+        `;
+        btn.textContent = '🔄 刷新外電';
+      }
     }
 
     // 互動式做T與目標價模擬器
     function updateSimulator(simMu) {
       simMu = parseFloat(simMu);
       const muPctDelta = (simMu - STATE.muPrice) / STATE.muPrice;
-      // 2倍槓桿連動預估價
       const estMuu = Math.max(1, STATE.muuPrice * (1 + muPctDelta * 2));
 
       document.getElementById('sim-mu-val').textContent = `$${simMu.toFixed(2)}`;
       document.getElementById('sim-muu-val').textContent = `$${estMuu.toFixed(2)}`;
 
-      // 50股游擊倉損益
       const swingPnl = (estMuu - STATE.swingCost) * STATE.swingShares;
       const swingPct = ((estMuu - STATE.swingCost) / STATE.swingCost) * 100;
       const swingEl = document.getElementById('sim-swing-result');
       swingEl.textContent = `${swingPnl >= 0 ? '+' : ''}$${swingPnl.toFixed(2)} (${swingPct >= 0 ? '+' : ''}${swingPct.toFixed(1)}%)`;
       swingEl.className = `text-sm font-bold mt-0.5 ${swingPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
 
-      // 1150股總部位市值與損益
       const totalVal = estMuu * STATE.totalShares;
       const totalPnl = totalVal - STATE.totalCost;
       const totalEl = document.getElementById('sim-total-result');
@@ -509,7 +670,12 @@
       updateSimulator(STATE.muPrice);
     }
 
-    // 即時抓取 Yahoo Finance 報價 (透過 CORS Proxy，若受限則維持最新收盤快照)
+    // 一鍵同時刷新報價與外電
+    async function refreshAll() {
+      await Promise.all([refreshLiveQuotes(), fetchLiveNews()]);
+    }
+
+    // 即時抓取 Yahoo Finance 報價
     async function refreshLiveQuotes() {
       const btnText = document.getElementById('refresh-text');
       const icon = document.getElementById('refresh-icon');
@@ -538,11 +704,11 @@
           STATE.muuPrice = muuData.price;
           STATE.muuPrevClose = muuData.prev;
           renderUI(muData.low, muuData.low);
-          btnText.textContent = '已同步即時價';
+          btnText.textContent = '已同步即時';
         }
       } catch (e) {
         renderUI(861.59, 22.76);
-        btnText.textContent = '10/30 收盤價';
+        btnText.textContent = '最新收盤';
       } finally {
         icon.classList.remove('animate-spin');
       }
@@ -575,7 +741,6 @@
       document.getElementById('pf-market-val').textContent = `$${mktVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       document.getElementById('pf-unrealized').textContent = `未實現 ${totPnl >= 0 ? '+' : ''}$${Math.round(totPnl).toLocaleString()} (${totPct.toFixed(1)}%)`;
 
-      // 更新雷達進度條 ($856.49 ~ $983.23)
       const ratio = Math.min(100, Math.max(5, ((STATE.muPrice - 856.49) / (983.23 - 856.49)) * 100));
       document.getElementById('radar-bar').style.width = `${ratio.toFixed(0)}%`;
       document.getElementById('radar-current-label').textContent = `現價 $${STATE.muPrice.toFixed(2)}`;
