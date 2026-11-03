@@ -175,30 +175,34 @@ def generate_gemini_summary(mu, muu, tw2059, news_items, cfg):
 - 最新國內外新聞標題：
 {headlines_text}
 """
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    # 依序嘗試已實測具備免費額度 (Free Tier OK) 之最高階模型：3.5-flash -> 3-flash -> 2.5-flash
+    models_to_try = ["gemini-3.5-flash", "gemini-3-flash-preview", "gemini-2.5-flash"]
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.3,
-            "maxOutputTokens": 2048,
-            "thinkingConfig": {"thinkingBudget": 0}
+            "maxOutputTokens": 2500
         }
     }
-    try:
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST"
-        )
-        with urllib.request.urlopen(req, timeout=25) as resp:
-            res_data = json.loads(resp.read().decode("utf-8"))
-        parts = res_data["candidates"][0]["content"]["parts"]
-        text = "".join(p.get("text", "") for p in parts).strip()
-        return text if text else None
-    except Exception as e:
-        print(f"[WARN] Gemini API call skipped/failed: {e}")
-        return None
+    for model_name in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                res_data = json.loads(resp.read().decode("utf-8"))
+            parts = res_data["candidates"][0]["content"]["parts"]
+            text = "".join(p.get("text", "") for p in parts).strip()
+            if text:
+                print(f"[OK] Gemini summary generated using {model_name}")
+                return text
+        except Exception as e:
+            print(f"[WARN] {model_name} skipped/failed: {e}")
+    return None
 
 
 def build_tactical_commentary(mu, muu, cfg):
