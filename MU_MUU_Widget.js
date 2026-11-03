@@ -20,9 +20,9 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 884.74, prevClose: 934.27, changePct: -5.3 },
-  MUU: { price: 24.08, prevClose: 27.0, changePct: -10.82 },
-  headline: "美光下挫5%！記憶體股面臨「高標」考驗 三星財報亮眼仍難滿足市場"
+  MU: { price: 833.59, prevClose: 884.74, changePct: -5.78 },
+  MUU: { price: 21.28, prevClose: 24.08, changePct: -11.63 },
+  headline: "鎧俠財測遜拖累記憶體股！美光跌破840美元 本週將迎三大考驗"
 };
 
 async function fetchQuote(symbol, fallback) {
