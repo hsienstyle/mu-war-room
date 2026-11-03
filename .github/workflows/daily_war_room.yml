@@ -3,7 +3,7 @@ name: Daily MU/MUU Cloud War Room & LINE Push
 on:
   schedule:
     # 台灣時間週二至週六早上 08:00 (對應 UTC 00:00，美股收盤後自動執行)
-    - cron: '0 0 * * 2-6'
+    - cron: '37 23 * * 1-5'
   workflow_dispatch: # 支援手動一鍵觸發測試
 
 permissions:
