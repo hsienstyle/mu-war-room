@@ -109,6 +109,25 @@ def fetch_yahoo_quote(symbol):
     }
 
 
+def fetch_twse_daily(stock_no):
+    """台股來源 1：證交所 OpenAPI 最新交易日收盤（盤前執行也能拿到昨收與漲跌）"""
+    url = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        rows = json.loads(resp.read().decode("utf-8"))
+    row = next(r for r in rows if r.get("Code") == stock_no)
+    price = float(str(row["ClosingPrice"]).replace(",", ""))
+    change = float(str(row.get("Change") or 0).replace(",", "").replace("+", "") or 0)
+    prev_close = price - change
+    return {
+        "price": round(price, 2),
+        "prev_close": round(prev_close, 2),
+        "high": round(float(str(row["HighestPrice"]).replace(",", "")), 2),
+        "low": round(float(str(row["LowestPrice"]).replace(",", "")), 2),
+        "change_pct": round((change / prev_close) * 100.0, 2) if prev_close else 0.0,
+    }
+
+
 def fetch_twse_quote(stock_no):
     """台股來源：臺灣證交所官方即時報價 API（不擋雲端 IP）"""
     url = f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_{stock_no}.tw&json=1&delay=0"
@@ -133,6 +152,12 @@ def fetch_twse_quote(stock_no):
 
 def fetch_quote_multi(symbol, stooq_sym, fallback):
     if symbol.endswith(".TW"):
+        try:
+            q = fetch_twse_daily(symbol.replace(".TW", ""))
+            print(f"[OK] TWSE daily close for {symbol}: {q['price']} ({q['change_pct']:+.2f}%)")
+            return q
+        except Exception as e:
+            print(f"[WARN] TWSE daily failed for {symbol}: {e}")
         try:
             q = fetch_twse_quote(symbol.replace(".TW", ""))
             print(f"[OK] TWSE quote for {symbol}: {q['price']} ({q['change_pct']:+.2f}%)")
