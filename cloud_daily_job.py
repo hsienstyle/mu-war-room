@@ -109,7 +109,36 @@ def fetch_yahoo_quote(symbol):
     }
 
 
+def fetch_twse_quote(stock_no):
+    """台股來源：臺灣證交所官方即時報價 API（不擋雲端 IP）"""
+    url = f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_{stock_no}.tw&json=1&delay=0"
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        data = json.loads(resp.read().decode("utf-8"))
+    info = data["msgArray"][0]
+    prev_close = float(info["y"])
+    last = info.get("z", "-")
+    price = float(last) if last not in ("-", "", None) else prev_close
+    high = float(info["h"]) if info.get("h") not in ("-", "", None) else price
+    low = float(info["l"]) if info.get("l") not in ("-", "", None) else price
+    change_pct = ((price - prev_close) / prev_close) * 100.0 if prev_close else 0.0
+    return {
+        "price": round(price, 2),
+        "prev_close": round(prev_close, 2),
+        "high": round(high, 2),
+        "low": round(low, 2),
+        "change_pct": round(change_pct, 2),
+    }
+
+
 def fetch_quote_multi(symbol, stooq_sym, fallback):
+    if symbol.endswith(".TW"):
+        try:
+            q = fetch_twse_quote(symbol.replace(".TW", ""))
+            print(f"[OK] TWSE quote for {symbol}: {q['price']} ({q['change_pct']:+.2f}%)")
+            return q
+        except Exception as e:
+            print(f"[WARN] TWSE failed for {symbol}: {e}")
     """三重來源依序嘗試：CNBC -> Stooq -> Yahoo query2 -> Fallback"""
     if not symbol.endswith(".TW"):
         try:
@@ -286,7 +315,7 @@ def main():
 
     # 三重來源抓取最新報價 (11/02 最新收盤為預設 fallback)
     mu = fetch_quote_multi("MU", "mu.us", {"price": 833.59, "prev_close": 884.74, "high": 891.52, "low": 829.52, "change_pct": -5.78})
-    muu = fetch_quote_multi("MUU", "muu.us", {"price": 22.40, "prev_close": 24.08, "high": 24.44, "low": 22.00, "change_pct": -6.98})
+    muu = fetch_quote_multi("MUU", "muu.us", {"price": 21.28, "prev_close": 24.08, "high": 24.44, "low": 21.10, "change_pct": -11.63})
     tw2059 = fetch_quote_multi("2059.TW", None, {"price": 9420.0, "prev_close": 9650.0, "high": 9655.0, "low": 9270.0, "change_pct": -2.38})
 
     mu_news = fetch_google_news_tw("美光 MU OR HBM 記憶體", max_items=3)
