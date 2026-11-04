@@ -26,6 +26,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "portfolio_config.json")
 INDEX_PATH = os.path.join(BASE_DIR, "index.html")
 WIDGET_PATH = os.path.join(BASE_DIR, "MU_MUU_Widget.js")
+LAST_RUN_PATH = os.path.join(BASE_DIR, "last_run_date.txt")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
@@ -335,6 +336,16 @@ def send_line_push(message_text):
 
 
 def main():
+    event_name = os.environ.get("GITHUB_EVENT_NAME", "")
+    if event_name == "schedule" and os.path.exists(LAST_RUN_PATH):
+        try:
+            with open(LAST_RUN_PATH, "r", encoding="utf-8") as f:
+                last_date = f.read().strip()
+            if last_date == TODAY_STR:
+                print(f"[INFO] Already executed today ({TODAY_STR}). Skipping duplicate scheduled run.")
+                return
+        except Exception as e:
+            print(f"[WARN] Error reading last_run_date: {e}")
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
@@ -398,6 +409,12 @@ def main():
 
     print(line_msg)
     send_line_push(line_msg)
+
+    try:
+        with open(LAST_RUN_PATH, "w", encoding="utf-8") as f:
+            f.write(TODAY_STR)
+    except Exception as e:
+        print(f"[WARN] Failed to write last_run_date: {e}")
 
 
 if __name__ == "__main__":
