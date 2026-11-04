@@ -20,9 +20,9 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 833.59, prevClose: 884.74, changePct: -5.78 },
-  MUU: { price: 21.28, prevClose: 24.08, changePct: -11.63 },
-  headline: "鎧俠財測遜拖累記憶體股！美光跌破840美元 本週將迎三大考驗"
+  MU: { price: 855.1, prevClose: 833.59, changePct: 2.58 },
+  MUU: { price: 22.36, prevClose: 21.28, changePct: 5.08 },
+  headline: "美光股價自三個月低點回神 華爾街看好還有90%上漲空間"
 };
 
 async function fetchQuote(symbol, fallback) {
