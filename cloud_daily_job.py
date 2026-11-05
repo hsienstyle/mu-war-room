@@ -236,7 +236,7 @@ def generate_gemini_summary(mu, muu, tw2059, news_items, cfg):
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.3,
-            "maxOutputTokens": 2500
+            "maxOutputTokens": 8192
         }
     }
     for model_name in models_to_try:
@@ -268,7 +268,7 @@ def build_tactical_commentary(mu, muu, cfg):
     elif mu["price"] >= defense:
         return f"👉 MU 低點守穩波段防守線 (${defense}) 之上，底層雙底結構完整，拉回不破前低皆以續抱與游擊倉等待反彈 ($905~$920) 為主。"
     else:
-        return f"⚠️ MU 收盤 (${mu['price']:.2f}) 跌破 ${defense} 前低支撐（盤中低點 ${mu['low']:.2f}），短線受同業財測與盤後 AMD 財報前避險賣壓影響回測 $825~$830 整數支撐區，嚴禁盲目追高，靜待今晚盤後 AMD 財報落地與重新站回 $856 之上！"
+        return f"⚠️ MU 收盤 (${mu['price']:.2f}) 跌破 ${defense} 前波支撐（盤中低點 ${mu['low']:.2f}），短線處於弱勢探底修正，嚴禁盲目摸底加碼槓桿，靜待盤中低點止穩與重新站回 ${defense} 支撐之上！"
 
 
 def update_frontend_files(mu, muu, headline):
