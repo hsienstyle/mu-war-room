@@ -20,9 +20,9 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 855.1, prevClose: 833.59, changePct: 2.58 },
-  MUU: { price: 22.36, prevClose: 21.28, changePct: 5.08 },
-  headline: "美光股價自三個月低點回神 華爾街看好還有90%上漲空間"
+  MU: { price: 795.23, prevClose: 855.1, changePct: -7.0 },
+  MUU: { price: 19.23, prevClose: 22.36, changePct: -14.0 },
+  headline: "德州變天震撼AI交易！美光、SK海力士等記憶體類股齊崩 資料中心擴建添變數"
 };
 
 async function fetchQuote(symbol, fallback) {
