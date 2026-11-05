@@ -11,14 +11,14 @@
   },
   "tw2059": {
     "shares": 17,
-    "total_cost_twd": 200267,
-    "avg_cost_twd": 11780.41
+    "total_cost_twd": 198967,
+    "avg_cost_twd": 11703.94
   },
   "levels": {
-    "mu_defense": 856.49,
-    "mu_support1": 861.59,
-    "mu_res1_min": 905.00,
-    "mu_res1_max": 920.00,
+    "mu_defense": 782.00,
+    "mu_support1": 800.00,
+    "mu_res1_min": 830.00,
+    "mu_res1_max": 855.00,
     "mu_50ma": 983.23
   }
 }
