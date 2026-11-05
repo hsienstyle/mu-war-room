@@ -303,6 +303,7 @@ def update_frontend_files(mu, muu, headline):
         if headline:
             safe_hl = headline.replace('"', '\\"')
             js = re.sub(r'headline:\s*"[^"]*"', f'headline: "{safe_hl}"', js)
+        js = re.sub(r'lastPushDate:\s*"[^"]*"', f'lastPushDate: "{TODAY_STR}"', js)
 
         with open(WIDGET_PATH, "w", encoding="utf-8") as f:
             f.write(js)
@@ -337,15 +338,25 @@ def send_line_push(message_text):
 
 def main():
     event_name = os.environ.get("GITHUB_EVENT_NAME", "")
-    if event_name == "schedule" and os.path.exists(LAST_RUN_PATH):
-        try:
-            with open(LAST_RUN_PATH, "r", encoding="utf-8") as f:
-                last_date = f.read().strip()
-            if last_date == TODAY_STR:
-                print(f"[INFO] Already executed today ({TODAY_STR}). Skipping duplicate scheduled run.")
-                return
-        except Exception as e:
-            print(f"[WARN] Error reading last_run_date: {e}")
+    if event_name == "schedule":
+        now_tw = datetime.now(TW_TZ)
+        if now_tw.hour < 8 or (now_tw.hour == 8 and now_tw.minute < 10):
+            print("[INFO] Before 08:10 TW time; deferring to 08:00 Google Apps Script primary trigger.")
+            return
+        if os.path.exists(WIDGET_PATH):
+            with open(WIDGET_PATH, "r", encoding="utf-8") as f:
+                if f'lastPushDate: "{TODAY_STR}"' in f.read():
+                    print(f"[INFO] Already executed today ({TODAY_STR}) via primary trigger. Skipping duplicate scheduled run.")
+                    return
+        if os.path.exists(LAST_RUN_PATH):
+            try:
+                with open(LAST_RUN_PATH, "r", encoding="utf-8") as f:
+                    last_date = f.read().strip()
+                if last_date == TODAY_STR:
+                    print(f"[INFO] Already executed today ({TODAY_STR}). Skipping duplicate scheduled run.")
+                    return
+            except Exception as e:
+                print(f"[WARN] Error reading last_run_date: {e}")
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 

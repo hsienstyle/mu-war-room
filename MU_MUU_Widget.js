@@ -22,7 +22,8 @@ const PORTFOLIO = {
 const FALLBACK_DATA = {
   MU: { price: 795.23, prevClose: 855.1, changePct: -7.0 },
   MUU: { price: 19.23, prevClose: 22.36, changePct: -14.0 },
-  headline: "德州變天震撼AI交易！美光、SK海力士等記憶體類股齊崩 資料中心擴建添變數"
+  headline: "德州變天震撼AI交易！美光、SK海力士等記憶體類股齊崩 資料中心擴建添變數",
+  lastPushDate: "2026-11-05"
 };
 
 async function fetchQuote(symbol, fallback) {
