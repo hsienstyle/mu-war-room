@@ -271,17 +271,63 @@ def build_tactical_commentary(mu, muu, cfg):
         return f"⚠️ MU 收盤 (${mu['price']:.2f}) 跌破 ${defense} 前波支撐（盤中低點 ${mu['low']:.2f}），短線處於弱勢探底修正，嚴禁盲目摸底加碼槓桿，靜待盤中低點止穩與重新站回 ${defense} 支撐之上！"
 
 
-def update_frontend_files(mu, muu, headline):
+def update_frontend_files(mu, muu, tw2059, headline, news_block=None):
     if os.path.exists(INDEX_PATH):
         with open(INDEX_PATH, "r", encoding="utf-8") as f:
             html = f.read()
 
         html = re.sub(r"muPrice:\s*[\d.]+", f"muPrice: {mu['price']}", html)
         html = re.sub(r"muPrevClose:\s*[\d.]+", f"muPrevClose: {mu['prev_close']}", html)
+        html = re.sub(r"muLow:\s*[\d.]+", f"muLow: {mu['low']}", html)
         html = re.sub(r"muuPrice:\s*[\d.]+", f"muuPrice: {muu['price']}", html)
         html = re.sub(r"muuPrevClose:\s*[\d.]+", f"muuPrevClose: {muu['prev_close']}", html)
+        html = re.sub(r"muuLow:\s*[\d.]+", f"muuLow: {muu['low']}", html)
+
+        mu_arrow = "▲" if mu["change_pct"] >= 0 else "▼"
+        muu_arrow = "▲" if muu["change_pct"] >= 0 else "▼"
         html = re.sub(r'id="mu-price">\$[\d.]+<', f'id="mu-price">${mu["price"]:.2f}<', html)
+        html = re.sub(r'id="mu-change"[^>]*>[^<]+<', f'id="mu-change" class="text-xs font-bold px-1.5 py-0.5 rounded {"bg-emerald-500/20 text-emerald-400" if mu["change_pct"] >= 0 else "bg-rose-500/20 text-rose-400"}">{mu_arrow} {abs(mu["change_pct"]):.2f}%<', html)
+        html = re.sub(r'id="mu-range">[^<]+<', f'id="mu-range">低 ${mu["low"]:.2f}<', html)
+
         html = re.sub(r'id="muu-price">\$[\d.]+<', f'id="muu-price">${muu["price"]:.2f}<', html)
+        html = re.sub(r'id="muu-change"[^>]*>[^<]+<', f'id="muu-change" class="text-xs font-bold px-1.5 py-0.5 rounded {"bg-emerald-500/20 text-emerald-400" if muu["change_pct"] >= 0 else "bg-rose-500/20 text-rose-400"}">{muu_arrow} {abs(muu["change_pct"]):.2f}%<', html)
+        html = re.sub(r'id="muu-range">[^<]+<', f'id="muu-range">低 ${muu["low"]:.2f}<', html)
+
+        short_date = TODAY_STR[5:].replace("-", "/")
+        html = re.sub(r'id="top-headline-date">[^<]+<', f'id="top-headline-date">{short_date} 最新<', html)
+        if headline:
+            html = re.sub(
+                r'id="top-headline">\s*[\s\S]*?\s*</p>',
+                f'id="top-headline">\n              {headline}\n            </p>',
+                html
+            )
+        if tw2059 and tw2059.get("price"):
+            html = re.sub(
+                r'id="tw2059-price">[^<]+<',
+                f'id="tw2059-price">NT$ {int(round(tw2059["price"])):,}<',
+                html
+            )
+        html = re.sub(r'id="radar-current-label">[^<]+<', f'id="radar-current-label">現價 ${mu["price"]:.2f}<', html)
+
+        if news_block:
+            html = re.sub(
+                r'id="gemini-insight-date">[^<]+<',
+                f'id="gemini-insight-date">{TODAY_STR} 雲端結算<',
+                html
+            )
+            paragraphs = []
+            for line in news_block.splitlines():
+                line_s = line.strip()
+                if line_s:
+                    line_clean = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", line_s)
+                    paragraphs.append(f"          <p>{line_clean}</p>")
+            if paragraphs:
+                inner_html = "\n".join(paragraphs)
+                html = re.sub(
+                    r'(<div id="gemini-insight-box"[^>]*>)[\s\S]*?(</div>)',
+                    rf'\1\n{inner_html}\n        \2',
+                    html
+                )
 
         with open(INDEX_PATH, "w", encoding="utf-8") as f:
             f.write(html)
@@ -371,8 +417,6 @@ def main():
 
     top_headline = mu_news[0]["title"] if mu_news else "鎧俠財測保守與AMD財報前避險，MU回測$833支撐；今晚聚焦AMD盤後財報"
 
-    update_frontend_files(mu, muu, top_headline)
-
     p_muu = cfg["muu"]
     mkt_val = round(muu["price"] * p_muu["total_shares"], 2)
     unrealized_usd = round(mkt_val - p_muu["total_cost_usd"], 2)
@@ -394,6 +438,8 @@ def main():
             "2. 【技術面關鍵價位】：MU跌破$856.49前低，盤中於$829.52止穩，短線關注今晚AMD AI晶片展望能否帶動股價迅速收復$856頸線。\n"
             "3. 【MUU 做T與部位建議】：MUU收$22.40，暫勿在破位當下急於攤平，靜待今晚盤後AMD財報落定、MU重返$856之上再執行右側做T。"
         )
+
+    update_frontend_files(mu, muu, tw2059, top_headline, news_block)
 
     line_msg = f"""☀️【MU / MUU 雲端 AI 戰情日報】
 📅 日期：{TODAY_STR}（GitHub + Gemini 自動結算）

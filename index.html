@@ -79,9 +79,9 @@
       <div onclick="switchTab('news')" class="ios-card p-3 bg-gradient-to-r from-sky-950/70 to-indigo-950/60 border-sky-500/30 cursor-pointer active:scale-[0.99] transition">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2 overflow-hidden">
-            <span class="px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 font-extrabold text-[10px] shrink-0">最新情報</span>
-            <p class="text-xs text-slate-200 font-medium truncate">
-              美光大幅調升2027 HBM合約價！川湖啟動百億CB擴建全球最大導軌廠
+            <span class="px-1.5 py-0.5 rounded bg-sky-500 text-slate-950 font-extrabold text-[10px] shrink-0" id="top-headline-date">11/06 最新</span>
+            <p class="text-xs text-slate-200 font-medium truncate" id="top-headline">
+              美光重挫17.46%收$656.39引爆AI鏈修正；川湖7,200跌停低接2股、尾盤7,500當沖獲利+600元
             </p>
           </div>
           <span class="text-xs text-sky-400 font-bold shrink-0 ml-2">詳情 ›</span>
@@ -102,15 +102,15 @@
             </div>
           </div>
           <div class="mt-2">
-            <div class="text-2xl font-black tracking-tight text-white" id="mu-price">$795.23</div>
+            <div class="text-2xl font-black tracking-tight text-white" id="mu-price">$656.39</div>
             <div class="flex items-center gap-1.5 mt-0.5">
-              <span id="mu-change" class="text-xs font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400">▼ 5.30%</span>
-              <span class="text-[11px] text-slate-400" id="mu-range">低 $861.59</span>
+              <span id="mu-change" class="text-xs font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400">▼ 17.46%</span>
+              <span class="text-[11px] text-slate-400" id="mu-range">低 $650.00</span>
             </div>
           </div>
           <div class="mt-3 pt-2.5 border-t border-slate-700/60 text-[11px] text-slate-300 flex justify-between">
-            <span>波段前低防守</span>
-            <span class="font-bold text-emerald-400">$856.49 🛡️</span>
+            <span>短線關鍵支撐</span>
+            <span class="font-bold text-amber-400" id="mu-defense-label">$650.00 🛡️</span>
           </div>
         </div>
 
@@ -126,16 +126,31 @@
             </div>
           </div>
           <div class="mt-2">
-            <div class="text-2xl font-black tracking-tight text-white" id="muu-price">$19.23</div>
+            <div class="text-2xl font-black tracking-tight text-white" id="muu-price">$12.62</div>
             <div class="flex items-center gap-1.5 mt-0.5">
-              <span id="muu-change" class="text-xs font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400">▼ 10.82%</span>
-              <span class="text-[11px] text-slate-400" id="muu-range">低 $22.76</span>
+              <span id="muu-change" class="text-xs font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400">▼ 34.37%</span>
+              <span class="text-[11px] text-slate-400" id="muu-range">低 $12.31</span>
             </div>
           </div>
           <div class="mt-3 pt-2.5 border-t border-slate-700/60 text-[11px] text-slate-300 flex justify-between">
             <span id="dash-swing-label">游擊 50 股 (@24.49)</span>
-            <span id="swing-badge" class="font-bold text-rose-400">-1.67%</span>
+            <span id="swing-badge" class="font-bold text-rose-400">-48.47%</span>
           </div>
+        </div>
+      </div>
+
+      <!-- 今日 Gemini AI 雲端晨間戰情洞察 (每日自動同步) -->
+      <div class="ios-card p-4 space-y-2.5 border-sky-500/30">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
+            <span>🧠 Gemini AI 晨間戰情洞察</span>
+          </h2>
+          <span class="text-[11px] text-sky-400 font-medium" id="gemini-insight-date">2026-11-06 08:04 雲端結算</span>
+        </div>
+        <div id="gemini-insight-box" class="text-xs text-slate-200 space-y-2 leading-relaxed bg-slate-900/75 p-3 rounded-xl border border-slate-800">
+          <p><strong>1. 【行情與外電重點】</strong>：美光暴跌 17.46% 至 $656.39（盤中低點 $650.00），受桃園新廠傳暫緩擴建與長鑫 HBM 雜音衝擊，引發 AI 鏈恐慌拋售；川湖 (2059.TW) 今早 7,200 跌停低接 2 股、尾盤拉升至 7,500 順利當沖獲利 +600 元，有效均價再降至 11,668.65 元。</p>
+          <p><strong>2. 【技術面關鍵價位】</strong>：MU 跌破前低 $856.49 與 $782 支撐，短線於 $650.00 整數關卡出現初步止跌下影線。上方第一反壓看跳空缺口 $760~$780，強壓為原前低 $856.49。</p>
+          <p><strong>3. 【MUU 做T與部位建議】</strong>：MUU 收 $12.62（-34.37%）。急跌段切勿盲目擴大槓桿本體部位，靜待 MU 站穩 $650~$680 打底確認後，再以小股數游擊倉利用反彈做 T 回收現金。</p>
         </div>
       </div>
 
@@ -145,30 +160,30 @@
           <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
             <span>🎯 MU / MUU 關鍵價位雷達</span>
           </h2>
-          <span class="text-[11px] text-emerald-400 font-medium">第二隻腳十字星守穩</span>
+          <span class="text-[11px] text-amber-400 font-medium" id="radar-status">⚠️ 回測 $650 整數關卡尋底</span>
         </div>
 
         <div class="space-y-1.5">
           <div class="flex justify-between text-[11px] text-slate-400">
-            <span>防守底線 $856.49</span>
-            <span class="text-sky-400 font-bold" id="radar-current-label">現價 $884.74</span>
-            <span>50MA 反壓 $983</span>
+            <span id="radar-min-label">短線防守 $650.00</span>
+            <span class="text-sky-400 font-bold" id="radar-current-label">現價 $656.39</span>
+            <span id="radar-max-label">前低頸線 $856.49</span>
           </div>
           <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden relative">
-            <div id="radar-bar" class="h-full bg-gradient-to-r from-emerald-500 via-sky-400 to-amber-400 rounded-full transition-all duration-300" style="width: 23%"></div>
+            <div id="radar-bar" class="h-full bg-gradient-to-r from-emerald-500 via-sky-400 to-amber-400 rounded-full transition-all duration-300" style="width: 8%"></div>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
           <div class="p-2.5 rounded-xl bg-slate-800/70 border border-slate-700/60">
-            <div class="text-slate-400 text-[11px]">第一壓力（游擊倉停利）</div>
-            <div class="font-bold text-amber-300 mt-0.5">MU $905~$920</div>
-            <div class="text-[11px] text-slate-300">對應 MUU <strong class="text-white">$25.80~$26.80</strong></div>
+            <div class="text-slate-400 text-[11px]">第一反壓（跳空缺口/前低）</div>
+            <div class="font-bold text-amber-300 mt-0.5">MU $760~$800</div>
+            <div class="text-[11px] text-slate-300">對應 MUU <strong class="text-white">$16.60~$18.20</strong></div>
           </div>
           <div class="p-2.5 rounded-xl bg-slate-800/70 border border-slate-700/60">
-            <div class="text-slate-400 text-[11px]">雙底支撐（十字星/前低）</div>
-            <div class="font-bold text-emerald-400 mt-0.5">MU $856.5~$861.6</div>
-            <div class="text-[11px] text-slate-300">對應 MUU <strong class="text-white">$22.50~$22.80</strong></div>
+            <div class="text-slate-400 text-[11px]">短線支撐（盤中低點防守）</div>
+            <div class="font-bold text-emerald-400 mt-0.5">MU $650.0~$656.4</div>
+            <div class="text-[11px] text-slate-300">對應 MUU <strong class="text-white">$12.30~$12.65</strong></div>
           </div>
         </div>
       </div>
@@ -181,45 +196,45 @@
               <h2 class="text-sm font-bold text-white">📉 MUU 2倍槓桿與波動率耗損監控</h2>
               <a href="./dashboard.html" class="px-2.5 py-1 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-300 text-[11px] font-bold shrink-0">📊 120日量化儀表板 ›</a>
             </div>
-            <p class="text-[11px] text-slate-400">2026/10/20 ~ 10/30 雙層累積走勢對比 (內扣費用 1.01%)</p>
+            <p class="text-[11px] text-slate-400">2026/10/20 ~ 11/06 雙層累積走勢對比 (內扣費用 1.01%)</p>
           </div>
         </div>
 
         <div class="grid grid-cols-3 gap-2 text-center bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
           <div>
             <div class="text-[10px] text-slate-400">MU 區間漲跌</div>
-            <div class="text-sm font-bold text-rose-400 mt-0.5">-1.26%</div>
-            <div class="text-[10px] text-slate-500">$896.07→$884.74</div>
+            <div class="text-sm font-bold text-rose-400 mt-0.5">-26.75%</div>
+            <div class="text-[10px] text-slate-500">$896.07→$656.39</div>
           </div>
           <div class="border-x border-slate-800">
             <div class="text-[10px] text-slate-400">理論 2X 漲跌</div>
-            <div class="text-sm font-bold text-slate-200 mt-0.5">-2.53%</div>
+            <div class="text-sm font-bold text-slate-200 mt-0.5">-53.50%</div>
             <div class="text-[10px] text-slate-500">無耗損基準</div>
           </div>
           <div>
             <div class="text-[10px] text-amber-400">MUU 實際漲跌</div>
-            <div class="text-sm font-bold text-rose-400 mt-0.5">-4.63%</div>
-            <div class="text-[10px] text-amber-400/90">震盪耗損 -2.10%</div>
+            <div class="text-sm font-bold text-rose-400 mt-0.5">-49.94%</div>
+            <div class="text-[10px] text-emerald-400/90">連跌複利減損 +3.56%</div>
           </div>
         </div>
 
         <div class="pt-1">
           <div class="flex justify-between text-[10px] text-slate-400 mb-1">
-            <span>🟢 MU 正股走勢 ($856 ~ $983)</span>
-            <span>🟠 MUU 2X 走勢 ($22.91 ~ $29.36)</span>
+            <span>🟢 MU 正股走勢 ($656 ~ $983)</span>
+            <span>🟠 MUU 2X 走勢 ($12.62 ~ $29.36)</span>
           </div>
           <svg viewBox="0 0 320 110" class="w-full h-28 bg-slate-900/60 rounded-xl p-2 border border-slate-800/80">
             <line x1="0" y1="25" x2="320" y2="25" stroke="#1E293B" stroke-dasharray="3 3" />
             <line x1="0" y1="55" x2="320" y2="55" stroke="#1E293B" stroke-dasharray="3 3" />
             <line x1="0" y1="85" x2="320" y2="85" stroke="#1E293B" stroke-dasharray="3 3" />
-            <polyline fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="12,68 48,55 84,96 120,81 156,62 192,44 228,8 264,41 300,76" />
-            <polyline fill="none" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 2" stroke-linecap="round" stroke-linejoin="round" points="12,65 48,51 84,98 120,83 156,62 192,42 228,10 264,26 300,82" />
-            <circle cx="84" cy="96" r="3.5" fill="#10B981" />
-            <circle cx="228" cy="8" r="3.5" fill="#38BDF8" />
-            <circle cx="300" cy="76" r="4" fill="#10B981" stroke="#fff" stroke-width="1.5" />
-            <text x="65" y="107" fill="#94A3B8" font-size="8">10/22($856)</text>
-            <text x="205" y="22" fill="#38BDF8" font-size="8">10/28($983)</text>
-            <text x="268" y="95" fill="#10B981" font-size="8">10/30($884.7)</text>
+            <polyline fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="12,38 48,30 84,52 120,42 156,28 192,10 228,48 264,65 304,96" />
+            <polyline fill="none" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 2" stroke-linecap="round" stroke-linejoin="round" points="12,36 48,28 84,54 120,44 156,29 192,12 228,52 264,70 304,99" />
+            <circle cx="192" cy="10" r="3.5" fill="#38BDF8" />
+            <circle cx="264" cy="65" r="3.5" fill="#F59E0B" />
+            <circle cx="304" cy="96" r="4" fill="#F43F5E" stroke="#fff" stroke-width="1.5" />
+            <text x="165" y="22" fill="#38BDF8" font-size="8">10/28($983)</text>
+            <text x="230" y="60" fill="#F59E0B" font-size="8">11/04($795)</text>
+            <text x="260" y="107" fill="#F43F5E" font-size="8">11/05($656.4)</text>
           </svg>
         </div>
       </div>
@@ -239,19 +254,19 @@
       </div>
 
       <div id="curated-news-list" class="space-y-3">
-        <article data-category="mu" class="ios-card p-4 space-y-2.5 border-l-4 border-l-emerald-400">
+        <article data-category="mu" class="ios-card p-4 space-y-2.5 border-l-4 border-l-rose-400">
           <div class="flex items-center justify-between text-[11px]">
-            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">🔥 結構性利多｜MU / HBM</span>
-            <span class="text-slate-400">2026-11-02 重點整理</span>
+            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">⚠️ 最新盤勢警報｜MU / HBM</span>
+            <span class="text-slate-400" id="news-top-date">2026-11-06 晨間更新</span>
           </div>
-          <h3 class="text-sm font-bold text-white leading-snug">
-            美光大幅調升 2027 年 HBM 合約價！花旗看多目標價調升至 $1,300
+          <h3 class="text-sm font-bold text-white leading-snug" id="news-top-title">
+            美光重挫 17.46% 收 $656.39！受擴廠時程傳聞與長鑫 HBM 雜音衝擊，短線測試 $650 關卡
           </h3>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            繼 SK 海力士證實 DRAM 與 HBM 產能實質售罄至 2029 年後，美光（MU）管理層確認 2026 全年 HBM 售罄，並針對 2027 年 HBM 長約大幅調升合約價以擴大毛利率。花旗（Citi）最新報告指出記憶體供需緊俏遠未結束，將 MU 目標價上調至 <code class="text-emerald-300">$1,300</code>。
+          <p class="text-xs text-slate-300 leading-relaxed" id="news-top-body">
+            美光（MU）昨日遭遇機構法人避險拋售，單日下跌 17.46% 收在 $656.39（盤中最低 $650.00），MUU 同步收於 $12.62（-34.37%）。市場受到桃園新廠擴建節奏調整傳聞與中國長鑫存儲（CXMT）HBM 進展消息影響，短線情緒劇烈修正；但 2026~2027 高階 HBM3e/HBM4 認證與 CSP 訂單壁壘仍具結構性優勢。
           </p>
-          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-sky-300">
-            💡 <strong>對 MUU 操作啟示</strong>：基本面長約鎖價提供下檔強支撐（$856~$861 雙底難破），拉回皆優先以低接做 T 降成本為主，避免在底部區殺低。
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-amber-300">
+            💡 <strong>對 MUU 操作啟示</strong>：急跌破位階段嚴禁盲目摸底放大本體槓桿，靜待 MU 於 $650~$680 築底止穩後，再運用小部位游擊倉逢反彈做 T 降低持倉成本。
           </div>
         </article>
 
@@ -418,8 +433,8 @@
           </div>
           <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800">
             <div class="text-slate-400">目前持倉總市值</div>
-            <div class="text-base font-extrabold text-white mt-0.5" id="pf-market-val">$27,692.00</div>
-            <div class="text-[11px] text-rose-400 mt-0.5" id="pf-unrealized">未實現 -$14,201 (-33.9%)</div>
+            <div class="text-base font-extrabold text-white mt-0.5" id="pf-market-val">$14,513.00</div>
+            <div class="text-[11px] text-rose-400 mt-0.5" id="pf-unrealized">未實現 -$27,380 (-65.4%)</div>
           </div>
         </div>
 
@@ -430,7 +445,7 @@
             <div class="text-[11px] text-slate-300">短線做 T 獨立核算，獲利直接折抵核心倉均價</div>
           </div>
           <div class="text-right">
-            <div class="text-sm font-extrabold text-white" id="swing-pnl-usd">-$20.50</div>
+            <div class="text-sm font-extrabold text-white" id="swing-pnl-usd">-$593.50</div>
             <div class="text-[11px] text-amber-300">停利目標 $25.8~$26.8</div>
           </div>
         </div>
@@ -446,14 +461,14 @@
 
         <div class="space-y-2 pt-1">
           <div class="flex justify-between text-xs">
-            <span class="text-slate-300">模擬 MU 股價：<strong class="text-sky-400 text-sm" id="sim-mu-val">$884.74</strong></span>
-            <span class="text-slate-300">預估 MUU：<strong class="text-amber-400 text-sm" id="sim-muu-val">$24.08</strong></span>
+            <span class="text-slate-300">模擬 MU 股價：<strong class="text-sky-400 text-sm" id="sim-mu-val">$656.39</strong></span>
+            <span class="text-slate-300">預估 MUU：<strong class="text-amber-400 text-sm" id="sim-muu-val">$12.62</strong></span>
           </div>
-          <input type="range" id="sim-slider" min="840" max="1060" step="1" value="885" oninput="updateSimulator(this.value)" class="w-full h-2 bg-slate-700 rounded-lg cursor-pointer" />
+          <input type="range" id="sim-slider" min="550" max="1060" step="1" value="656" oninput="updateSimulator(this.value)" class="w-full h-2 bg-slate-700 rounded-lg cursor-pointer" />
           <div class="flex justify-between text-[10px] text-slate-500">
-            <span>$856 (前低)</span>
-            <span>$915 (頸線)</span>
-            <span>$983 (50MA)</span>
+            <span>$650 (短撐)</span>
+            <span>$780 (缺口)</span>
+            <span>$856 (頸線)</span>
             <span>$1,050 (回本區)</span>
           </div>
         </div>
@@ -461,11 +476,11 @@
         <div class="grid grid-cols-2 gap-2.5 pt-2 text-xs">
           <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
             <div class="text-slate-400 text-[11px]" id="sim-swing-label">游擊倉損益</div>
-            <div class="text-sm font-bold mt-0.5 text-rose-400" id="sim-swing-result">-$20.50 (-1.67%)</div>
+            <div class="text-sm font-bold mt-0.5 text-rose-400" id="sim-swing-result">-$593.50 (-48.5%)</div>
           </div>
           <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
             <div class="text-slate-400 text-[11px]" id="sim-total-label">總部位市值 / 損益</div>
-            <div class="text-sm font-bold mt-0.5 text-white" id="sim-total-result">$27,692 (-$14,201)</div>
+            <div class="text-sm font-bold mt-0.5 text-white" id="sim-total-result">$14,513 (-$27,380)</div>
           </div>
         </div>
       </div>
@@ -478,8 +493,8 @@
             <h3 class="text-sm font-bold text-white">2059.TW 川湖 (持有 17 股)</h3>
           </div>
           <div class="text-right">
-            <div class="text-base font-extrabold text-white">NT$ 7,500</div>
-            <div class="text-[11px] text-slate-400">有效均價 NT$ 11,669</div>
+            <div class="text-base font-extrabold text-white" id="tw2059-price">NT$ 7,500</div>
+            <div class="text-[11px] text-slate-400" id="tw2059-avg">有效均價 NT$ 11,669</div>
           </div>
         </div>
         <div class="text-xs text-slate-300 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
@@ -494,19 +509,27 @@
         <div id="trade-history-list" class="space-y-2 text-xs">
           <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
             <div>
+              <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-WIN</span>
+              <strong class="text-white ml-1">2059 川湖 2股 (7,200→7,500)</strong>
+              <div class="text-[11px] text-slate-400 mt-0.5">11/06 跌停低接、尾盤拉高獲利了結 (+NT$600)</div>
+            </div>
+            <span class="text-emerald-400 font-mono font-bold">+NT$600</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <div>
+              <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-SAVE</span>
+              <strong class="text-white ml-1">2059 川湖 4股 (8,475→7,930)</strong>
+              <div class="text-[11px] text-slate-400 mt-0.5">11/05 高出低接反T成功，省下成本 NT$2,180</div>
+            </div>
+            <span class="text-emerald-400 font-mono font-bold">+NT$2,180</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <div>
               <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">BUY</span>
               <strong class="text-white ml-1">MUU 50股 @ $24.49</strong>
               <div class="text-[11px] text-slate-400 mt-0.5">10/30 回測前低支撐買回，省下 $25.50</div>
             </div>
             <span class="text-slate-300 font-mono">$1,224.5</span>
-          </div>
-          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
-            <div>
-              <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">SELL</span>
-              <strong class="text-white ml-1">MUU 50股 @ $25.00</strong>
-              <div class="text-[11px] text-slate-400 mt-0.5">10/29 破位控制部位收回現金</div>
-            </div>
-            <span class="text-slate-300 font-mono">$1,250.0</span>
           </div>
           <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
             <div>
@@ -591,10 +614,12 @@
 
     // 核心狀態與最新快照資料
     const STATE = {
-      muPrice: 795.23,
-      muPrevClose: 855.1,
-      muuPrice: 19.23,
-      muuPrevClose: 22.36,
+      muPrice: 656.39,
+      muPrevClose: 795.23,
+      muLow: 650.00,
+      muuPrice: 12.62,
+      muuPrevClose: 19.23,
+      muuLow: 12.31,
       totalShares: 1150,
       coreShares: 1100,
       totalCost: 41893.20,
@@ -748,19 +773,27 @@
       const defaultHtml = `
         <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
           <div>
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-WIN</span>
+            <strong class="text-white ml-1">2059 川湖 2股 (7,200→7,500)</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/06 跌停低接、尾盤拉高獲利了結 (+NT$600)</div>
+          </div>
+          <span class="text-emerald-400 font-mono font-bold">+NT$600</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-SAVE</span>
+            <strong class="text-white ml-1">2059 川湖 4股 (8,475→7,930)</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/05 高出低接反T成功，省下成本 NT$2,180</div>
+          </div>
+          <span class="text-emerald-400 font-mono font-bold">+NT$2,180</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
             <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">BUY</span>
             <strong class="text-white ml-1">MUU 50股 @ $24.49</strong>
             <div class="text-[11px] text-slate-400 mt-0.5">10/30 回測前低支撐買回，省下 $25.50</div>
           </div>
           <span class="text-slate-300 font-mono">$1,224.5</span>
-        </div>
-        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
-          <div>
-            <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">SELL</span>
-            <strong class="text-white ml-1">MUU 50股 @ $25.00</strong>
-            <div class="text-[11px] text-slate-400 mt-0.5">10/29 破位控制部位收回現金</div>
-          </div>
-          <span class="text-slate-300 font-mono">$1,250.0</span>
         </div>
         <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
           <div>
@@ -970,20 +1003,22 @@
         if (muData && muuData) {
           STATE.muPrice = muData.price;
           STATE.muPrevClose = muData.prev;
+          STATE.muLow = muData.low || STATE.muLow;
           STATE.muuPrice = muuData.price;
           STATE.muuPrevClose = muuData.prev;
-          renderUI(muData.low, muuData.low);
+          STATE.muuLow = muuData.low || STATE.muuLow;
+          renderUI(STATE.muLow, STATE.muuLow);
           btnText.textContent = '已同步即時';
         }
       } catch (e) {
-        renderUI(861.59, 22.76);
+        renderUI(STATE.muLow, STATE.muuLow);
         btnText.textContent = '最新收盤';
       } finally {
         icon.classList.remove('animate-spin');
       }
     }
 
-    function renderUI(muLow = 861.59, muuLow = 22.76) {
+    function renderUI(muLow = STATE.muLow, muuLow = STATE.muuLow) {
       const muPct = ((STATE.muPrice - STATE.muPrevClose) / STATE.muPrevClose) * 100;
       const muuPct = ((STATE.muuPrice - STATE.muuPrevClose) / STATE.muuPrevClose) * 100;
 
@@ -991,11 +1026,13 @@
       const muChgEl = document.getElementById('mu-change');
       muChgEl.textContent = `${muPct >= 0 ? '▲' : '▼'} ${Math.abs(muPct).toFixed(2)}%`;
       muChgEl.className = `text-xs font-bold px-1.5 py-0.5 rounded ${muPct >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`;
+      if (muLow) document.getElementById('mu-range').textContent = `低 $${Number(muLow).toFixed(2)}`;
 
       document.getElementById('muu-price').textContent = `$${STATE.muuPrice.toFixed(2)}`;
       const muuChgEl = document.getElementById('muu-change');
       muuChgEl.textContent = `${muuPct >= 0 ? '▲' : '▼'} ${Math.abs(muuPct).toFixed(2)}%`;
       muuChgEl.className = `text-xs font-bold px-1.5 py-0.5 rounded ${muuPct >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`;
+      if (muuLow) document.getElementById('muu-range').textContent = `低 $${Number(muuLow).toFixed(2)}`;
 
       const swingPct = STATE.swingCost > 0 ? ((STATE.muuPrice - STATE.swingCost) / STATE.swingCost) * 100 : 0;
       const swingUsd = (STATE.muuPrice - STATE.swingCost) * STATE.swingShares;
@@ -1016,9 +1053,11 @@
       document.getElementById('pf-market-val').textContent = `$${mktVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       document.getElementById('pf-unrealized').textContent = `未實現 ${totPnl >= 0 ? '+' : ''}$${Math.round(totPnl).toLocaleString()} (${totPct.toFixed(1)}%)`;
 
-      const ratio = Math.min(100, Math.max(5, ((STATE.muPrice - 856.49) / (983.23 - 856.49)) * 100));
+      const ratio = Math.min(100, Math.max(5, ((STATE.muPrice - 650.00) / (856.49 - 650.00)) * 100));
       document.getElementById('radar-bar').style.width = `${ratio.toFixed(0)}%`;
       document.getElementById('radar-current-label').textContent = `現價 $${STATE.muPrice.toFixed(2)}`;
+      const sliderEl = document.getElementById('sim-slider');
+      if (sliderEl) sliderEl.value = Math.round(STATE.muPrice);
     }
 
     async function copyScriptableCode() {
