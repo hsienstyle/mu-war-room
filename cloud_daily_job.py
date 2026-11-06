@@ -354,6 +354,29 @@ def update_frontend_files(mu, muu, tw2059, headline, news_block=None):
         with open(WIDGET_PATH, "w", encoding="utf-8") as f:
             f.write(js)
 
+    dash_path = os.path.join(BASE_DIR, "dashboard.html")
+    if os.path.exists(dash_path):
+        with open(dash_path, "r", encoding="utf-8") as f:
+            dhtml = f.read()
+        dhtml = re.sub(
+            r'\{\s*symbol:\s*"MU",\s*date:\s*"[^"]+",\s*price:\s*[\d.]+,\s*d1:\s*[-\d.]+',
+            f'{{ symbol: "MU", date: "{TODAY_STR}", price: {mu["price"]}, d1: {mu["change_pct"]}',
+            dhtml
+        )
+        dhtml = re.sub(
+            r'\{\s*symbol:\s*"MUU",\s*date:\s*"[^"]+",\s*price:\s*[\d.]+,\s*d1:\s*[-\d.]+',
+            f'{{ symbol: "MUU", date: "{TODAY_STR}", price: {muu["price"]}, d1: {muu["change_pct"]}',
+            dhtml
+        )
+        if tw2059 and tw2059.get("price"):
+            dhtml = re.sub(
+                r'\{\s*symbol:\s*"2059\.TW",\s*date:\s*"[^"]+",\s*price:\s*[\d.]+,\s*d1:\s*[-\d.]+',
+                f'{{ symbol: "2059.TW", date: "{TODAY_STR}", price: {tw2059["price"]}, d1: {tw2059["change_pct"]}',
+                dhtml
+            )
+        with open(dash_path, "w", encoding="utf-8") as f:
+            f.write(dhtml)
+
 
 def send_line_push(message_text):
     token = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN", "").strip()
