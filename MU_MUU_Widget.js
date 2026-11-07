@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 656.39, prevClose: 795.23, changePct: -17.46 },
-  MUU: { price: 12.62, prevClose: 19.23, changePct: -34.37 },
-  headline: "美光重挫17.46%收$656.39引爆AI鏈修正；川湖7,200跌停低接2股、尾盤7,500當沖獲利+600元",
-  lastPushDate: "2026-11-06"
+  MU: { price: 690.0, prevClose: 656.39, changePct: 5.12 },
+  MUU: { price: 13.78, prevClose: 12.62, changePct: 9.19 },
+  headline: "德州變天震撼AI交易！美光、SK海力士等記憶體類股齊崩 資料中心擴建添變數",
+  lastPushDate: "2026-11-07"
 };
 
 async function fetchQuote(symbol, fallback) {
