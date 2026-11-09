@@ -1,22 +1,24 @@
 {
   "muu": {
-    "total_shares": 1150,
+    "total_shares": 1250,
     "core_shares": 1100,
-    "swing_shares": 50,
-    "swing_cost": 24.49,
-    "swing_target_min": 25.80,
-    "swing_target_max": 26.80,
-    "total_cost_usd": 41893.20,
-    "avg_cost_usd": 36.429
+    "swing_shares": 150,
+    "swing_cost": 18.16,
+    "swing_target_min": 22.00,
+    "swing_target_max": 25.00,
+    "total_cost_usd": 43392.20,
+    "avg_cost_usd": 34.714
   },
   "tw2059": {
-    "shares": 17,
-    "total_cost_twd": 198367,
+    "shares": 15,
+    "cash_reserved_twd": 16080,
+    "total_net_capital_twd": 198367,
+    "remaining_stock_cost_twd": 182287,
     "avg_cost_twd": 11668.65
   },
   "levels": {
     "mu_defense": 656.39,
-    "mu_support1": 700.00,
+    "mu_support1": 690.00,
     "mu_res1_min": 780.00,
     "mu_res1_max": 800.00,
     "mu_50ma": 983.23
