@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 656.39, prevClose: 795.23, changePct: -17.46 },
-  MUU: { price: 12.62, prevClose: 19.23, changePct: -34.37 },
-  headline: "美光重挫17.46%收$656.39引爆AI鏈修正；川湖7,200跌停低接2股、尾盤7,500當沖獲利+600元",
-  lastPushDate: "2026-11-06"
+  MU: { price: 733.15, prevClose: 690.0, changePct: 6.25 },
+  MUU: { price: 15.5, prevClose: 13.78, changePct: 12.48 },
+  headline: "美光股票現在值得買入嗎？",
+  lastPushDate: "2026-11-10"
 };
 
 async function fetchQuote(symbol, fallback) {
