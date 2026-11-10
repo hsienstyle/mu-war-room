@@ -22,7 +22,7 @@ const PORTFOLIO = {
 const FALLBACK_DATA = {
   MU: { price: 733.15, prevClose: 690.0, changePct: 6.25 },
   MUU: { price: 15.5, prevClose: 13.78, changePct: 12.48 },
-  headline: "美光股票現在值得買入嗎？",
+  headline: "美光本益比降至3.7倍低的「荒謬」！千億美元庫藏股、長約能否支撐AI記憶體行情？",
   lastPushDate: "2026-11-10"
 };
 
