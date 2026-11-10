@@ -10,13 +10,13 @@
 const WAR_ROOM_URL = "https://hsienstyle.github.io/mu-war-room/";
 
 const PORTFOLIO = {
-  totalShares: 1150,          // MUU 總股數 (1100核心 + 50游擊)
-  avgCost: 36.429,            // 整體實質均價 (USD)
-  totalCost: 41893.20,        // 總投入淨成本 (USD)
-  swingShares: 50,            // 游擊倉股數
-  swingCost: 24.49,           // 游擊倉買入價 (10/30 低接)
-  muDefense: 856.49,          // MU 10/22 波段前低防守線
-  muResistance1: 915.00       // MU 頸線反壓
+  totalShares: 1250,          // MUU 總股數 (1100核心 + 150游擊)
+  avgCost: 34.714,            // 整體實質均價 (USD)
+  totalCost: 43392.20,        // 總投入淨成本 (USD)
+  swingShares: 150,           // 游擊倉股數 (50股@24.49 + 100股@14.99)
+  swingCost: 18.16,           // 游擊倉均價
+  muDefense: 656.39,          // MU 11/05 低點防守線
+  muResistance1: 780.00       // MU 缺口反壓
 };
 
 const FALLBACK_DATA = {

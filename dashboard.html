@@ -100,8 +100,8 @@
     // 預設基準數據（當雲端每日排程執行 nas_dashboard.py 時會自動覆寫最新 120 日數據）
     const D = {
       positions: [
-        { symbol: "MUU", shares: 1150, ccy: "USD", avg: 36.429, price: 12.62, value: 14513.00, pnl: -27380.20, pnl_pct: -65.36, breakeven: 188.66 },
-        { symbol: "2059.TW (川湖)", shares: 17, ccy: "TWD", avg: 11668.65, price: 7500.00, value: 127500.00, pnl: -70867.00, pnl_pct: -35.73, breakeven: 55.58 }
+        { symbol: "MUU", shares: 1250, ccy: "USD", avg: 34.714, price: 12.62, value: 15775.00, pnl: -27617.20, pnl_pct: -63.65, breakeven: 175.07 },
+        { symbol: "2059.TW (川湖)", shares: 15, ccy: "TWD", avg: 11668.65, price: 8040.00, value: 120600.00, pnl: -61687.00, pnl_pct: -33.84, breakeven: 45.13 }
       ],
       watch: [
         { symbol: "MU", date: "2026-11-06", price: 656.39, d1: -17.46, d20: -26.75, ma50_gap: -33.24, rsi: 24.5 },
@@ -127,7 +127,7 @@
 
     // 若使用者在 iOS 戰情室 App 內有修改持倉，自動連動讀取 localStorage
     try {
-      const saved = localStorage.getItem('mu_war_room_portfolio_v1');
+      const saved = localStorage.getItem('mu_war_room_portfolio_v2');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.totalShares > 0) {

@@ -133,8 +133,8 @@
             </div>
           </div>
           <div class="mt-3 pt-2.5 border-t border-slate-700/60 text-[11px] text-slate-300 flex justify-between">
-            <span id="dash-swing-label">游擊 50 股 (@24.49)</span>
-            <span id="swing-badge" class="font-bold text-rose-400">-48.47%</span>
+            <span id="dash-swing-label">游擊 150 股 (@18.16)</span>
+            <span id="swing-badge" class="font-bold text-rose-400">-30.51%</span>
           </div>
         </div>
       </div>
@@ -347,7 +347,7 @@
         <div class="flex items-center justify-between border-b border-slate-700/60 pb-2.5">
           <div>
             <span class="text-xs text-sky-400 font-semibold">核心美股持倉總覽</span>
-            <h2 class="text-base font-bold text-white" id="pf-title-shares">MUU (1,150 股 = 1,100核心 + 50游擊)</h2>
+            <h2 class="text-base font-bold text-white" id="pf-title-shares">MUU (1,250 股 = 1,100核心 + 150游擊)</h2>
           </div>
           <button onclick="togglePositionEditor()" class="px-2.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 active:scale-95 text-slate-950 font-extrabold text-xs transition flex items-center gap-1 shadow-md shadow-sky-500/20">
             <span>✏️ 輸入買賣 / 修改持倉</span>
@@ -378,7 +378,7 @@
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 block mb-1">成交價 (USD)</label>
-                <input type="number" id="trade-price" step="0.01" value="25.80" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="trade-price" step="0.01" value="22.00" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
             </div>
             <button onclick="recordQuickTrade()" class="w-full py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-98 text-slate-950 font-bold text-xs transition">
@@ -392,19 +392,19 @@
             <div class="grid grid-cols-2 gap-2 text-xs">
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">MUU 總股數</label>
-                <input type="number" id="edit-total-shares" value="1150" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="edit-total-shares" value="1250" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">MUU 實質總成本 ($)</label>
-                <input type="number" id="edit-total-cost" step="0.01" value="41893.20" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="edit-total-cost" step="0.01" value="43392.20" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">游擊倉股數</label>
-                <input type="number" id="edit-swing-shares" value="50" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="edit-swing-shares" value="150" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">游擊倉買價 ($)</label>
-                <input type="number" id="edit-swing-cost" step="0.01" value="24.49" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="edit-swing-cost" step="0.01" value="18.16" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
             </div>
             <div class="flex gap-2 pt-1">
@@ -428,25 +428,25 @@
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800">
             <div class="text-slate-400">實質總投入成本</div>
-            <div class="text-base font-extrabold text-white mt-0.5" id="pf-total-cost">$41,893.20</div>
-            <div class="text-[11px] text-sky-400 mt-0.5" id="pf-avg-cost">實質均價 $36.429 / 股</div>
+            <div class="text-base font-extrabold text-white mt-0.5" id="pf-total-cost">$43,392.20</div>
+            <div class="text-[11px] text-sky-400 mt-0.5" id="pf-avg-cost">實質均價 $34.714 / 股</div>
           </div>
           <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800">
             <div class="text-slate-400">目前持倉總市值</div>
-            <div class="text-base font-extrabold text-white mt-0.5" id="pf-market-val">$14,513.00</div>
-            <div class="text-[11px] text-rose-400 mt-0.5" id="pf-unrealized">未實現 -$27,380 (-65.4%)</div>
+            <div class="text-base font-extrabold text-white mt-0.5" id="pf-market-val">$15,775.00</div>
+            <div class="text-[11px] text-rose-400 mt-0.5" id="pf-unrealized">未實現 -$27,617 (-63.6%)</div>
           </div>
         </div>
 
         <!-- 游擊倉獨立追蹤 -->
         <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
           <div class="text-xs space-y-0.5">
-            <div class="font-bold text-amber-300" id="pf-swing-title">⚡ 低接游擊倉 (50 股 @ $24.49)</div>
+            <div class="font-bold text-amber-300" id="pf-swing-title">⚡ 低接游擊倉 (150 股 @ $18.16)</div>
             <div class="text-[11px] text-slate-300">短線做 T 獨立核算，獲利直接折抵核心倉均價</div>
           </div>
           <div class="text-right">
-            <div class="text-sm font-extrabold text-white" id="swing-pnl-usd">-$593.50</div>
-            <div class="text-[11px] text-amber-300">停利目標 $25.8~$26.8</div>
+            <div class="text-sm font-extrabold text-white" id="swing-pnl-usd">-$831.00</div>
+            <div class="text-[11px] text-amber-300">停利目標 $22.0~$25.0</div>
           </div>
         </div>
       </div>
@@ -509,6 +509,22 @@
         <div id="trade-history-list" class="space-y-2 text-xs">
           <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
             <div>
+              <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">SELL</span>
+              <strong class="text-white ml-1">2059 川湖 2股 @ 8,040</strong>
+              <div class="text-[11px] text-slate-400 mt-0.5">11/09 反彈站上8千調節做反T，抽回現金 NT$16,080 待低接</div>
+            </div>
+            <span class="text-amber-300 font-mono font-bold">NT$16,080</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <div>
+              <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">BUY</span>
+              <strong class="text-white ml-1">MUU 100股 @ $14.99</strong>
+              <div class="text-[11px] text-slate-400 mt-0.5">11/06 天量止跌反彈加碼，總持股增至1,250股、均價降至 $34.714</div>
+            </div>
+            <span class="text-slate-300 font-mono">$1,499.0</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <div>
               <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-WIN</span>
               <strong class="text-white ml-1">2059 川湖 2股 (7,200→7,500)</strong>
               <div class="text-[11px] text-slate-400 mt-0.5">11/06 跌停低接、尾盤拉高獲利了結 (+NT$600)</div>
@@ -522,22 +538,6 @@
               <div class="text-[11px] text-slate-400 mt-0.5">11/05 高出低接反T成功，省下成本 NT$2,180</div>
             </div>
             <span class="text-emerald-400 font-mono font-bold">+NT$2,180</span>
-          </div>
-          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
-            <div>
-              <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">BUY</span>
-              <strong class="text-white ml-1">MUU 50股 @ $24.49</strong>
-              <div class="text-[11px] text-slate-400 mt-0.5">10/30 回測前低支撐買回，省下 $25.50</div>
-            </div>
-            <span class="text-slate-300 font-mono">$1,224.5</span>
-          </div>
-          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
-            <div>
-              <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-WIN</span>
-              <strong class="text-white ml-1">MUU 50股 ($25.21→$27.00)</strong>
-              <div class="text-[11px] text-slate-400 mt-0.5">10/26~10/27 短線做T獲利 +$89.50 (+7.1%)</div>
-            </div>
-            <span class="text-emerald-400 font-mono font-bold">+$89.5</span>
           </div>
         </div>
       </div>
@@ -603,12 +603,12 @@
 
   <script>
     const DEFAULT_PORTFOLIO = {
-      totalShares: 1150,
+      totalShares: 1250,
       coreShares: 1100,
-      totalCost: 41893.20,
-      avgCost: 36.429,
-      swingShares: 50,
-      swingCost: 24.49,
+      totalCost: 43392.20,
+      avgCost: 34.714,
+      swingShares: 150,
+      swingCost: 18.16,
       customTrades: []
     };
 
@@ -620,12 +620,12 @@
       muuPrice: 12.62,
       muuPrevClose: 19.23,
       muuLow: 12.31,
-      totalShares: 1150,
+      totalShares: 1250,
       coreShares: 1100,
-      totalCost: 41893.20,
-      avgCost: 36.429,
-      swingShares: 50,
-      swingCost: 24.49,
+      totalCost: 43392.20,
+      avgCost: 34.714,
+      swingShares: 150,
+      swingCost: 18.16,
       customTrades: [],
       liveNewsLoaded: false
     };
@@ -633,7 +633,7 @@
     // 載入儲存在手機本機 (localStorage) 的自訂持倉
     function loadSavedPortfolio() {
       try {
-        const saved = localStorage.getItem('mu_war_room_portfolio_v1');
+        const saved = localStorage.getItem('mu_war_room_portfolio_v2');
         if (saved) {
           const parsed = JSON.parse(saved);
           STATE.totalShares = parsed.totalShares ?? DEFAULT_PORTFOLIO.totalShares;
@@ -653,7 +653,7 @@
 
     function persistPortfolio() {
       try {
-        localStorage.setItem('mu_war_room_portfolio_v1', JSON.stringify({
+        localStorage.setItem('mu_war_room_portfolio_v2', JSON.stringify({
           totalShares: STATE.totalShares,
           coreShares: STATE.coreShares,
           totalCost: STATE.totalCost,
@@ -745,7 +745,7 @@
     }
 
     function resetDefaultPosition() {
-      localStorage.removeItem('mu_war_room_portfolio_v1');
+      localStorage.removeItem('mu_war_room_portfolio_v2');
       Object.assign(STATE, JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO)));
       syncPortfolioEditorInputs();
       renderCustomTrades();
@@ -773,6 +773,22 @@
       const defaultHtml = `
         <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
           <div>
+            <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">SELL</span>
+            <strong class="text-white ml-1">2059 川湖 2股 @ 8,040</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/09 反彈站上8千調節做反T，抽回現金 NT$16,080 待低接</div>
+          </div>
+          <span class="text-amber-300 font-mono font-bold">NT$16,080</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">BUY</span>
+            <strong class="text-white ml-1">MUU 100股 @ $14.99</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/06 天量止跌反彈加碼，總持股增至1,250股、均價降至 $34.714</div>
+          </div>
+          <span class="text-slate-300 font-mono">$1,499.0</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
             <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-WIN</span>
             <strong class="text-white ml-1">2059 川湖 2股 (7,200→7,500)</strong>
             <div class="text-[11px] text-slate-400 mt-0.5">11/06 跌停低接、尾盤拉高獲利了結 (+NT$600)</div>
@@ -787,22 +803,6 @@
           </div>
           <span class="text-emerald-400 font-mono font-bold">+NT$2,180</span>
         </div>
-        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
-          <div>
-            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">BUY</span>
-            <strong class="text-white ml-1">MUU 50股 @ $24.49</strong>
-            <div class="text-[11px] text-slate-400 mt-0.5">10/30 回測前低支撐買回，省下 $25.50</div>
-          </div>
-          <span class="text-slate-300 font-mono">$1,224.5</span>
-        </div>
-        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
-          <div>
-            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-WIN</span>
-            <strong class="text-white ml-1">MUU 50股 ($25.21→$27.00)</strong>
-            <div class="text-[11px] text-slate-400 mt-0.5">10/26~10/27 短線做T獲利 +$89.50 (+7.1%)</div>
-          </div>
-          <span class="text-emerald-400 font-mono font-bold">+$89.5</span>
-        </div>
       `;
       listEl.innerHTML = customHtml + defaultHtml;
     }
@@ -815,14 +815,16 @@
           core_shares: STATE.coreShares,
           swing_shares: STATE.swingShares,
           swing_cost: Number(STATE.swingCost.toFixed(2)),
-          swing_target_min: 25.80,
-          swing_target_max: 26.80,
+          swing_target_min: 22.00,
+          swing_target_max: 25.00,
           total_cost_usd: Number(STATE.totalCost.toFixed(2)),
           avg_cost_usd: Number(STATE.avgCost.toFixed(3))
         },
         tw2059: {
-          shares: 17,
-          total_cost_twd: 198367,
+          shares: 15,
+          cash_reserved_twd: 16080,
+          total_net_capital_twd: 198367,
+          remaining_stock_cost_twd: 182287,
           avg_cost_twd: 11668.65
         },
         levels: {

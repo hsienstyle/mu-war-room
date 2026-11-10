@@ -480,8 +480,8 @@ def main():
 • 實質總成本：${p_muu['total_cost_usd']:,.2f} (均價 ${p_muu['avg_cost_usd']:.3f})
 • 最新總市值：${mkt_val:,.2f} USD
 • 總未實現損益：{unrealized_usd:+,.2f} USD ({unrealized_pct:+.2f}%)
-• ⚡ 游擊{p_muu['swing_shares']}股損益：{swing_diff_usd:+.2f} USD ({swing_diff_pct:+.2f}%，停利目標 $25.8~$26.8)
-• 🏭 川湖 (2059.TW)：收盤 {tw2059['price']:,.0f} 元 ({tw2059['change_pct']:+.2f}%)｜持有 {cfg['tw2059']['shares']} 股 (均價 {cfg['tw2059']['avg_cost_twd']:,.0f} 元)
+• ⚡ 游擊{p_muu['swing_shares']}股損益：{swing_diff_usd:+.2f} USD ({swing_diff_pct:+.2f}%，停利目標 ${p_muu.get('swing_target_min', 22.0):.1f}~${p_muu.get('swing_target_max', 25.0):.1f})
+• 🏭 川湖 (2059.TW)：收盤 {tw2059['price']:,.0f} 元 ({tw2059['change_pct']:+.2f}%)｜持有 {cfg['tw2059']['shares']} 股{f" (+反T現金 {cfg['tw2059']['cash_reserved_twd']:,} 元)" if cfg['tw2059'].get('cash_reserved_twd') else ""} (均價 {cfg['tw2059']['avg_cost_twd']:,.0f} 元)
 
 📱 iOS 戰情室與 120日量化儀表板已同步更新：
 • 戰情室主頁：https://hsienstyle.github.io/mu-war-room/
