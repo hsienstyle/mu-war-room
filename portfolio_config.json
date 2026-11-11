@@ -10,11 +10,9 @@
     "avg_cost_usd": 34.714
   },
   "tw2059": {
-    "shares": 15,
-    "cash_reserved_twd": 16080,
-    "total_net_capital_twd": 197692,
-    "remaining_stock_cost_twd": 181612,
-    "avg_cost_twd": 11628.94
+    "shares": 20,
+    "total_cost_twd": 224162,
+    "avg_cost_twd": 11208.10
   },
   "levels": {
     "mu_defense": 656.39,
