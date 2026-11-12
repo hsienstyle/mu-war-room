@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 725.11, prevClose: 733.15, changePct: -1.1 },
-  MUU: { price: 15.1, prevClose: 15.5, changePct: -2.58 },
-  headline: "【即時新聞】美光(MU)預估本益比下殺至4.2倍！受惠AI記憶體需求，高盛重申目標價上看1250美元",
-  lastPushDate: "2026-11-11"
+  MU: { price: 811.3, prevClose: 725.11, changePct: 11.89 },
+  MUU: { price: 18.75, prevClose: 15.1, changePct: 24.17 },
+  headline: "鎧俠財測保守與AMD財報前避險，MU回測$833支撐；今晚聚焦AMD盤後財報",
+  lastPushDate: "2026-11-12"
 };
 
 async function fetchQuote(symbol, fallback) {
