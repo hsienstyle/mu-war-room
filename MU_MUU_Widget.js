@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 811.3, prevClose: 725.11, changePct: 11.89 },
-  MUU: { price: 18.75, prevClose: 15.1, changePct: 24.17 },
-  headline: "鎧俠財測保守與AMD財報前避險，MU回測$833支撐；今晚聚焦AMD盤後財報",
-  lastPushDate: "2026-11-12"
+  MU: { price: 798.44, prevClose: 811.3, changePct: -1.59 },
+  MUU: { price: 18.13, prevClose: 18.75, changePct: -3.31 },
+  headline: "AI 熱潮殺進記憶體戰場：CoreWeave 爆表財報點火晶片股，BofA 預言記憶體牛市一路漲到2027",
+  lastPushDate: "2026-11-13"
 };
 
 async function fetchQuote(symbol, fallback) {
