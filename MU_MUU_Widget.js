@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 798.44, prevClose: 811.30, changePct: -1.59 },
-  MUU: { price: 18.13, prevClose: 18.75, changePct: -3.31 },
-  headline: "美光回踩缺口守穩$764.57拉下影線收$798.44，蓄力挑戰$830~$855月線反壓！",
-  lastPushDate: "2026-11-13"
+  MU: { price: 778.31, prevClose: 798.44, changePct: -2.52 },
+  MUU: { price: 17.18, prevClose: 18.13, changePct: -5.24 },
+  headline: "【23:21 即時新聞】Micron Technology(MU) 急跌5%：受Nvidia領導風暴拖累，AI記憶體族群轉弱",
+  lastPushDate: "2026-11-14"
 };
 
 async function fetchQuote(symbol, fallback) {
