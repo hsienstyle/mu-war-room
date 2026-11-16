@@ -15,9 +15,9 @@
     "avg_cost_twd": 10849.41
   },
   "levels": {
-    "mu_defense": 764.57,
-    "mu_support1": 780.00,
-    "mu_res1_min": 830.00,
+    "mu_defense": 750.25,
+    "mu_support1": 725.11,
+    "mu_res1_min": 827.58,
     "mu_res1_max": 855.00,
     "mu_50ma": 983.23
   }

@@ -15,15 +15,15 @@ const PORTFOLIO = {
   totalCost: 42448.91,        // 總投入淨成本 (USD)
   swingShares: 100,           // 游擊倉股數 (11/12 反T接回均價 $17.28)
   swingCost: 17.28,           // 游擊倉均價
-  muDefense: 764.57,          // MU 11/12 回踩缺口低點防守線
-  muResistance1: 830.00       // MU 月線與前高平台反壓
+  muDefense: 750.25,          // MU 11/13 低點與 10MA 短線第一支撐
+  muResistance1: 827.58       // MU 前高頸線與月線反壓
 };
 
 const FALLBACK_DATA = {
   MU: { price: 778.31, prevClose: 798.44, changePct: -2.52 },
   MUU: { price: 17.18, prevClose: 18.13, changePct: -5.24 },
-  headline: "【23:21 即時新聞】Micron Technology(MU) 急跌5%：受Nvidia領導風暴拖累，AI記憶體族群轉弱",
-  lastPushDate: "2026-11-14"
+  headline: "美光連兩日守穩$750支撐！外電傳黃仁勳考慮回歸，美光盤前漲逾+2%待11/17 NVDA財報",
+  lastPushDate: "2026-11-16"
 };
 
 async function fetchQuote(symbol, fallback) {
