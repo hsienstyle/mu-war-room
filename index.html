@@ -490,21 +490,16 @@
         <div class="flex items-center justify-between">
           <div>
             <span class="text-[11px] text-emerald-400 font-semibold">台股 AI 伺服器導軌龍頭</span>
-            <h3 class="text-sm font-bold text-white">2059.TW 川湖 (持有 19 股)</h3>
+            <h3 class="text-sm font-bold text-white">2059.TW 川湖 (持有 22 股)</h3>
           </div>
           <div class="text-right">
-<<<<<<< HEAD
-            <div class="text-base font-extrabold text-white" id="tw2059-price">NT$ 7,880</div>
-            <div class="text-[11px] text-slate-400" id="tw2059-avg">有效均價 NT$ 11,669</div>
-=======
-            <div class="text-base font-extrabold text-white" id="tw2059-price">NT$ 7,880</div>
-            <div class="text-[11px] text-slate-400" id="tw2059-avg">有效均價 NT$ 11,284</div>
->>>>>>> 8817e65 (Update MUU portfolio to 1,200 shares (.374 avg) and 11/12 T-trade records)
+            <div class="text-base font-extrabold text-white" id="tw2059-price">NT$ 8,100</div>
+            <div class="text-[11px] text-slate-400" id="tw2059-avg">有效均價 NT$ 10,849</div>
           </div>
         </div>
         <div class="text-xs text-slate-300 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
-          • <strong>淨投入成本</strong>：NT$ 214,387（11/12 回測 8,200 元精準低接買回 2 股，較前日賣價 8,725 元大省 +1,050 元，有效均價降至 11,283.53 元）<br/>
-          • <strong>最新動能</strong>：10月營收公告 45.62 億（月增 +2.18%、年增 +191%，創歷史第3高），近3日三大法人逆勢大買 +448 張！
+          • <strong>淨投入成本</strong>：NT$ 238,687（11/12 買 2 股@8,200 ＋ 11/13 買 3 股@8,100，總持股 22 股、有效均價首度壓破 11,000 降至 10,849.41 元）<br/>
+          • <strong>最新動能</strong>：Q3 財報毛利率衝上 88.2%、單季 EPS 122.79 元，累計前三季 EPS 233.75 元（年增 +252%）創歷史新高！
         </div>
       </div>
 
@@ -512,6 +507,14 @@
       <div class="ios-card p-4 space-y-2.5">
         <h3 class="text-sm font-bold text-white">📋 近期部位操作紀錄</h3>
         <div id="trade-history-list" class="space-y-2 text-xs">
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <div>
+              <span class="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold text-[10px]">BUY</span>
+              <strong class="text-white ml-1">2059 川湖 3股 @ NT$8,100</strong>
+              <div class="text-[11px] text-slate-400 mt-0.5">11/13 早盤再接 3 股（5股游擊均價 8,140），總持股 22 股、均價壓至 NT$10,849</div>
+            </div>
+            <span class="text-sky-400 font-mono font-bold">-NT$24,300</span>
+          </div>
           <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
             <div>
               <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-WIN</span>
@@ -778,6 +781,14 @@
       const defaultHtml = `
         <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
           <div>
+            <span class="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold text-[10px]">BUY</span>
+            <strong class="text-white ml-1">2059 川湖 3股 @ NT$8,100</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/13 早盤再接 3 股（5股游擊均價 8,140），總持股 22 股、均價壓至 NT$10,849</div>
+          </div>
+          <span class="text-sky-400 font-mono font-bold">-NT$24,300</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
             <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-WIN</span>
             <strong class="text-white ml-1">MUU 賣200股@17.71 / 買回150股@17.28</strong>
             <div class="text-[11px] text-slate-400 mt-0.5">11/12 高出低接做反T（買50@17.17、50@17.84、50@16.84），淨收回現金 +$943.29</div>
@@ -826,11 +837,9 @@
           avg_cost_usd: Number(STATE.avgCost.toFixed(3))
         },
         tw2059: {
-          shares: 19,
-          cash_reserved_twd: 26175,
-          total_net_capital_twd: 214387,
-          remaining_stock_cost_twd: 214387,
-          avg_cost_twd: 11283.53
+          shares: 22,
+          total_cost_twd: 238687,
+          avg_cost_twd: 10849.41
         },
         levels: {
           mu_defense: 764.57,
