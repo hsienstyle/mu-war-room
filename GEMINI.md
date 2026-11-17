@@ -10,11 +10,15 @@
 
 ---
 
-## 2. AI 助手分析準則
+## 2. AI 助手分析準則（六大維度全方位機構級分析架構）
 1. **語言與格式**：一律使用**繁體中文**回答，重要數據與比較優先使用 Markdown 表格整理。
-2. **雙層分析視角（MU 基本面 + MUU 槓桿特性）**：
-   - 分析產業與基本面時，聚焦於底層資產 **`MU`（美光）** 的營收、毛利率、HBM 產能與良率、DRAM/NAND 合約價與現貨價週期、法說會指引（Guidance）。
-   - 討論操作與部位管理時，必須考慮 **`MUU`（2倍槓桿 ETF）** 的每日重設（Daily Reset）特性、波動率耗損（Volatility Decay / Beta Slippage）以及約 1.01% 的內扣費用，提醒盤整震盪期的耗損風險。
+2. **六大維度全方位分析視角**：
+   - **① 技術面 (Technical Analysis)**：K 線型態、均線結構（5/10/20/50/200MA）、跳空缺口、成交量價結構、RSI/MACD 動能與關鍵支撐壓力位。
+   - **② 基本面 (Fundamental Analysis)**：聚焦底層資產 **`MU`（美光）** 之營收、毛利率、HBM3E/HBM4 產能與良率、DRAM/NAND 現貨與合約報價週期、法說會指引（Guidance）與估值（Forward P/E、P/B）；以及 **`2059.TW`（川湖）** 在 GB300 / Vera Rubin / ASIC 伺服器導軌之市佔、毛利率與 EPS 動能。
+   - **③ 籌碼面 (Institutional & Flow Analysis)**：`MU` 機構法人持倉（13F）、空單餘額與回補天數（Short Interest）、內部人買賣、槓桿 ETF 申贖流向；`2059.TW` 三大法人（外資/投信/自營商）買賣超、融資融券、借券賣出與大戶持股動向。
+   - **④ 消息與事件面 (News & Event Catalysts)**：輝達 (`NVDA`) / 博通 (`AVGO`) / 超微 (`AMD`) 財報與 AI 算力指引、四大 CSP 資本支出（CapEx）、同業動態（SK Hynix / Samsung / CXMT）、反壟斷訴訟、出口管制與關稅政策、川湖 CB 可轉債訂價與法說日程。
+   - **⑤ 總體經濟與資金面 (Macro & Liquidity)**：美國 CPI / PPI / 非農就業數據、聯準會（Fed）利率政策與降息預期、10 年期美債殖利率（`US10Y`）、美元指數（`DXY`）與新台幣匯率、費城半導體指數（`SOX`）及 AI 硬體板塊資金輪動。
+   - **⑥ 衍生品與量化微結構面 (Derivatives & Quantitative Microstructure)**：`MU` 選擇權隱含波動率（`IV` / `IV Rank`）、Put/Call Ratio、最大痛點（`Max Pain`）、造市商 Gamma 曝險（`GEX` / Gamma Wall 對沖助漲助跌效應），以及 **`MUU`（2倍槓桿 ETF）** 每日重設（Daily Reset）之波動率耗損（Volatility Decay / Beta Slippage）、內扣費用（1.01%）與尾盤再平衡（Rebalancing）微結構衝擊。
 3. **外部資訊查詢原則**：
    - 在 Antigravity 對話中查詢最新美股收盤價、高低點與新聞時，**一律優先使用內建 `search_web` 工具**，切勿在對話中臨時撰寫爬蟲腳本抓取外部網頁。
 

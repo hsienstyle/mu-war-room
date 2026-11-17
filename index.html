@@ -797,28 +797,35 @@
       listEl.innerHTML = customHtml + defaultHtml;
     }
 
-    // 一鍵複製完整戰情與最新庫存給手機 Gemini App (繞過 robots.txt 爬蟲限制)
+    // 一鍵複製完整戰情與最新庫存給手機 Gemini App (繞過 robots.txt 爬蟲限制，涵蓋六大分析維度)
     async function copyGeminiPrompt() {
-      const promptText = `你是我的美股記憶體 (MU / MUU) 與川湖 (2059.TW) 專屬技術面操盤助手。請一律「只看純技術面」（K線、均線 5/10/20/50/200MA、跳空缺口、量價結構与 MUU 2倍槓桿耗損特性），用繁體中文與表格回答。
+      const promptText = `你是我的美股記憶體 (MU / MUU) 與台股 AI 伺服器導軌龍頭川湖 (2059.TW) 專屬機構級操盤與研究助手。
+請一律使用繁體中文與 Markdown 表格，並從以下【六大核心維度】進行全方位深度分析與操作推演：
+1. 【技術面】：K線型態、均線結構 (5/10/20/50/200MA)、跳空缺口、量價結構、RSI/MACD 與關鍵支撐壓力位。
+2. 【基本面】：MU 營收毛利率、HBM3E/HBM4 產能良率与市佔、DRAM/NAND 合約與現貨報價週期、估值倍數 (Forward P/E, P/B)；川湖 GB300/Vera Rubin 導軌滲透率、毛利率与 EPS 動能。
+3. 【籌碼面】：美股機構持倉、空單餘額 (Short Interest)、ETF 申贖資金流；台股三大法人 (外資/投信/自營商) 買賣超、融資券與借券變化、大戶持股動向。
+4. 【消息與事件面】：NVDA / AMD / AVGO 財報與 AI 指引、CSP 資本支出 (CapEx)、同業動態 (SK Hynix / Samsung / CXMT)、反壟斷訴訟、關稅與地緣政策、川湖 CB 募資進度。
+5. 【總體經濟與資金面】：美國 CPI/PPI/就業數據、Fed 利率路徑、10年期美債殖利率 (US10Y)、美元與台幣匯率、費半指數 (SOX) 與科技板塊資金輪動。
+6. 【衍生品與量化微結構面】：MU 選擇權隱含波動率 (IV)、Put/Call Ratio、最大痛點 (Max Pain)、造市商 Gamma Exposure (GEX 對沖牆)，以及 MUU 2倍槓桿 ETF 每日重設 (Daily Reset) 之波動率耗損 (Volatility Decay / Beta Slippage) 與尾盤再平衡 (Rebalancing) 微結構影響。
 
-【我的最新即時持倉與成本數據】
+【我的最新即時持倉與成本結構】
 1. 美股 MUU (Direxion Daily MU Bull 2X ETF)：
    - 目前總持股：${STATE.totalShares.toLocaleString()} 股（核心底倉 ${STATE.coreShares.toLocaleString()} 股 + 短線游擊倉 ${STATE.swingShares} 股 @ 均價 $${STATE.swingCost.toFixed(2)} USD）
-   - 游擊倉明細：11/12 買回 100 股 @ $17.28 + 11/16 回測年線買回 50 股 @ $14.70（整輪 200 股反T已淨省 +$208.29 USD）
+   - 游擊倉明細：11/12 買回 100 股 @ $17.28 + 11/16 回測年線買回 50 股 @ $14.70（11/12~11/16 整輪 200 股反T已淨收回 +$208.29 USD 現金）
    - 實質總投入淨成本：$${STATE.totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD
-   - 整體損益兩平實質均價：$${STATE.avgCost.toFixed(3)} USD
+   - 整體損益兩平實質均價：$${STATE.avgCost.toFixed(3)} USD / 股
 2. 台股 2059.TW 川湖：
    - 目前總持股：22 股（17 股核心 + 5 股游擊 @ 均價 8,140 元）
    - 實質總投入成本：238,687 TWD｜有效均價：10,849.41 TWD
 
-【最新盤面報價與關鍵技術水位】
+【最新盤面報價與關鍵價位】
 - MU 現價/收盤：$${STATE.muPrice.toFixed(2)}（前收 $${STATE.muPrevClose.toFixed(2)}，日低 $${STATE.muLow.toFixed(2)}）
 - MUU 現價/收盤：$${STATE.muuPrice.toFixed(2)}（前收 $${STATE.muuPrevClose.toFixed(2)}，日低 $${STATE.muuLow.toFixed(2)}）
 - 下檔關鍵支撐：200MA 年線多空生命線 MU $715.00~$716.38（對應 MUU $14.35~$14.44）
-- 短線第一反壓：5MA/10MA 與缺口區 MU $750.00~$780.00（對應 MUU $15.80~$17.10，可優先收割 50 股 @$14.70 低接游擊倉）
-- 波段頸線與月線反壓：MU $827.58~$855.00（對應 MUU $19.40~$20.80，分批收割 100 股 @$17.28 游擊倉）
+- 短線第一反壓：5MA/10MA 與缺口區 MU $750.00~$780.00（對應 MUU $15.80~$17.10，可優先調節 50 股 @$14.70 低接游擊倉）
+- 波段頸線與月線反壓：MU $827.58~$855.00（對應 MUU $19.40~$20.80，分批調節 100 股 @$17.28 游擊倉）
 
-請根據以上最新持倉與純技術面數據，幫我分析接下来的具體操作與掛單價位：`;
+請結合上述【六大維度】與我的最新持倉數據，為我分析當前的多空局勢與具體操作策略（含進出場價位與部位風控）：`;
 
       try {
         await navigator.clipboard.writeText(promptText);
