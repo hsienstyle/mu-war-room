@@ -10,19 +10,19 @@
 const WAR_ROOM_URL = "https://hsienstyle.github.io/mu-war-room/";
 
 const PORTFOLIO = {
-  totalShares: 1200,          // MUU 總股數 (1100核心 + 100游擊)
-  avgCost: 35.374,            // 整體實質均價 (USD)
-  totalCost: 42448.91,        // 總投入淨成本 (USD)
-  swingShares: 100,           // 游擊倉股數 (11/12 反T接回均價 $17.28)
-  swingCost: 17.28,           // 游擊倉均價
-  muDefense: 750.25,          // MU 11/13 低點與 10MA 短線第一支撐
-  muResistance1: 827.58       // MU 前高頸線與月線反壓
+  totalShares: 1250,          // MUU 總股數 (1100核心 + 150游擊)
+  avgCost: 34.547,            // 整體實質均價 (USD)
+  totalCost: 43183.91,        // 總投入淨成本 (USD)
+  swingShares: 150,           // 游擊倉股數 (100股@17.28 + 50股@14.70 = 均價 $16.42)
+  swingCost: 16.42,           // 游擊倉均價
+  muDefense: 715.00,          // MU 200MA 年線多空生命線
+  muResistance1: 780.00       // MU 5MA/10MA 與缺口反壓
 };
 
 const FALLBACK_DATA = {
   MU: { price: 719.02, prevClose: 778.31, changePct: -7.62 },
   MUU: { price: 14.56, prevClose: 17.18, changePct: -15.25 },
-  headline: "美法院駁回三星、SK海力士與美光撤訴動議 DRAM反壟斷案續審",
+  headline: "美光回測200MA年線($716.38)守穩收$719.02！$14.70精準接回50股MUU大省$150.5",
   lastPushDate: "2026-11-17"
 };
 
