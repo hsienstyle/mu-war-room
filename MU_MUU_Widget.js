@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 778.31, prevClose: 798.44, changePct: -2.52 },
-  MUU: { price: 17.18, prevClose: 18.13, changePct: -5.24 },
-  headline: "美光連兩日守穩$750支撐！外電傳黃仁勳考慮回歸，美光盤前漲逾+2%待11/17 NVDA財報",
-  lastPushDate: "2026-11-16"
+  MU: { price: 719.02, prevClose: 778.31, changePct: -7.62 },
+  MUU: { price: 14.56, prevClose: 17.18, changePct: -15.25 },
+  headline: "美法院駁回三星、SK海力士與美光撤訴動議 DRAM反壟斷案續審",
+  lastPushDate: "2026-11-17"
 };
 
 async function fetchQuote(symbol, fallback) {
