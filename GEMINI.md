@@ -60,3 +60,13 @@
      git commit -m "Update portfolio / war room data"
      git push origin main
      ```
+   - **同步更新至 Google Drive 遠端資料夾（`美股記憶體_MU戰情室`，Folder ID: `1p5GbcMqrLPI-UBqIyfB0BEOd-o_iNIE6`）**：
+     使用 `gdrive mutate update <FILE_ID> <本地相對路徑>` 原地更新以下對應檔案（保持 File ID 與連結不變，方便手機版 Gemini App 透過 `@Google Drive` 隨時讀取）：
+     - `美股記憶體_MU_MUU_最新戰情與持倉總表.md`：`1vipUsK_S6Q5m2CipwbZ0g0uR2h2PgL4F`
+     - `GEMINI.md`：`1lMTaJGDD0cqGSPyNugqskuyk6LZsWsGw`
+     - `portfolio_config.json`：`1qfrGmv2p12Gfa2l39onRbE6anHEmgRtr`
+     - `portfolio/trades.csv`：`1AGh_oeMfeJQ9KNeyjEoVTyGikdGMLDAI`
+     - `notes/MU_MUU_technical_analysis.md`：`1J3ChomcsZXKIwzP1c9d49rGTUc3doBYE`
+     - `watchlist.md`：`1pt_0NWLGS-99Mu5NSaB5U8lWO4ebS1iI`
+     - `index.html`：`1-HrZXMTmu_B_G_UG6zMSrA5ktf3okTeX`
+     - `MU_MUU_Widget.js`：`1jb12a3El1k6USIykBzNnuAd7CM-C3u4X`
