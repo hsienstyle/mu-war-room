@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 712.42, prevClose: 719.02, changePct: -0.92 },
-  MUU: { price: 14.21, prevClose: 14.56, changePct: -2.4 },
-  headline: "美光近一個月跌兩成！上季一家AI基金清倉 另一家買成第一大持股",
-  lastPushDate: "2026-11-18"
+  MU: { price: 705.27, prevClose: 712.42, changePct: -1.0 },
+  MUU: { price: 13.94, prevClose: 14.21, changePct: -1.9 },
+  headline: "美光跌逾20%後能反攻？分析師點名3大催化劑",
+  lastPushDate: "2026-11-19"
 };
 
 async function fetchQuote(symbol, fallback) {
