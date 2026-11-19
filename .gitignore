@@ -1,6 +1,8 @@
-# 敏感設定檔（含 LINE Token）
+# 敏感設定檔（含 LINE / GitHub Token）
 line_config.json
 setup_github_secrets.ps1
+google_apps_script_trigger.gs
+*.local.gs
 
 # 暫存與快取
 __pycache__/

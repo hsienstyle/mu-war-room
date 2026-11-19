@@ -1,0 +1,89 @@
+{
+  "updated_at": "2026-11-19 13:52:09+08:00",
+  "stock_no": "2059",
+  "stock_name": "川湖",
+  "latest": {
+    "trade_date": "2026-11-18",
+    "price": {
+      "close": 6520.0,
+      "prev_close": 6565.0,
+      "change": -45.0,
+      "change_pct": -0.69,
+      "open": 6575.0,
+      "high": 6750.0,
+      "low": 6210.0,
+      "volume_shares": 713299,
+      "volume_lots": 713.3,
+      "vol_change_pct": -26.4,
+      "ma5": 7251.0,
+      "ma20": 8690.25
+    },
+    "t86_latest": {
+      "date": "2026-11-18",
+      "foreign_shares": -31284,
+      "trust_shares": -16000,
+      "dealer_shares": 26307,
+      "total_shares": -20977,
+      "foreign_lots": -31,
+      "trust_lots": -16,
+      "dealer_lots": 26,
+      "total_lots": -21
+    },
+    "t86_5d": {
+      "days": 5,
+      "foreign_lots": 111,
+      "trust_lots": -188,
+      "dealer_lots": 68,
+      "total_lots": -8.8
+    },
+    "streaks": {
+      "foreign": [
+        "連賣",
+        1
+      ],
+      "trust": [
+        "連賣",
+        3
+      ]
+    },
+    "margin": {
+      "margin_prev": 409,
+      "margin_balance": 400,
+      "margin_change": -9,
+      "short_prev": 0,
+      "short_balance": 0,
+      "short_change": 0,
+      "short_margin_ratio": 0.0
+    },
+    "sbl": {
+      "sbl_prev_lots": 620,
+      "sbl_sell_lots": 8.0,
+      "sbl_return_lots": 0,
+      "sbl_balance_lots": 628,
+      "sbl_change_lots": 8.0
+    },
+    "day_trade": {
+      "day_trade_lots": 348,
+      "day_trade_ratio": 48.79
+    }
+  },
+  "insight": "1. 【三大法人動向】：三大法人合計 -21 張（外資 連賣 1 日、近 5 日三大法人累計 -8.8 張），持續觀察外資賣壓是否收斂。\n2. 【散戶與空方籌碼】：融資 -9 張（餘額 400 張）；借券賣出餘額 +8 張（總餘額 628 張）。留意借券賣出若轉為還券回補，將是千金股止跌反攻領先訊號。\n3. 【位階與 22 股操作】：收盤 6,520 元（-0.69%）仍壓於 5MA (7,251 元)，持倉均價 10,849 元為現股無斷頭壓力，聚焦 5 日量能與外資轉買訊號決定是否做 T 降本。",
+  "history": [
+    {
+      "date": "2026-11-18",
+      "close": 6520.0,
+      "change_pct": -0.69,
+      "volume_lots": 713.3,
+      "foreign_lots": -31,
+      "trust_lots": -16,
+      "dealer_lots": 26,
+      "inst_total_lots": -21,
+      "margin_change": -9,
+      "margin_balance": 400,
+      "short_change": 0,
+      "sbl_change_lots": 8.0,
+      "sbl_balance_lots": 628,
+      "day_trade_ratio": 48.79
+    }
+  ]
+}
