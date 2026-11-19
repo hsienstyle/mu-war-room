@@ -1,0 +1,118 @@
+{
+  "updated_at": "2026-11-19 14:47:17+08:00",
+  "date": "2026-11-19",
+  "core": {
+    "MU": {
+      "price": 705.27,
+      "prev_close": 712.39,
+      "high": 722.96,
+      "low": 687.33,
+      "change_pct": -1.0
+    },
+    "MUU": {
+      "price": 13.94,
+      "prev_close": 14.21,
+      "high": 14.69,
+      "low": 13.26,
+      "change_pct": -1.9
+    },
+    "2059.TW": {
+      "price": 6520.0,
+      "prev_close": 6565.0,
+      "high": 6750.0,
+      "low": 6210.0,
+      "change_pct": -0.69
+    }
+  },
+  "macro_and_peers": {
+    "us10y": {
+      "price": 5.07,
+      "prev_close": 5.066,
+      "high": 5.08,
+      "low": 5.05,
+      "change_pct": 0.08
+    },
+    "dxy": {
+      "price": 103.86,
+      "prev_close": 103.86,
+      "high": 103.97,
+      "low": 103.77,
+      "change_pct": 0.0
+    },
+    "usdtwd": {
+      "price": 32.94,
+      "prev_close": 32.93,
+      "high": 33.01,
+      "low": 32.94,
+      "change_pct": 0.02
+    },
+    "sox": {
+      "price": 9652.8,
+      "prev_close": 9643.15,
+      "high": 9828.19,
+      "low": 9493.93,
+      "change_pct": 0.1
+    },
+    "nvda": {
+      "price": 150.96,
+      "prev_close": 155.45,
+      "high": 159.7,
+      "low": 150.4,
+      "change_pct": -2.89
+    },
+    "wdc": {
+      "price": 288.19,
+      "prev_close": 283.32,
+      "high": 295.6,
+      "low": 279.11,
+      "change_pct": 1.72
+    },
+    "avgo": {
+      "price": 354.05,
+      "prev_close": 341.62,
+      "high": 357.34,
+      "low": 340.74,
+      "change_pct": 3.64
+    }
+  },
+  "mu_tech_and_muu_slippage": {
+    "mu_ma5": 742.69,
+    "mu_ma20": 809.1,
+    "mu_rsi14": 30.9,
+    "slippage_5d": {
+      "from_date": "2026-11-11",
+      "to_date": "2026-11-18",
+      "mu_ret_pct": -13.07,
+      "ideal_2x_pct": -26.14,
+      "muu_ret_pct": -25.65,
+      "slippage_pct": 0.48
+    },
+    "slippage_20d": {
+      "from_date": "2026-10-21",
+      "to_date": "2026-11-18",
+      "mu_ret_pct": -22.81,
+      "ideal_2x_pct": -45.62,
+      "muu_ret_pct": -46.85,
+      "slippage_pct": -1.24
+    }
+  },
+  "mu_options": {
+    "source": "CBOE",
+    "expiration": "2026-11-20",
+    "max_pain": 800.0,
+    "vol_pcr": 0.65,
+    "oi_pcr": 0.91,
+    "call_wall": {
+      "strike": 800.0,
+      "oi": 8957
+    },
+    "put_wall": {
+      "strike": 750.0,
+      "oi": 7178
+    },
+    "atm_iv_pct": 105.4,
+    "net_gex_m": -70.77,
+    "call_oi_total": 282821,
+    "put_oi_total": 257514
+  }
+}
