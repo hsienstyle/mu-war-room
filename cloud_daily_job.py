@@ -24,6 +24,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 TW_TZ = timezone(timedelta(hours=8))
@@ -486,11 +487,117 @@ def fetch_google_news_tw(query, max_items=3):
         return []
 
 
+def _clean_gemini_plain_text(text):
+    """清除 Markdown 粗體 ** 與標題前綴 #，保留乾淨繁體中文純文字"""
+    if not text:
+        return ""
+    cleaned = str(text).replace("**", "")
+    cleaned = re.sub(r"^\s*#+\s*", "", cleaned, flags=re.MULTILINE)
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    return cleaned.strip()
+
+
+def call_gemini_text(api_key, prompt, max_tokens=1024, temperature=0.3):
+    """統一呼叫 Gemini REST API：依序嘗試 gemini-2.5-flash -> gemini-2.5-flash-lite -> gemini-3-flash-preview"""
+    if not api_key:
+        return None
+
+    model_specs = [
+        ("gemini-2.5-flash", True),
+        ("gemini-2.5-flash-lite", True),
+        ("gemini-3-flash-preview", False),
+    ]
+    for model_name, use_thinking_zero in model_specs:
+        gen_cfg = {
+            "temperature": temperature,
+            "maxOutputTokens": max_tokens,
+        }
+        if use_thinking_zero:
+            gen_cfg["thinkingConfig"] = {"thinkingBudget": 0}
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": gen_cfg,
+        }
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            try:
+                with urllib.request.urlopen(req, timeout=25, context=SSL_CTX) as resp:
+                    res_data = json.loads(resp.read().decode("utf-8"))
+            except (ssl.SSLError, urllib.error.URLError) as ssl_err:
+                if isinstance(ssl_err, ssl.SSLError) or isinstance(getattr(ssl_err, "reason", None), ssl.SSLError):
+                    unverified = ssl._create_unverified_context()
+                    with urllib.request.urlopen(req, timeout=25, context=unverified) as resp:
+                        res_data = json.loads(resp.read().decode("utf-8"))
+                else:
+                    raise
+            candidates = res_data.get("candidates") or []
+            if not candidates:
+                raise ValueError("Empty candidates in Gemini response")
+            parts = (candidates[0].get("content") or {}).get("parts") or []
+            raw_text = "".join(p.get("text", "") for p in parts).strip()
+            clean_text = _clean_gemini_plain_text(raw_text)
+            if clean_text:
+                print(f"[OK] Gemini response generated using {model_name}")
+                return clean_text
+        except Exception as e:
+            print(f"[WARN] {model_name} skipped/failed: {e}")
+    return None
+
+
+def _fmt_signed_score(score):
+    return f"{score:+d}" if score != 0 else "0"
+
+
+def _parse_agent_score_and_text(raw_text, default_score=0):
+    """解析專職分析師回傳的 (-5 ~ +5) 分數與 60~80 字純文字分析"""
+    cleaned = _clean_gemini_plain_text(raw_text)
+    if not cleaned:
+        return default_score, ""
+
+    score = default_score
+    m = re.search(r"(?:分數|評分|score)\s*[:：]?\s*([+-]?\s*\d+)", cleaned, flags=re.IGNORECASE)
+    if m:
+        try:
+            score = int(m.group(1).replace(" ", ""))
+        except ValueError:
+            score = default_score
+    else:
+        m2 = re.search(r"([+-]\d+)\s*/\s*5|^\s*([+-]?\d+)\b", cleaned)
+        if m2:
+            val_s = m2.group(1) or m2.group(2)
+            try:
+                score = int(val_s)
+            except ValueError:
+                score = default_score
+    score = max(-5, min(5, score))
+
+    # 移除分數行，抽出乾淨分析文字
+    lines = [ln.strip() for ln in cleaned.splitlines() if ln.strip()]
+    body_lines = []
+    for ln in lines:
+        if re.match(r"^(?:分數|評分|score)\s*[:：]?\s*[+-]?\s*\d+(?:\s*/\s*5)?\s*$", ln, flags=re.IGNORECASE):
+            continue
+        ln = re.sub(r"^(?:分數|評分|score)\s*[:：]?\s*[+-]?\s*\d+(?:\s*/\s*5)?\s*[｜|，,。；;]?\s*", "", ln, flags=re.IGNORECASE)
+        ln = re.sub(r"^(?:分析|觀點|結論|評論)\s*[:：]\s*", "", ln)
+        if ln:
+            body_lines.append(ln)
+    analysis = " ".join(body_lines).strip() or cleaned
+    return score, analysis
+
+
 def generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg):
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
         return None
 
+    macro = macro or {}
+    tech_slip = tech_slip or {}
     headlines_text = "\n".join([f"- {n['title']}" for n in news_items]) if news_items else "無最新標題"
     p_muu = cfg["muu"]
 
@@ -523,7 +630,7 @@ def generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, new
         else "無"
     )
 
-    prompt = f"""你是機構級美股記憶體 (MU/MUU) 與台股川湖 (2059.TW) 戰情分析師。請根據以下六大維度最新數據，用繁體中文撰寫 4 點精簡扼要（每點 50~70 字）的晨間分析（不要加任何開場白）：
+    prompt = f"""你是機構級美股記憶體 (MU/MUU) 與台股川湖 (2059.TW) 戰情分析師。請根據以下六大維度最新數據，用繁體中文純文字（不可使用 ** 或 # 符號）撰寫 4 點精簡扼要（每點 50~70 字）的晨間分析（不要加任何開場白）：
 1. 【總經與同業共振】：結合 US10Y、SOX、NVDA、SK Hynix 與外電，判斷今日走勢是美光個股因素還是大盤/美債估值壓抑。
 2. 【技術位階與動能】：結合 MU 收盤 (${mu['price']})、5MA/20MA/RSI(14) 與 200MA 防守線 (${cfg['levels']['mu_defense']}) 評估多空結構。
 3. 【選擇權微結構與 MUU 耗損】：解讀 Max Pain、Call/Put OI 牆、P/C Ratio 與 MUU 20日波動率耗損對短線震盪的影響。
@@ -538,30 +645,238 @@ def generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, new
 - 最新新聞標題：
 {headlines_text}
 """
-    models_to_try = ["gemini-3.5-flash", "gemini-3-flash-preview", "gemini-2.5-flash"]
-    payload = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 8192},
-    }
-    for model_name in models_to_try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    return call_gemini_text(api_key, prompt, max_tokens=2048, temperature=0.3)
+
+
+def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg):
+    """雲端免費版 4-Agent 投資委員會：
+    Stage 1 (ThreadPoolExecutor 平行 3 專家): macro_agent + quant_agent + bear_agent
+    Stage 2 (Synthesizer): cio_agent 統整 3 專家觀點與實盤部位給出最終操作裁決
+    回傳 (formatted_summary_text, committee_data_dict)
+    """
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        print("[INFO] GEMINI_API_KEY not set; skipping 4-Agent Investment Committee.")
+        return None, None
+
+    macro = macro or {}
+    tech_slip = tech_slip or {}
+    news_items = news_items or []
+    p_muu = cfg.get("muu", {})
+    p_tw = cfg.get("tw2059", {})
+    levels = cfg.get("levels", {})
+
+    headlines_text = "\n".join([f"- {n['title']}" for n in news_items]) if news_items else "無最新新聞標題"
+
+    macro_parts = []
+    if macro.get("us10y"):
+        macro_parts.append(f"US10Y {macro['us10y']['price']:.2f}% ({macro['us10y']['change_pct']:+.2f}%)")
+    if macro.get("dxy"):
+        macro_parts.append(f"DXY {macro['dxy']['price']:.2f} ({macro['dxy']['change_pct']:+.2f}%)")
+    if macro.get("usdtwd"):
+        macro_parts.append(f"USD/TWD {macro['usdtwd']['price']:.2f}")
+    if macro.get("sox"):
+        macro_parts.append(f"SOX {macro['sox']['price']:,.1f} ({macro['sox']['change_pct']:+.2f}%)")
+    if macro.get("nvda"):
+        macro_parts.append(f"NVDA ${macro['nvda']['price']:.2f} ({macro['nvda']['change_pct']:+.2f}%)")
+    if macro.get("wdc"):
+        macro_parts.append(f"WDC ${macro['wdc']['price']:.2f} ({macro['wdc']['change_pct']:+.2f}%)")
+    if macro.get("avgo"):
+        macro_parts.append(f"AVGO ${macro['avgo']['price']:.2f} ({macro['avgo']['change_pct']:+.2f}%)")
+    macro_summary_str = "｜".join(macro_parts) if macro_parts else "宏觀與同業報價暫缺"
+
+    if options_info:
+        gex_val = options_info.get("net_gex_m")
+        gex_str = f"{gex_val:+.2f}M" if gex_val is not None else "--"
+        opt_summary_str = (
+            f"到期 {options_info['expiration']}｜Max Pain ${options_info['max_pain']}｜"
+            f"Vol P/C {options_info['vol_pcr']} / OI P/C {options_info['oi_pcr']}｜"
+            f"Call OI 牆 ${options_info['call_wall']['strike']} ({options_info['call_wall']['oi']:,}) / "
+            f"Put OI 牆 ${options_info['put_wall']['strike']} ({options_info['put_wall']['oi']:,})｜"
+            f"ATM IV {options_info['atm_iv_pct']}%｜Net GEX {gex_str}"
+        )
+    else:
+        opt_summary_str = "暫無最新 CBOE MU 選擇權數據"
+
+    slip5 = tech_slip.get("slippage_5d")
+    slip20 = tech_slip.get("slippage_20d")
+    slip_parts = []
+    if slip5:
+        slip_parts.append(
+            f"5日 MU {slip5['mu_ret_pct']:+.1f}% vs MUU {slip5['muu_ret_pct']:+.1f}% (耗損 {slip5['slippage_pct']:+.2f}%)"
+        )
+    if slip20:
+        slip_parts.append(
+            f"20日 MU {slip20['mu_ret_pct']:+.1f}% vs MUU {slip20['muu_ret_pct']:+.1f}% (耗損 {slip20['slippage_pct']:+.2f}%)"
+        )
+    slip_summary_str = "；".join(slip_parts) if slip_parts else "暫無耗損計算數據"
+
+    tech_summary_str = (
+        f"MU 收 ${mu['price']:.2f} ({mu['change_pct']:+.2f}%，高 ${mu['high']:.2f}/低 ${mu['low']:.2f})｜"
+        f"5MA ${tech_slip.get('mu_ma5', '--')} / 20MA ${tech_slip.get('mu_ma20', '--')} / "
+        f"200MA防守線 ${levels.get('mu_defense', '--')} / RSI14 {tech_slip.get('mu_rsi14', '--')}"
+    )
+
+    macro_prompt = f"""你是「🌐 總經與同業分析師」。請針對以下總體經濟、半導體同業與新聞標題，從資金與產業共振角度評估美光 (MU) 與川湖 (2059.TW)。
+請嚴格以繁體中文純文字輸出兩行（禁止使用 **、# 或任何 Markdown 符號，不要開場白）：
+分數：<整數 -5 到 +5，-5極空、0中性、+5極多，請帶正負號如 +2 或 -2>
+分析：<60~80字精簡專業結論>
+
+數據：
+- MU：${mu['price']:.2f} ({mu['change_pct']:+.2f}%)｜MUU：${muu['price']:.2f} ({muu['change_pct']:+.2f}%)｜川湖 2059.TW：{tw2059['price']:.0f} ({tw2059['change_pct']:+.2f}%)
+- 總經與同業：{macro_summary_str}
+- 最新新聞標題：
+{headlines_text}
+"""
+
+    quant_prompt = f"""你是「🧮 量化與微結構師」。請根據 MU 技術均線/動能、CBOE 選擇權微結構（Max Pain、P/C Ratio、Call/Put OI 牆、ATM IV、Net GEX）與 MUU 2X 槓桿耗損，評估短線籌碼與波動結構。
+請嚴格以繁體中文純文字輸出兩行（禁止使用 **、# 或任何 Markdown 符號，不要開場白）：
+分數：<整數 -5 到 +5，-5極空、0中性、+5極多，請帶正負號如 +2 或 -2>
+分析：<60~80字精簡專業結論>
+
+數據：
+- 技術位階：{tech_summary_str}
+- MUU 收盤：${muu['price']:.2f} ({muu['change_pct']:+.2f}%)｜槓桿耗損：{slip_summary_str}
+- CBOE MU 選擇權：{opt_summary_str}
+"""
+
+    bear_prompt = f"""你是「🛡️ 空頭魔鬼代言人（強制風控反方）」。你的唯一職責是嚴格挑出下行風險、技術破位觸發點、高 IV 槓桿耗損陷阱，以及此刻「不應盲目加碼槓桿」的硬理由。
+請嚴格以繁體中文純文字輸出兩行（禁止使用 **、# 或任何 Markdown 符號，不要開場白）：
+分數：<整數 -5 到 +5，代表風險評分，負分越深風險越高如 -4，風險可控則近 0>
+分析：<60~80字精簡犀利風控警示>
+
+數據：
+- 技術與防守線：{tech_summary_str}｜關鍵支撐1 ${levels.get('mu_support1', '--')}
+- MUU：${muu['price']:.2f} ({muu['change_pct']:+.2f}%)｜槓桿耗損：{slip_summary_str}
+- 總經與同業：{macro_summary_str}
+- CBOE MU 選擇權：{opt_summary_str}
+- 川湖 2059.TW：{tw2059['price']:.0f} ({tw2059['change_pct']:+.2f}%)
+- 最新新聞標題：
+{headlines_text}
+"""
+
+    specialist_specs = [
+        ("macro", "🌐 總經與同業分析師", macro_prompt),
+        ("quant", "🧮 量化與微結構師", quant_prompt),
+        ("bear", "🛡️ 空頭魔鬼代言人", bear_prompt),
+    ]
+
+    def _run_specialist(key, role, prompt_text):
         try:
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=25) as resp:
-                res_data = json.loads(resp.read().decode("utf-8"))
-            parts = res_data["candidates"][0]["content"]["parts"]
-            text = "".join(p.get("text", "") for p in parts).strip()
-            if text:
-                print(f"[OK] Gemini summary generated using {model_name}")
-                return text
+            raw = call_gemini_text(api_key, prompt_text, max_tokens=512, temperature=0.3)
+            if not raw:
+                return key, {"role": role, "score": 0, "analysis": "", "ok": False}
+            sc, ana = _parse_agent_score_and_text(raw, default_score=0)
+            return key, {"role": role, "score": sc, "analysis": ana, "ok": True}
         except Exception as e:
-            print(f"[WARN] {model_name} skipped/failed: {e}")
-    return None
+            print(f"[WARN] Committee specialist {key} failed: {e}")
+            return key, {"role": role, "score": 0, "analysis": "", "ok": False}
+
+    stage1 = {}
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {
+            executor.submit(_run_specialist, key, role, ptxt): (key, role)
+            for key, role, ptxt in specialist_specs
+        }
+        for fut, (key, role) in futures.items():
+            try:
+                k, res = fut.result()
+                stage1[k] = res
+            except Exception as e:
+                print(f"[WARN] Committee future {key} exception: {e}")
+                stage1[key] = {"role": role, "score": 0, "analysis": "", "ok": False}
+
+    ok_count = sum(1 for v in stage1.values() if v.get("ok"))
+    if ok_count == 0:
+        print("[WARN] Stage 1 specialists all failed; falling back to single-call generate_gemini_summary.")
+        fallback_text = generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg)
+        return fallback_text, None
+
+    # 補齊個別失敗專家的中性預設說明
+    for key, role, _ in specialist_specs:
+        if not stage1[key].get("analysis"):
+            stage1[key]["analysis"] = f"{role}暫未取得模型回應，以盤面數據中性看待。"
+
+    s_macro = stage1["macro"]["score"]
+    s_quant = stage1["quant"]["score"]
+    s_bear = stage1["bear"]["score"]
+    total_score = s_macro + s_quant + s_bear
+    stance = "偏多" if total_score >= 3 else ("偏空" if total_score <= -3 else "中性")
+    score_header = (
+        f"⚖️ 委員會多空總分：{_fmt_signed_score(total_score)}/15（{stance}）｜"
+        f"總經 {_fmt_signed_score(s_macro)}・量化 {_fmt_signed_score(s_quant)}・風控 {_fmt_signed_score(s_bear)}"
+    )
+
+    cio_prompt = f"""你是「🏛️ 首席投資長 (CIO)」。你已聽取三位專職分析師的簡報，請結合投資人的真實持倉與關鍵防守價位，統整出今日最終晨間操作裁決。
+
+【三位專職分析師報告】
+- 總經與同業分析師（評分 {_fmt_signed_score(s_macro)}）：{stage1['macro']['analysis']}
+- 量化與微結構師（評分 {_fmt_signed_score(s_quant)}）：{stage1['quant']['analysis']}
+- 空頭魔鬼代言人（評分 {_fmt_signed_score(s_bear)}）：{stage1['bear']['analysis']}
+- 委員會多空總分：{_fmt_signed_score(total_score)}/15（{stance}）
+
+【投資人實盤部位與關鍵價位】
+- MUU 總持股：{p_muu.get('total_shares', 1250):,} 股（核心 {p_muu.get('core_shares', 1100):,} 股 + 游擊 {p_muu.get('swing_shares', 150)} 股 @${p_muu.get('swing_cost', 16.42)}，實質均價 ${p_muu.get('avg_cost_usd', 34.547)}，現價 ${muu['price']:.2f}）
+- 川湖 (2059.TW)：{p_tw.get('shares', 22)} 股（均價 {p_tw.get('avg_cost_twd', 10849.41):,.0f} 元，現價 {tw2059['price']:,.0f} 元）
+- MU 關鍵價位：現價 ${mu['price']:.2f}｜200MA 防守線 ${levels.get('mu_defense', 715.0)}｜支撐1 ${levels.get('mu_support1', 716.38)}｜反壓區 ${levels.get('mu_res1_min', 780.0)}~${levels.get('mu_res1_max', 830.0)}｜50MA ${levels.get('mu_50ma', 983.23)}
+
+【嚴格輸出格式要求】
+1. 僅使用繁體中文純文字，絕對不可包含 **、#、項目符號或任何開場白/結語。
+2. 不要重複輸出總分行（系統會自動加上），直接輸出以下 4 行編號內容（每點精簡 55~80 字）：
+1. 【總經與同業】...
+2. 【量化與微結構】...
+3. 【空頭風控警示】...
+4. 【CIO 最終操作裁決】...（務必針對 MUU {p_muu.get('total_shares', 1250):,} 股含 {p_muu.get('swing_shares', 150)} 股游擊倉 與 川湖 {p_tw.get('shares', 22)} 股給出今日具體執行、停利/減碼或觀望紀律）
+"""
+
+    cio_raw = call_gemini_text(api_key, cio_prompt, max_tokens=1536, temperature=0.3)
+    cio_body = ""
+    if cio_raw:
+        cio_lines = []
+        for ln in cio_raw.splitlines():
+            s = ln.strip()
+            if not s:
+                continue
+            if s.startswith("⚖️") or s.startswith("委員會多空總分"):
+                continue
+            cio_lines.append(s)
+        cio_body = "\n".join(cio_lines).strip()
+
+    if not cio_body:
+        print("[WARN] Stage 2 CIO synthesis failed; falling back to single-call or rule-based committee synthesis.")
+        fallback_single = generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg)
+        if fallback_single:
+            committee_data = {
+                "total_score": total_score,
+                "stance": stance,
+                "summary_line": score_header,
+                "macro": {"role": stage1["macro"]["role"], "score": s_macro, "analysis": stage1["macro"]["analysis"]},
+                "quant": {"role": stage1["quant"]["role"], "score": s_quant, "analysis": stage1["quant"]["analysis"]},
+                "bear": {"role": stage1["bear"]["role"], "score": s_bear, "analysis": stage1["bear"]["analysis"]},
+                "cio": {"role": "🏛️ 首席投資長", "verdict": fallback_single, "fallback": True},
+            }
+            return fallback_single, committee_data
+
+        tactical_fallback = build_tactical_commentary(mu, muu, cfg)
+        cio_body = "\n".join([
+            f"1. 【總經與同業】{stage1['macro']['analysis']}",
+            f"2. 【量化與微結構】{stage1['quant']['analysis']}",
+            f"3. 【空頭風控警示】{stage1['bear']['analysis']}",
+            f"4. 【CIO 最終操作裁決】{tactical_fallback}",
+        ])
+
+    final_text = f"{score_header}\n{cio_body}"
+    committee_data = {
+        "total_score": total_score,
+        "stance": stance,
+        "summary_line": score_header,
+        "macro": {"role": stage1["macro"]["role"], "score": s_macro, "analysis": stage1["macro"]["analysis"]},
+        "quant": {"role": stage1["quant"]["role"], "score": s_quant, "analysis": stage1["quant"]["analysis"]},
+        "bear": {"role": stage1["bear"]["role"], "score": s_bear, "analysis": stage1["bear"]["analysis"]},
+        "cio": {"role": "🏛️ 首席投資長", "verdict": cio_body, "full_text": final_text},
+    }
+    print(f"[OK] 4-Agent Investment Committee completed: {score_header}")
+    return final_text, committee_data
 
 
 def build_tactical_commentary(mu, muu, cfg):
@@ -746,7 +1061,7 @@ def update_frontend_files(mu, muu, tw2059, headline, news_block=None, macro=None
             f.write(dhtml)
 
 
-def save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info):
+def save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=None):
     out = {
         "updated_at": NOW_TW.strftime("%Y-%m-%d %H:%M:%S+08:00"),
         "date": TODAY_STR,
@@ -754,6 +1069,7 @@ def save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info):
         "macro_and_peers": macro,
         "mu_tech_and_muu_slippage": tech_slip,
         "mu_options": options_info,
+        "committee": committee,
     }
     with open(MACRO_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
@@ -850,10 +1166,12 @@ def main():
     total_pnl_pct = (total_pnl_twd / total_cost_twd) * 100.0 if total_cost_twd else 0.0
 
     tactical_line = build_tactical_commentary(mu, muu, cfg)
-    gemini_insight = generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, all_news, cfg)
+    committee_text, committee_data = generate_gemini_committee_summary(
+        mu, muu, tw2059, macro, tech_slip, options_info, all_news, cfg
+    )
 
-    if gemini_insight:
-        news_block = gemini_insight
+    if committee_text:
+        news_block = committee_text
     elif all_news:
         news_block = "\n".join([f"{i+1}. {n['title']}" for i, n in enumerate(all_news[:4])])
     else:
@@ -925,7 +1243,7 @@ def main():
 🧮 MU 選擇權微結構 & MUU 槓桿耗損：
 {micro_block}
 
-🧠 Gemini AI 六維度戰情洞察：
+🏛️ 4-Agent 投資委員會裁決：
 {news_block}
 
 💼 雙市場持倉結算：
@@ -943,7 +1261,7 @@ def main():
         print("[DRY-RUN] 測試完成，未寫入檔案與發送 LINE。")
         return
 
-    save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info)
+    save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=committee_data)
     if args.save_json_only:
         print("[SAVE-JSON-ONLY] 已儲存 daily_macro_options.json，略過前端修改與 LINE 推播。")
         return
