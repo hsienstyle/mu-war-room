@@ -386,11 +386,11 @@ def fetch_mu_options_microstructure(spot_price):
             bucket = by_exp.setdefault(exp_iso, {"C": [], "P": []})
             bucket[side].append(rec)
 
-        # 選擇最近一個且具足夠 OI (>= 5000) 的主流週/月選到期日
+        # 選擇最近一個且具足夠 OI (>= 1000) 的主流週/月選到期日
         target_exp = None
         for exp_iso in sorted(by_exp.keys()):
             tot_oi = sum(x["oi"] for x in by_exp[exp_iso]["C"]) + sum(x["oi"] for x in by_exp[exp_iso]["P"])
-            if tot_oi >= 5000:
+            if tot_oi >= 1000:
                 target_exp = exp_iso
                 break
         if not target_exp and by_exp:
@@ -575,7 +575,7 @@ def build_tactical_commentary(mu, muu, cfg):
         return f"⚠️ MU 收盤 (${mu['price']:.2f}) 暫壓於 ${defense} 年線下方（低點 ${mu['low']:.2f}），高 IV 震盪期嚴禁無腦加碼槓桿，靜待站回 ${defense} 之上再積極操作！"
 
 
-def update_frontend_files(mu, muu, tw2059, headline, news_block=None):
+def update_frontend_files(mu, muu, tw2059, headline, news_block=None, macro=None, tech_slip=None, options_info=None, tactical_line=None, cfg=None):
     if os.path.exists(INDEX_PATH):
         with open(INDEX_PATH, "r", encoding="utf-8") as f:
             html = f.read()
@@ -640,6 +640,62 @@ def update_frontend_files(mu, muu, tw2059, headline, news_block=None):
                     rf'\1\n{inner_html}\n        \2',
                     html,
                 )
+
+        # 同步更新 Tab 2「最新情報」卡片 1（MU / MUU 每日焦點）與卡片 2（宏觀與微結構）
+        def replace_tag_inner(src, elem_id, new_inner):
+            return re.sub(
+                rf'(<[a-zA-Z0-9]+[^>]*id="{elem_id}"[^>]*>)[\s\S]*?(</[a-zA-Z0-9]+>)',
+                lambda m: f"{m.group(1)}\n            {new_inner}\n          {m.group(2)}",
+                src,
+                count=1,
+            )
+
+        macro = macro or {}
+        tech_slip = tech_slip or {}
+        mu_ma5_s = f"${tech_slip['mu_ma5']:.2f}" if tech_slip.get("mu_ma5") else "--"
+        mu_ma20_s = f"${tech_slip['mu_ma20']:.2f}" if tech_slip.get("mu_ma20") else "--"
+        mu_rsi_s = f"{tech_slip['mu_rsi14']}" if tech_slip.get("mu_rsi14") is not None else "--"
+
+        mu_card_title = f"MU 收 ${mu['price']:.2f} ({mu['change_pct']:+.2f}%)、MUU 收 ${muu['price']:.2f} ({muu['change_pct']:+.2f}%)｜{headline or '最新記憶體與 AI 焦點'}"
+        insight_lines = [re.sub(r"\*\*([^*]+)\*\*", r"\1", ln.strip()) for ln in (news_block or "").splitlines() if ln.strip()]
+        mu_body_extra = f" {insight_lines[1]}" if len(insight_lines) >= 2 else (f" {insight_lines[0]}" if insight_lines else "")
+        mu_card_body = (
+            f"美股最新收盤：MU 收 ${mu['price']:.2f} ({mu['change_pct']:+.2f}%，盤中高 ${mu['high']:.2f} / 低 ${mu['low']:.2f})、"
+            f"MUU 收 ${muu['price']:.2f} ({muu['change_pct']:+.2f}%，高 ${muu['high']:.2f} / 低 ${muu['low']:.2f})。"
+            f"技術面 5MA {mu_ma5_s} / 20MA {mu_ma20_s} / RSI14 {mu_rsi_s}。{mu_body_extra}"
+        )
+        mu_tip_text = f"💡 <strong>對 MUU 操作啟示</strong>：{tactical_line or (insight_lines[-1] if insight_lines else '嚴守劇本紀律，逢反抽分批調節游擊倉降本。')}"
+
+        html = re.sub(r'id="news-card-mu-date">[^<]+<', f'id="news-card-mu-date">{TODAY_STR} 雲端更新<', html)
+        html = replace_tag_inner(html, "news-card-mu-title", mu_card_title)
+        html = replace_tag_inner(html, "news-card-mu-body", mu_card_body)
+        html = replace_tag_inner(html, "news-card-mu-tip", mu_tip_text)
+
+        us10y_s = f"{macro['us10y']['price']:.2f}% ({macro['us10y']['change_pct']:+.2f}%)" if macro.get("us10y") else "--"
+        dxy_s = f"{macro['dxy']['price']:.2f}" if macro.get("dxy") else "--"
+        fx_s = f"{macro['usdtwd']['price']:.2f}" if macro.get("usdtwd") else "--"
+        sox_s = f"{macro['sox']['change_pct']:+.2f}%" if macro.get("sox") else "--"
+        nvda_s = f"{macro['nvda']['change_pct']:+.2f}%" if macro.get("nvda") else "--"
+        wdc_s = f"{macro['wdc']['change_pct']:+.2f}%" if macro.get("wdc") else "--"
+        avgo_s = f"{macro['avgo']['change_pct']:+.2f}%" if macro.get("avgo") else "--"
+        s20 = tech_slip.get("slippage_20d")
+        slip_s = f"MUU 20日槓桿耗損 {s20['slippage_pct']:+.2f}%（MU {s20['mu_ret_pct']:+.1f}% vs MUU {s20['muu_ret_pct']:+.1f}%）" if s20 else "高波動震盪期留意槓桿耗損"
+        opt_s = (
+            f"CBOE MU 選擇權 ({options_info['expiration']})：Max Pain ${options_info['max_pain']:.0f}、"
+            f"P/C(量/OI) {options_info['vol_pcr'] or '--'}/{options_info['oi_pcr'] or '--'}、"
+            f"Call牆 ${options_info['call_wall']['strike']:.0f} / Put牆 ${options_info['put_wall']['strike']:.0f}、"
+            f"IV {options_info['atm_iv_pct'] or '--'}%、Net GEX {options_info['net_gex_m']:+.1f}M。"
+            if options_info
+            else ""
+        )
+        macro_title = f"US10Y {us10y_s}｜費半 {sox_s}・NVDA {nvda_s}・WDC {wdc_s}｜{('MU Max Pain $' + str(int(options_info['max_pain']))) if options_info and options_info.get('max_pain') else '宏觀與微結構共振'}"
+        macro_body = f"總經資金：US10Y {us10y_s}、DXY {dxy_s}、USD/TWD {fx_s}。同業共振：SOX {sox_s}、NVDA {nvda_s}、WDC {wdc_s}、AVGO {avgo_s}。{opt_s}{slip_s}。"
+        macro_tip = f"💡 <strong>微結構風控紀律</strong>：{insight_lines[2] if len(insight_lines) >= 3 else '緊盯 US10Y 5.00% 關卡與選擇權 OI 牆變化，高 IV 震盪期嚴控槓桿倉位。'}"
+
+        html = re.sub(r'id="news-card-macro-date">[^<]+<', f'id="news-card-macro-date">{TODAY_STR} 雲端更新<', html)
+        html = replace_tag_inner(html, "news-card-macro-title", macro_title)
+        html = replace_tag_inner(html, "news-card-macro-body", macro_body)
+        html = replace_tag_inner(html, "news-card-macro-tip", macro_tip)
 
         with open(INDEX_PATH, "w", encoding="utf-8") as f:
             f.write(html)
@@ -892,7 +948,11 @@ def main():
         print("[SAVE-JSON-ONLY] 已儲存 daily_macro_options.json，略過前端修改與 LINE 推播。")
         return
 
-    update_frontend_files(mu, muu, tw2059, top_headline, news_block)
+    update_frontend_files(
+        mu, muu, tw2059, top_headline, news_block,
+        macro=macro, tech_slip=tech_slip, options_info=options_info,
+        tactical_line=tactical_line, cfg=cfg
+    )
     send_line_push(line_msg)
 
     try:

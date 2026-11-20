@@ -436,11 +436,29 @@ def generate_gemini_chips_insight(summary, news_items, cfg):
     t_dir, t_days = summary["streaks"]["trust"]
     tw_cfg = cfg["tw2059"]
 
+    margin_prompt = (
+        f"融資增減 {fmt_lots(margin['margin_change'])} 張（餘額 {margin['margin_balance']:,} 張）、"
+        f"融券增減 {fmt_lots(margin['short_change'])} 張（餘額 {margin['short_balance']:,} 張，券資比 {margin['short_margin_ratio']:.2f}%）"
+        if margin
+        else "證交所尚未公布（暫缺，請勿解讀為 0）"
+    )
+    sbl_prompt = (
+        f"當日賣出 {fmt_lots(sbl['sbl_sell_lots'], signed=False)} 張、還券 {fmt_lots(sbl['sbl_return_lots'], signed=False)} 張、"
+        f"餘額增減 {fmt_lots(sbl['sbl_change_lots'])} 張（總餘額 {fmt_lots(sbl['sbl_balance_lots'], signed=False)} 張）"
+        if sbl
+        else "證交所尚未公布（暫缺，請勿解讀為 0）"
+    )
+    dt_prompt = (
+        f"{fmt_lots(dt['day_trade_lots'], signed=False)} 張（佔比 {dt['day_trade_ratio']:.1f}%）"
+        if dt
+        else "證交所尚未公布（暫缺，請勿解讀為 0）"
+    )
+
     headlines = "\n".join([f"- {n['title']}" for n in news_items]) if news_items else "無最新新聞標題"
     prompt = f"""你是台股 AI 伺服器供應鏈與千金股籌碼分析師，專精解讀 2059 川湖（AI 伺服器導軌龍頭）的法人與信用籌碼。
 請根據以下 {summary['trade_date']} 最新盤後數據，用繁體中文撰寫 3 點精簡扼要（每點約 50~70 字）的盤後籌碼專報洞察（不要加任何開場白）：
 1. 【三大法人與土洋結構】：判讀外資 ({fmt_lots(t86['foreign_lots'])} 張，{f_dir}{f_days}日)、投信 ({fmt_lots(t86['trust_lots'])} 張，{t_dir}{t_days}日)、自營商與近 5 日累計動向。
-2. 【融資券與借券空方壓力】：評估融資增減、借券賣出餘額變化與當沖比，判斷散戶籌碼浮額與外資空方回補力道。
+2. 【融資券與借券空方壓力】：評估融資增減、借券賣出餘額變化與當沖比，判斷散戶籌碼浮額與外資空方回補力道（若欄位標註尚未公布則以已公布項目為主）。
 3. 【技術位階與持倉建議】：針對持有 {tw_cfg['shares']} 股（實質均價 NT$ {tw_cfg['avg_cost_twd']:,.2f}）給出明確風控、續抱或游擊做 T 建議。
 
 今日盤後數據 ({summary['trade_date']})：
@@ -448,9 +466,9 @@ def generate_gemini_chips_insight(summary, news_items, cfg):
 - 成交量：{p['volume_lots']:,.0f} 張（較前日 {p.get('vol_change_pct', 0):+.1f}%），5MA：{p.get('ma5', 0):,.0f} 元，20MA：{p.get('ma20', 0):,.0f} 元
 - 三大法人當日：外資 {fmt_lots(t86['foreign_lots'])} 張、投信 {fmt_lots(t86['trust_lots'])} 張、自營商 {fmt_lots(t86['dealer_lots'])} 張、合計 {fmt_lots(t86['total_lots'])} 張
 - 近 5 日累計：外資 {fmt_lots(t5['foreign_lots'])} 張、投信 {fmt_lots(t5['trust_lots'])} 張、合計 {fmt_lots(t5['total_lots'])} 張
-- 融資融券：融資增減 {fmt_lots(margin.get('margin_change', 0))} 張（餘額 {margin.get('margin_balance', 0):,} 張）、融券增減 {fmt_lots(margin.get('short_change', 0))} 張（餘額 {margin.get('short_balance', 0):,} 張，券資比 {margin.get('short_margin_ratio', 0):.2f}%）
-- 借券賣出：當日賣出 {fmt_lots(sbl.get('sbl_sell_lots', 0), signed=False)} 張、還券 {fmt_lots(sbl.get('sbl_return_lots', 0), signed=False)} 張、餘額增減 {fmt_lots(sbl.get('sbl_change_lots', 0))} 張（總餘額 {fmt_lots(sbl.get('sbl_balance_lots', 0), signed=False)} 張）
-- 現股當沖：{fmt_lots(dt.get('day_trade_lots', 0), signed=False)} 張（佔比 {dt.get('day_trade_ratio', 0):.1f}%）
+- 融資融券：{margin_prompt}
+- 借券賣出：{sbl_prompt}
+- 現股當沖：{dt_prompt}
 - 川湖最新新聞：
 {headlines}
 """
@@ -525,7 +543,7 @@ def update_chips_json(summary, insight_text):
     print(f"[OK] Saved {CHIPS_JSON_PATH} ({len(sorted_hist)} days)")
 
 
-def update_index_html_tw2059(summary, insight_text):
+def update_index_html_tw2059(summary, insight_text, cfg=None):
     if not os.path.exists(INDEX_PATH):
         return
 
@@ -597,9 +615,47 @@ def update_index_html_tw2059(summary, insight_text):
             rf'\1\n{chips_inner}\n        \2',
             html,
         )
-        with open(INDEX_PATH, "w", encoding="utf-8") as f:
-            f.write(html)
-        print("[OK] Updated tw2059-chips-box in index.html")
+
+    # 同步更新 Tab 2「最新情報」第 3 張卡片（2059 川湖盤後籌碼與動能）
+    def replace_tag_inner(src, elem_id, new_inner):
+        return re.sub(
+            rf'(<[a-zA-Z0-9]+[^>]*id="{elem_id}"[^>]*>)[\s\S]*?(</[a-zA-Z0-9]+>)',
+            lambda m: f"{m.group(1)}\n            {new_inner}\n          {m.group(2)}",
+            src,
+            count=1,
+        )
+
+    t5 = summary["t86_5d"]
+    tw_title = (
+        f"川湖收 {p['close']:,.0f} 元 ({p['change_pct']:+.2f}%)｜"
+        f"外資 {fmt_lots(t86['foreign_lots'])} 張（{f_dir}{f_days}日）、三大法人合計 {fmt_lots(t86['total_lots'])} 張"
+    )
+    ma5_txt = f"{p['ma5']:,.0f}" if p.get("ma5") else "--"
+    ma20_txt = f"{p['ma20']:,.0f}" if p.get("ma20") else "--"
+    tw_body = (
+        f"{summary['trade_date']} 盤後結算：川湖收 {p['close']:,.0f} 元 ({p['change']:+,.0f} / {p['change_pct']:+.2f}%，"
+        f"高 {p['high']:,.0f} / 低 {p['low']:,.0f})，量 {int(round(p['volume_lots'])):,} 張，5MA {ma5_txt} / 20MA {ma20_txt}。"
+        f"籌碼面：外資 {fmt_lots(t86['foreign_lots'])} 張（近5日 {fmt_lots(t5['foreign_lots'])}）、"
+        f"投信 {fmt_lots(t86['trust_lots'])} 張、三大合計 {fmt_lots(t86['total_lots'])} 張；"
+        f"融資 {margin_str}、借券 {sbl_str}、當沖 {dt_str}。"
+    )
+    tw_cfg = (cfg or {}).get("tw2059", {"shares": 22, "total_cost_twd": 238687, "avg_cost_twd": 10849.41})
+    mkt_val = p["close"] * tw_cfg["shares"]
+    insight_lines = [re.sub(r"\*\*([^*]+)\*\*", r"\1", ln.strip()) for ln in (insight_text or "").splitlines() if ln.strip()]
+    tip_extra = insight_lines[-1] if insight_lines else "現股無斷頭壓力，留意 5MA 與外資連買訊號擇機做 T 降本。"
+    tw_tip = (
+        f"💡 <strong>持倉解析 ({tw_cfg['shares']}股 / 均價 {tw_cfg['avg_cost_twd']:,.0f} 元)</strong>："
+        f"現股市值 NT$ {mkt_val:,.0f}（成本 NT$ {tw_cfg['total_cost_twd']:,.0f}）。{tip_extra}"
+    )
+
+    html = re.sub(r'id="news-card-2059-date">[^<]+<', f'id="news-card-2059-date">{summary["trade_date"]} 收盤更新<', html)
+    html = replace_tag_inner(html, "news-card-2059-title", tw_title)
+    html = replace_tag_inner(html, "news-card-2059-body", tw_body)
+    html = replace_tag_inner(html, "news-card-2059-tip", tw_tip)
+
+    with open(INDEX_PATH, "w", encoding="utf-8") as f:
+        f.write(html)
+    print("[OK] Updated tw2059-chips-box and Tab 2 news-card-2059 in index.html")
 
 
 def send_line_push(message_text):
@@ -837,7 +893,7 @@ def main():
 
     # 6. 更新 JSON、網頁卡片與發送 LINE
     update_chips_json(summary, insight)
-    update_index_html_tw2059(summary, insight)
+    update_index_html_tw2059(summary, insight, cfg)
 
     if args.no_push:
         print("[NO-PUSH] 已同步更新 tw2059_chips.json 與 index.html（略過 LINE 推播與執行日期鎖）。")
