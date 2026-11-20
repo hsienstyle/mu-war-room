@@ -1,64 +1,64 @@
 {
-  "updated_at": "2026-11-19 16:37:50+08:00",
+  "updated_at": "2026-11-20 16:37:49+08:00",
   "stock_no": "2059",
   "stock_name": "川湖",
   "latest": {
-    "trade_date": "2026-11-19",
+    "trade_date": "2026-11-20",
     "price": {
-      "close": 5940.0,
-      "prev_close": 6520.0,
-      "change": -580.0,
-      "change_pct": -8.9,
-      "open": 6500.0,
-      "high": 6570.0,
-      "low": 5870.0,
-      "volume_shares": 1075580,
-      "volume_lots": 1075.6,
-      "vol_change_pct": 50.8,
-      "ma5": 6806.0,
-      "ma20": 8482.25
+      "close": 5350.0,
+      "prev_close": 5940.0,
+      "change": -590.0,
+      "change_pct": -9.93,
+      "open": 5640.0,
+      "high": 5640.0,
+      "low": 5350.0,
+      "volume_shares": 683922,
+      "volume_lots": 683.9,
+      "vol_change_pct": -36.4,
+      "ma5": 6300.0,
+      "ma20": 8245.75
     },
     "t86_latest": {
-      "date": "2026-11-19",
-      "foreign_shares": 257286,
-      "trust_shares": 18999,
-      "dealer_shares": 1298,
-      "total_shares": 277583,
-      "foreign_lots": 257,
-      "trust_lots": 19,
-      "dealer_lots": 1.3,
-      "total_lots": 278
+      "date": "2026-11-20",
+      "foreign_shares": 42047,
+      "trust_shares": 11600,
+      "dealer_shares": 16091,
+      "total_shares": 69738,
+      "foreign_lots": 42,
+      "trust_lots": 12,
+      "dealer_lots": 16,
+      "total_lots": 70
     },
     "t86_5d": {
       "days": 5,
-      "foreign_lots": 501,
-      "trust_lots": -129,
-      "dealer_lots": 83,
-      "total_lots": 455
+      "foreign_lots": 637,
+      "trust_lots": -130,
+      "dealer_lots": 93,
+      "total_lots": 600
     },
     "streaks": {
       "foreign": [
         "連買",
-        1
+        2
       ],
       "trust": [
         "連買",
-        1
+        2
       ]
     },
     "margin": {
-      "margin_prev": 409,
-      "margin_balance": 400,
-      "margin_change": -9,
+      "margin_prev": 400,
+      "margin_balance": 359,
+      "margin_change": -41,
       "short_prev": 0,
-      "short_balance": 0,
-      "short_change": 0,
-      "short_margin_ratio": 0.0
+      "short_balance": 3,
+      "short_change": 3,
+      "short_margin_ratio": 0.84
     },
     "sbl": null,
     "day_trade": null
   },
-  "insight": "1. 【三大法人與土洋結構】：今日股價重挫 8.90%，但三大法人逆勢合買 278 張，外資買超 257 張，近 5 日累計買超 501 張；投信亦微幅轉買。籌碼呈現「價跌法人吸籌」結構，顯示外資等大戶並未撤退，反而於低檔逢低承接。\n\n2. 【融資券與借券空方壓力】：融資再減 9 張至 400 張極低水位，當沖與借券賣出均為 0，顯示散戶籌碼極度乾淨，且無借券空方鎖殺壓力。此波急跌主因情緒面與高價股調節，並非籌碼面轉壞，有利後續上演洗盤反彈。\n\n3. 【技術位階與持倉建議】：現價 5,940 元深幅乖離 20MA，遠低於成本 10,849 元。鑑於基本面目標價仍高且法人加碼，切勿恐慌殺低。建議實質持有者續抱，待站回 5MA（6,806元）訊號出現後，再搭配現階段零股游擊做 T 降成本。",
+  "insight": "1. 【三大法人與土洋結構】：三大法人同步站買方，合計買超70張。外資(+42張)與投信(+12張)皆呈連2買，近5日外資累計買超達637張，顯示法人在重挫打至跌停時並未急倒，低檔仍有逢低護盤接手的沉澱買盤。\n\n2. 【融資券與借券空方壓力】：融資單日大減41張（餘額降至359張），顯示散戶籌碼加速洗清與浮額收斂；融券微增3張。因證交所尚未公布借券賣出與當沖數據，暫勿評估空方力道，但融資大幅退場有助短線籌碼落底。\n\n3. 【技術位階與持倉建議】：股價跳空鎖跌停且遠離5MA，與持倉均價10,849.41元差距過大。目前絕非盲目加碼或攤平之時，建議先嚴守風控觀望，待股價出現打開跌停且爆量止跌訊號後，再考慮以少量游擊做T調降成本。",
   "history": [
     {
       "date": "2026-11-18",
@@ -88,6 +88,22 @@
       "margin_change": -9,
       "margin_balance": 400,
       "short_change": 0,
+      "sbl_change_lots": null,
+      "sbl_balance_lots": null,
+      "day_trade_ratio": null
+    },
+    {
+      "date": "2026-11-20",
+      "close": 5350.0,
+      "change_pct": -9.93,
+      "volume_lots": 683.9,
+      "foreign_lots": 42,
+      "trust_lots": 12,
+      "dealer_lots": 16,
+      "inst_total_lots": 70,
+      "margin_change": -41,
+      "margin_balance": 359,
+      "short_change": 3,
       "sbl_change_lots": null,
       "sbl_balance_lots": null,
       "day_trade_ratio": null
