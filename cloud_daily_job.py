@@ -506,6 +506,7 @@ def call_gemini_text(api_key, prompt, max_tokens=1024, temperature=0.3, model_sp
 
     if model_specs is None:
         model_specs = [
+            ("gemini-3.6-flash", True),
             ("gemini-3.6-flash", False),
             ("gemini-3.5-flash", False),
             ("gemini-3-flash-preview", False),
@@ -767,7 +768,7 @@ def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options
 
     def _run_specialist(key, role, prompt_text):
         try:
-            raw = call_gemini_text(api_key, prompt_text, max_tokens=512, temperature=0.3)
+            raw = call_gemini_text(api_key, prompt_text, max_tokens=4096, temperature=0.3)
             if not raw:
                 return key, {"role": role, "score": 0, "analysis": "", "ok": False}
             sc, ana = _parse_agent_score_and_text(raw, default_score=0)
@@ -841,8 +842,8 @@ def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options
         ("gemini-2.5-flash", True),
     ]
     cio_raw = call_gemini_text(
-        api_key, cio_prompt, max_tokens=4096, temperature=0.3,
-        model_specs=cio_model_specs, timeout=50
+        api_key, cio_prompt, max_tokens=8192, temperature=0.3,
+        model_specs=cio_model_specs, timeout=55
     )
     cio_body = ""
     if cio_raw:

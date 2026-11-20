@@ -476,7 +476,7 @@ def generate_gemini_chips_insight(summary, news_items, cfg):
     models_to_try = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3-flash-preview", "gemini-2.5-flash"]
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 4096},
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 8192},
     }
     for model_name in models_to_try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
