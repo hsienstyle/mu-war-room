@@ -1,78 +1,78 @@
 {
-  "updated_at": "2026-11-19 14:47:17+08:00",
-  "date": "2026-11-19",
+  "updated_at": "2026-11-20 08:02:50+08:00",
+  "date": "2026-11-20",
   "core": {
     "MU": {
-      "price": 705.27,
-      "prev_close": 712.39,
-      "high": 722.96,
-      "low": 687.33,
-      "change_pct": -1.0
+      "price": 690.44,
+      "prev_close": 705.27,
+      "high": 760.01,
+      "low": 689.28,
+      "change_pct": -2.1
     },
     "MUU": {
-      "price": 13.94,
-      "prev_close": 14.21,
-      "high": 14.69,
-      "low": 13.26,
-      "change_pct": -1.9
+      "price": 13.37,
+      "prev_close": 13.94,
+      "high": 16.14,
+      "low": 13.34,
+      "change_pct": -4.09
     },
     "2059.TW": {
-      "price": 6520.0,
-      "prev_close": 6565.0,
-      "high": 6750.0,
-      "low": 6210.0,
-      "change_pct": -0.69
+      "price": 5940.0,
+      "prev_close": 6520.0,
+      "high": 6570.0,
+      "low": 5870.0,
+      "change_pct": -8.9
     }
   },
   "macro_and_peers": {
     "us10y": {
-      "price": 5.07,
-      "prev_close": 5.066,
-      "high": 5.08,
-      "low": 5.05,
-      "change_pct": 0.08
+      "price": 5.042,
+      "prev_close": 5.052,
+      "high": 5.04,
+      "low": 5.04,
+      "change_pct": -0.2
     },
     "dxy": {
-      "price": 103.86,
-      "prev_close": 103.86,
-      "high": 103.97,
-      "low": 103.77,
+      "price": 103.89,
+      "prev_close": 103.89,
+      "high": 0.0,
+      "low": 0.0,
       "change_pct": 0.0
     },
     "usdtwd": {
-      "price": 32.94,
-      "prev_close": 32.93,
-      "high": 33.01,
-      "low": 32.94,
+      "price": 33.02,
+      "prev_close": 33.02,
+      "high": 33.04,
+      "low": 32.97,
       "change_pct": 0.02
     },
     "sox": {
-      "price": 9652.8,
-      "prev_close": 9643.15,
-      "high": 9828.19,
-      "low": 9493.93,
-      "change_pct": 0.1
+      "price": 9419.72,
+      "prev_close": 9652.8,
+      "high": 10109.88,
+      "low": 9412.19,
+      "change_pct": -2.42
     },
     "nvda": {
-      "price": 150.96,
-      "prev_close": 155.45,
-      "high": 159.7,
-      "low": 150.4,
-      "change_pct": -2.89
+      "price": 145.98,
+      "prev_close": 150.96,
+      "high": 158.13,
+      "low": 145.71,
+      "change_pct": -3.3
     },
     "wdc": {
-      "price": 288.19,
-      "prev_close": 283.32,
-      "high": 295.6,
-      "low": 279.11,
-      "change_pct": 1.72
+      "price": 296.78,
+      "prev_close": 288.19,
+      "high": 316.11,
+      "low": 291.82,
+      "change_pct": 2.98
     },
     "avgo": {
-      "price": 354.05,
-      "prev_close": 341.62,
-      "high": 357.34,
-      "low": 340.74,
-      "change_pct": 3.64
+      "price": 346.65,
+      "prev_close": 354.05,
+      "high": 369.26,
+      "low": 345.0,
+      "change_pct": -2.09
     }
   },
   "mu_tech_and_muu_slippage": {
@@ -96,23 +96,5 @@
       "slippage_pct": -1.24
     }
   },
-  "mu_options": {
-    "source": "CBOE",
-    "expiration": "2026-11-20",
-    "max_pain": 800.0,
-    "vol_pcr": 0.65,
-    "oi_pcr": 0.91,
-    "call_wall": {
-      "strike": 800.0,
-      "oi": 8957
-    },
-    "put_wall": {
-      "strike": 750.0,
-      "oi": 7178
-    },
-    "atm_iv_pct": 105.4,
-    "net_gex_m": -70.77,
-    "call_oi_total": 282821,
-    "put_oi_total": 257514
-  }
+  "mu_options": null
 }
