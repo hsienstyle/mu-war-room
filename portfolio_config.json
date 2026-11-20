@@ -1,13 +1,13 @@
 {
   "muu": {
-    "total_shares": 1250,
+    "total_shares": 1200,
     "core_shares": 1100,
-    "swing_shares": 150,
+    "swing_shares": 100,
     "swing_cost": 16.42,
-    "swing_target_min": 18.50,
-    "swing_target_max": 20.50,
-    "total_cost_usd": 43183.91,
-    "avg_cost_usd": 34.547
+    "swing_target_min": 18.5,
+    "swing_target_max": 20.5,
+    "total_cost_usd": 42648.91,
+    "avg_cost_usd": 35.541
   },
   "tw2059": {
     "shares": 22,
@@ -15,10 +15,10 @@
     "avg_cost_twd": 10849.41
   },
   "levels": {
-    "mu_defense": 715.00,
+    "mu_defense": 715,
     "mu_support1": 716.38,
-    "mu_res1_min": 780.00,
-    "mu_res1_max": 830.00,
+    "mu_res1_min": 780,
+    "mu_res1_max": 830,
     "mu_50ma": 983.23
   },
   "alerts": {
@@ -29,7 +29,7 @@
         "id": "mu_reclaim_200ma",
         "symbol": "MU",
         "op": ">=",
-        "target": 715.00,
+        "target": 715,
         "title": "🚀 MU 站回 200MA 年線 ($715)",
         "action": "觀察是否放量突破 $723 啟動破底翻，準備劇本 A 收割 50 股。"
       },
@@ -37,7 +37,7 @@
         "id": "muu_script_a_sell50",
         "symbol": "MUU",
         "op": ">=",
-        "target": 15.50,
+        "target": 15.5,
         "title": "🔴 劇本 A 觸發｜MUU 進入 $15.50~$16.50 停利區",
         "action": "可收割 50 股（11/16 @$14.70 低接倉），先抽回 ~$800 USD 現金避開高 IV 耗損！"
       },
@@ -45,7 +45,7 @@
         "id": "muu_script_b_sell100",
         "symbol": "MUU",
         "op": ">=",
-        "target": 18.30,
+        "target": 18.3,
         "title": "🔥 劇本 B 觸發｜MUU 強攻 $18.30~$19.80 月線頸線區",
         "action": "分兩批收割 100 股（11/12 @$17.28 游擊倉），獲利了結留 1,100 股核心底倉！"
       },
@@ -61,14 +61,14 @@
         "id": "muu_script_d_stop",
         "symbol": "MUU",
         "op": "<=",
-        "target": 12.30,
+        "target": 12.3,
         "title": "🚨 劇本 D 紅線跌破｜MUU 觸及 $12.30 風控線",
         "action": "W 底失敗風險升高，依紀律檢視減碼 150 股游擊倉保現金！"
       }
     ],
     "us_pct_threshold": {
-      "MU": 5.0,
-      "MUU": 10.0
+      "MU": 5,
+      "MUU": 10
     },
     "tw_rules": [
       {
@@ -89,7 +89,7 @@
       }
     ],
     "tw_pct_threshold": {
-      "2059": 5.0
+      "2059": 5
     }
   }
 }
