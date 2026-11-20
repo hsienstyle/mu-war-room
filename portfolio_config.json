@@ -1,13 +1,13 @@
 {
   "muu": {
-    "total_shares": 1200,
+    "total_shares": 1150,
     "core_shares": 1100,
-    "swing_shares": 100,
+    "swing_shares": 50,
     "swing_cost": 16.42,
     "swing_target_min": 18.5,
     "swing_target_max": 20.5,
-    "total_cost_usd": 42648.91,
-    "avg_cost_usd": 35.541
+    "total_cost_usd": 42118.91,
+    "avg_cost_usd": 36.625
   },
   "tw2059": {
     "shares": 22,
