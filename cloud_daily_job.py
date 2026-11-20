@@ -497,16 +497,20 @@ def _clean_gemini_plain_text(text):
     return cleaned.strip()
 
 
-def call_gemini_text(api_key, prompt, max_tokens=1024, temperature=0.3):
-    """統一呼叫 Gemini REST API：依序嘗試 gemini-2.5-flash -> gemini-2.5-flash-lite -> gemini-3-flash-preview"""
+def call_gemini_text(api_key, prompt, max_tokens=1024, temperature=0.3, model_specs=None, timeout=30):
+    """統一呼叫 Gemini REST API：預設實測 Free Tier 最高階高速鏈
+    gemini-3.6-flash (825ms) -> gemini-3.5-flash -> gemini-3-flash-preview -> gemini-2.5-flash
+    """
     if not api_key:
         return None
 
-    model_specs = [
-        ("gemini-2.5-flash", True),
-        ("gemini-2.5-flash-lite", True),
-        ("gemini-3-flash-preview", False),
-    ]
+    if model_specs is None:
+        model_specs = [
+            ("gemini-3.6-flash", False),
+            ("gemini-3.5-flash", False),
+            ("gemini-3-flash-preview", False),
+            ("gemini-2.5-flash", True),
+        ]
     for model_name, use_thinking_zero in model_specs:
         gen_cfg = {
             "temperature": temperature,
@@ -527,12 +531,12 @@ def call_gemini_text(api_key, prompt, max_tokens=1024, temperature=0.3):
         )
         try:
             try:
-                with urllib.request.urlopen(req, timeout=25, context=SSL_CTX) as resp:
+                with urllib.request.urlopen(req, timeout=timeout, context=SSL_CTX) as resp:
                     res_data = json.loads(resp.read().decode("utf-8"))
             except (ssl.SSLError, urllib.error.URLError) as ssl_err:
                 if isinstance(ssl_err, ssl.SSLError) or isinstance(getattr(ssl_err, "reason", None), ssl.SSLError):
                     unverified = ssl._create_unverified_context()
-                    with urllib.request.urlopen(req, timeout=25, context=unverified) as resp:
+                    with urllib.request.urlopen(req, timeout=timeout, context=unverified) as resp:
                         res_data = json.loads(resp.read().decode("utf-8"))
                 else:
                     raise
@@ -829,7 +833,17 @@ def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options
 4. 【CIO 最終操作裁決】...（務必針對 MUU {p_muu.get('total_shares', 1250):,} 股含 {p_muu.get('swing_shares', 150)} 股游擊倉 與 川湖 {p_tw.get('shares', 22)} 股給出今日具體執行、停利/減碼或觀望紀律）
 """
 
-    cio_raw = call_gemini_text(api_key, cio_prompt, max_tokens=1536, temperature=0.3)
+    # CIO 最終裁決採用更深推理的 gemini-3.7-flash 優先，逾時或限流無縫降級 3.6 -> 3.5 -> 2.5
+    cio_model_specs = [
+        ("gemini-3.7-flash", False),
+        ("gemini-3.6-flash", False),
+        ("gemini-3.5-flash", False),
+        ("gemini-2.5-flash", True),
+    ]
+    cio_raw = call_gemini_text(
+        api_key, cio_prompt, max_tokens=4096, temperature=0.3,
+        model_specs=cio_model_specs, timeout=50
+    )
     cio_body = ""
     if cio_raw:
         cio_lines = []

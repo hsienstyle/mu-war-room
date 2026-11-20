@@ -473,7 +473,7 @@ def generate_gemini_chips_insight(summary, news_items, cfg):
 {headlines}
 """
 
-    models_to_try = ["gemini-3.5-flash", "gemini-3-flash-preview", "gemini-2.5-flash"]
+    models_to_try = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3-flash-preview", "gemini-2.5-flash"]
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": 0.3, "maxOutputTokens": 4096},
@@ -490,7 +490,7 @@ def generate_gemini_chips_insight(summary, news_items, cfg):
             with urllib.request.urlopen(req, timeout=25) as resp:
                 res_data = json.loads(resp.read().decode("utf-8"))
             parts = res_data["candidates"][0]["content"]["parts"]
-            text = "".join(p.get("text", "") for p in parts).strip()
+            text = "".join(p.get("text", "") for p in parts).replace("**", "").strip()
             if text:
                 print(f"[OK] Gemini chips insight generated using {model_name}")
                 return text
