@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 690.44, prevClose: 705.27, changePct: -2.1 },
-  MUU: { price: 13.37, prevClose: 13.94, changePct: -4.09 },
-  headline: "【即時新聞】AI記憶體需求狂飆！美光(MU)示警供應短缺至2027年，今年股價飆145%",
-  lastPushDate: "2026-11-20"
+  MU: { price: 594.51, prevClose: 690.44, changePct: -13.89 },
+  MUU: { price: 9.64, prevClose: 13.37, changePct: -27.9 },
+  headline: "美光預估本益比剩3.8倍還在跌！記憶體股下一關看什麼？",
+  lastPushDate: "2026-11-21"
 };
 
 async function fetchQuote(symbol, fallback) {
