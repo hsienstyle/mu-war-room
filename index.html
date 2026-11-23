@@ -525,16 +525,16 @@
         <div class="flex items-center justify-between">
           <div>
             <span class="text-[11px] text-emerald-400 font-semibold">台股 AI 伺服器導軌龍頭</span>
-            <h3 class="text-sm font-bold text-white">2059.TW 川湖 (持有 22 股)</h3>
+            <h3 class="text-sm font-bold text-white">2059.TW 川湖 (持有 20 股)</h3>
           </div>
           <div class="text-right">
-            <div class="text-base font-extrabold text-white" id="tw2059-price">NT$ 5,350</div>
-            <div class="text-[11px] text-slate-400" id="tw2059-avg">有效均價 NT$ 10,849</div>
+            <div class="text-base font-extrabold text-white" id="tw2059-price">NT$ 5,680</div>
+            <div class="text-[11px] text-slate-400" id="tw2059-avg">有效均價 NT$ 11,366</div>
           </div>
         </div>
         <div class="text-xs text-slate-300 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
-          • <strong>淨投入成本</strong>：NT$ 238,687（11/12 買 2 股@8,200 ＋ 11/13 買 3 股@8,100，總持股 22 股、有效均價首度壓破 11,000 降至 10,849.41 元）<br/>
-          • <strong>最新動能</strong>：Q3 毛利率 88.2%、單季 EPS 122.79 元創歷史新高！11/16 隨台股暴跌 2,635 點測跌停 7,095 後收 7,175 元 (-8.95%)，2026F P/E 僅 21.3x 靜待 11/17 NVDA 財報。
+          • <strong>淨投入成本</strong>：NT$ 227,327（11/23 趁禁空令首日急拉於 5,680 元減碼 2 股抽回 +NT$11,360 現金，總持股 20 股、有效均價 11,366.35 元）<br/>
+          • <strong>最新動能</strong>：Q3 毛利率 88.2%、單季 EPS 122.79 元創歷史新高！11/23 早盤回測 4,980 後暴力 V 轉 +6.2% 至 5,680 元重奪股后，留意百億 0% CB 尚未訂價與週三美國 Core PCE 變數。
         </div>
         <div id="tw2059-chips-box" class="bg-slate-900/75 p-2.5 rounded-xl border border-emerald-500/25 space-y-2">
           <div class="flex items-center justify-between text-[11px]">
@@ -566,6 +566,14 @@
       <div class="ios-card p-4 space-y-2.5">
         <h3 class="text-sm font-bold text-white">📋 近期部位操作紀錄</h3>
         <div id="trade-history-list" class="space-y-2 text-xs">
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <div>
+              <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[10px]">DE-RISK</span>
+              <strong class="text-white ml-1">2059 川湖 減碼2股 @ NT$5,680</strong>
+              <div class="text-[11px] text-slate-400 mt-0.5">11/23 趁禁空令首日急拉 +6.2% 反壓區減碼 2 股降曝險，收回 +NT$11,360，總持股 20 股、均價 NT$11,366</div>
+            </div>
+            <span class="text-amber-300 font-mono font-bold">+NT$11,360</span>
+          </div>
           <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
             <div>
               <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">STOP-RISK</span>
@@ -900,8 +908,8 @@
    - 實質總投入淨成本：$${STATE.totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD
    - 整體損益兩平實質均價：$${STATE.avgCost.toFixed(3)} USD / 股
 2. 台股 2059.TW 川湖：
-   - 目前總持股：22 股（17 股核心 + 5 股游擊 @ 均價 8,140 元）
-   - 實質總投入成本：238,687 TWD｜有效均價：10,849.41 TWD
+   - 目前總持股：20 股（17 股核心 + 3 股游擊；11/23 趁禁空令反彈於 5,680 元減碼 2 股收回 +11,360 TWD）
+   - 實質總投入成本：227,327 TWD｜有效均價：11,366.35 TWD
 
 【最新盤面報價與關鍵價位】
 - MU 現價/收盤：$${STATE.muPrice.toFixed(2)}（前收 $${STATE.muPrevClose.toFixed(2)}，日低 $${STATE.muLow.toFixed(2)}）
@@ -937,9 +945,9 @@
           avg_cost_usd: Number(STATE.avgCost.toFixed(3))
         },
         tw2059: {
-          shares: 22,
-          total_cost_twd: 238687,
-          avg_cost_twd: 10849.41
+          shares: 20,
+          total_cost_twd: 227327,
+          avg_cost_twd: 11366.35
         },
         levels: {
           mu_defense: 715.00,
