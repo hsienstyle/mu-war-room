@@ -34,6 +34,8 @@
      - **`risk-devil`（🛡️ 空頭魔鬼代言人 / 風控審查官）**：強制站在空方與風控立場，挑戰前面三位專家的樂觀假設，點出破位紅線、高 IV 陰跌陷阱與最壞劇本最大回撤，給出 `-5 ~ +5` 風險評分。
   3. 4 位專家於佈告欄交叉檢視後，由 Coordinator（CIO）彙整輸出**繁體中文 Markdown 表格版「4-Agent 投資委員會決議書」**（含總分 `/20`、多空衝突裁決、以及針對 `MUU` 核心/游擊倉與 `2059.TW` 的具體掛單劇本 A/B/C/D），並詢問是否同步寫入戰情室與筆記。
 - **日常省配額模式**：若使用者僅詢問「分析今天最新戰情」或一般單一問題（未輸入 `開會`），則維持單人模式以節省 Antigravity 配額。
+- **觸發暗號二：`跑量化` / `跑 Colab`（Google Colab 機構級量化實驗室自動執行與判讀）**：
+  - 當使用者輸入 **`跑量化`**、**`跑 Colab`**、**`執行量化實驗室`** 或要求用 Colab 執行並分析時，**不需反問連結**，直接委派 `browser` subagent 開啟 Google Colab 專屬筆記本 `https://colab.research.google.com/drive/122LnxDw4vJf6cJwpxiy7ekcQKYOfvRiP`（本機對應 `notebooks/MU_WarRoom_Quant_Lab.ipynb`），點擊 **「全部執行 (Run all)」** 待 Cell 1～6 全部完成後，擷取最新 4 大量化模組結果（`MUU` 50,000 次蒙地卡羅波動耗損、`MU` 全到期日 GEX 剖面與 IV 期限結構、5 年急殺重啟游擊倉濾網回測、`2059.TW` 法人與融資籌碼圖），再由主對話結合六大維度與實盤持倉輸出操作分析與掛單劇本。
 
 ---
 
@@ -55,7 +57,8 @@
 | `daily_macro_options.json` | 每日雲端快照：總經、同業共振、CBOE `MU` 選擇權、MUU 耗損與 4-Agent 委員會紀錄 |
 | `tw2059_chips.json` | 川湖近 30 個交易日盤後籌碼歷史資料庫 |
 | `.github/workflows/` | `daily_war_room.yml`（08:00 美股晨報）與 `tw2059_chips.yml`（16:35 川湖籌碼）雙排程設定 |
-| `google_apps_script_trigger.gs` | **Google Apps Script 總指揮中心（v5.2，置於本機根目錄且已列於 `.gitignore`）**：每 5 分鐘巡檢（08:00 晨報、08:05 & 16:40 Google Drive 自動同步、09:05~13:35 川湖盤中狙擊、16:35 川湖籌碼、21:00~05:15 美股盤前/盤中狙擊）＋ **LINE 雙向機器人 Web App**（`報價`/`倉位`/`算T`/`籌碼`/`選擇權`/`警報`/`買賣記帳`/`同步`/`問`/`開會` 4-Agent `gemini-3.6-flash` 並行） |
+| `google_apps_script_trigger.gs` | **Google Apps Script 總指揮中心（v5.2，置於本機根目錄且已列於 `.gitignore`）**：每 5 分鐘巡檢（08:00 晨報、08:05 & 16:40 Google Drive 含原生 Google Doc 自動同步、09:05~13:35 川湖盤中狙擊、16:35 川湖籌碼、21:00~05:15 美股盤前/盤中狙擊）＋ **LINE 雙向機器人 Web App**（`報價`/`倉位`/`算T`/`籌碼`/`選擇權`/`警報`/`買賣記帳`/`同步`/`問`/`開會` 4-Agent `gemini-3.6-flash` 並行） |
+| `notebooks/MU_WarRoom_Quant_Lab.ipynb` | **Google Colab 機構級量化實驗室**（直開連結：`https://colab.research.google.com/drive/122LnxDw4vJf6cJwpxiy7ekcQKYOfvRiP`）：`MUU` 50,000 次蒙地卡羅耗損模擬、`MU` 全到期日 GEX / IV 期限結構、5 年急殺重啟游擊倉回測與 `2059.TW` 籌碼疊圖 |
 
 ### 資安紅線（嚴格遵守）
 - **零明文密鑰**：嚴禁於任何 `.py`、`.gs`、`.html`、`.json` 或公開 Repo 中硬編碼任何 Token / API Key。
@@ -87,4 +90,5 @@
      - `watchlist.md`：`1pt_0NWLGS-99Mu5NSaB5U8lWO4ebS1iI`
      - `index.html`：`1-HrZXMTmu_B_G_UG6zMSrA5ktf3okTeX`
      - `MU_MUU_Widget.js`：`1jb12a3El1k6USIykBzNnuAd7CM-C3u4X`
-     - *(另由 GAS 自動維護於同資料夾內之即時快照：`tw2059_chips.json`、`daily_macro_options.json`)*
+     - `MU_WarRoom_Quant_Lab.ipynb`（Google Colab 量化實驗室）：`122LnxDw4vJf6cJwpxiy7ekcQKYOfvRiP`
+     - *(另由 GAS 自動維護於同資料夾內之即時快照：`tw2059_chips.json`、`daily_macro_options.json` 與原生 Google Doc `美股記憶體_MU_MUU_最新戰情與持倉總表`)*
