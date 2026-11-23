@@ -139,8 +139,8 @@
             </div>
           </div>
           <div class="mt-3 pt-2.5 border-t border-slate-700/60 text-[11px] text-slate-300 flex justify-between">
-            <span id="dash-swing-label">游擊 150 股 (@16.42)</span>
-            <span id="swing-badge" class="font-bold text-rose-400">-11.33%</span>
+            <span id="dash-swing-label">游擊 0 股 (現金 $1,596)</span>
+            <span id="swing-badge" class="font-bold text-slate-400">空手待命</span>
           </div>
         </div>
       </div>
@@ -382,7 +382,7 @@
         <div class="flex items-center justify-between border-b border-slate-700/60 pb-2.5">
           <div>
             <span class="text-xs text-sky-400 font-semibold">核心美股持倉總覽</span>
-            <h2 class="text-base font-bold text-white" id="pf-title-shares">MUU (1,250 股 = 1,100核心 + 150游擊)</h2>
+            <h2 class="text-base font-bold text-white" id="pf-title-shares">MUU (1,100 股 = 1,100核心 + 0游擊)</h2>
           </div>
           <button onclick="togglePositionEditor()" class="px-2.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 active:scale-95 text-slate-950 font-extrabold text-xs transition flex items-center gap-1 shadow-md shadow-sky-500/20">
             <span>✏️ 輸入買賣 / 修改持倉</span>
@@ -427,19 +427,19 @@
             <div class="grid grid-cols-2 gap-2 text-xs">
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">MUU 總股數</label>
-                <input type="number" id="edit-total-shares" value="1250" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="edit-total-shares" value="1100" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">MUU 實質總成本 ($)</label>
-                <input type="number" id="edit-total-cost" step="0.01" value="43183.91" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="edit-total-cost" step="0.01" value="41587.91" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">游擊倉股數</label>
-                <input type="number" id="edit-swing-shares" value="150" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="edit-swing-shares" value="0" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">游擊倉買價 ($)</label>
-                <input type="number" id="edit-swing-cost" step="0.01" value="16.42" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
+                <input type="number" id="edit-swing-cost" step="0.01" value="0.00" class="w-full bg-slate-800 text-white rounded-lg px-2 py-1.5 text-xs border border-slate-700" />
               </div>
             </div>
             <div class="flex gap-2 pt-1">
@@ -463,25 +463,25 @@
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800">
             <div class="text-slate-400">實質總投入成本</div>
-            <div class="text-base font-extrabold text-white mt-0.5" id="pf-total-cost">$43,183.91</div>
-            <div class="text-[11px] text-sky-400 mt-0.5" id="pf-avg-cost">實質均價 $34.547 / 股</div>
+            <div class="text-base font-extrabold text-white mt-0.5" id="pf-total-cost">$41,587.91</div>
+            <div class="text-[11px] text-sky-400 mt-0.5" id="pf-avg-cost">實質均價 $37.807 / 股</div>
           </div>
           <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800">
             <div class="text-slate-400">目前持倉總市值</div>
-            <div class="text-base font-extrabold text-white mt-0.5" id="pf-market-val">$19,037.50</div>
-            <div class="text-[11px] text-rose-400 mt-0.5" id="pf-unrealized">未實現 -$24,146 (-55.9%)</div>
+            <div class="text-base font-extrabold text-white mt-0.5" id="pf-market-val">$10,604.00</div>
+            <div class="text-[11px] text-rose-400 mt-0.5" id="pf-unrealized">未實現 -$30,984 (-74.5%)</div>
           </div>
         </div>
 
         <!-- 游擊倉獨立追蹤 -->
         <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
           <div class="text-xs space-y-0.5">
-            <div class="font-bold text-amber-300" id="pf-swing-title">⚡ 低接游擊倉 (150 股 @ $16.42)</div>
-            <div class="text-[11px] text-slate-300">100股@17.28 + 50股@14.70，獲利直接折抵核心倉均價</div>
+            <div class="font-bold text-amber-300" id="pf-swing-title">⚡ 低接游擊倉 (0 股｜已抽回 $1,596 現金)</div>
+            <div class="text-[11px] text-slate-300">11/20 已全數清空 150 股游擊倉（均價 $10.64），空手待止跌紅K</div>
           </div>
           <div class="text-right">
-            <div class="text-sm font-extrabold text-white" id="swing-pnl-usd">-$178.50</div>
-            <div class="text-[11px] text-amber-300">停利目標 $17.5~$20.5</div>
+            <div class="text-sm font-extrabold text-emerald-400" id="swing-pnl-usd">+$1,596.00</div>
+            <div class="text-[11px] text-amber-300">游擊現金子彈</div>
           </div>
         </div>
       </div>
@@ -566,6 +566,14 @@
       <div class="ios-card p-4 space-y-2.5">
         <h3 class="text-sm font-bold text-white">📋 近期部位操作紀錄</h3>
         <div id="trade-history-list" class="space-y-2 text-xs">
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <div>
+              <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">STOP-RISK</span>
+              <strong class="text-white ml-1">MUU 減碼150股 @ 均價 $10.64</strong>
+              <div class="text-[11px] text-slate-400 mt-0.5">11/20 分3批（50@10.70 / 50@10.60 / 50@10.62）清空游擊倉，抽回 +$1,596 現金，回歸 1,100 核心</div>
+            </div>
+            <span class="text-amber-300 font-mono font-bold">+$1,596.0</span>
+          </div>
           <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
             <div>
               <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-SAVE</span>
@@ -662,12 +670,12 @@
 
   <script>
     const DEFAULT_PORTFOLIO = {
-      totalShares: 1250,
+      totalShares: 1100,
       coreShares: 1100,
-      totalCost: 43183.91,
-      avgCost: 34.547,
-      swingShares: 150,
-      swingCost: 16.42,
+      totalCost: 41587.91,
+      avgCost: 37.807,
+      swingShares: 0,
+      swingCost: 0,
       customTrades: []
     };
 
@@ -679,12 +687,12 @@
       muuPrice: 9.64,
       muuPrevClose: 13.37,
       muuLow: 9.29,
-      totalShares: 1250,
+      totalShares: 1100,
       coreShares: 1100,
-      totalCost: 43183.91,
-      avgCost: 34.547,
-      swingShares: 150,
-      swingCost: 16.42,
+      totalCost: 41587.91,
+      avgCost: 37.807,
+      swingShares: 0,
+      swingCost: 0,
       customTrades: [],
       liveNewsLoaded: false
     };
@@ -830,6 +838,14 @@
       }).join('');
 
       const defaultHtml = `
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
+            <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">STOP-RISK</span>
+            <strong class="text-white ml-1">MUU 減碼150股 @ 均價 $10.64</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/20 分3批（50@10.70 / 50@10.60 / 50@10.62）清空游擊倉，抽回 +$1,596 現金，回歸 1,100 核心</div>
+          </div>
+          <span class="text-amber-300 font-mono font-bold">+$1,596.0</span>
+        </div>
         <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
           <div>
             <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">T-SAVE</span>
