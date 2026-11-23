@@ -1,13 +1,13 @@
 {
   "muu": {
-    "total_shares": 1100,
+    "total_shares": 1000,
     "core_shares": 1100,
     "swing_shares": 0,
     "swing_cost": 0,
     "swing_target_min": 18.5,
     "swing_target_max": 20.5,
-    "total_cost_usd": 41587.91,
-    "avg_cost_usd": 37.807
+    "total_cost_usd": 40506.91,
+    "avg_cost_usd": 40.507
   },
   "tw2059": {
     "shares": 20,
@@ -16,10 +16,10 @@
   },
   "levels": {
     "mu_defense": 585.25,
-    "mu_support1": 509.00,
-    "mu_res1_min": 637.00,
-    "mu_res1_max": 650.00,
-    "mu_50ma": 715.00
+    "mu_support1": 509,
+    "mu_res1_min": 637,
+    "mu_res1_max": 650,
+    "mu_50ma": 715
   },
   "alerts": {
     "enabled": true,
@@ -29,7 +29,7 @@
         "id": "muu_deleverage_tranche1",
         "symbol": "MUU",
         "op": ">=",
-        "target": 10.20,
+        "target": 10.2,
         "title": "🟠 減碼第1批｜MUU 彈抵 $10.20~$10.45 逃生窗",
         "action": "對應 MU $610~$620，趁 22:30~23:00 0DTE Vanna 急拉先減 100 股 MUU 鎖定現金防踏空！週三 PCE 前嚴禁買股。"
       },
@@ -61,7 +61,7 @@
         "id": "muu_deep_value",
         "symbol": "MUU",
         "op": "<=",
-        "target": 7.60,
+        "target": 7.6,
         "title": "💎 深水區觀察｜MUU 進入 $7.00~$7.60 極端超跌區",
         "action": "對應 MU $510~$530，限週三 PCE<=3.3% 且 US10Y<5.00% 後出現實體紅K止穩，優先改轉 0% 耗損之 1X 正股 MU！"
       }
