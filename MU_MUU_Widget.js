@@ -10,20 +10,20 @@
 const WAR_ROOM_URL = "https://hsienstyle.github.io/mu-war-room/";
 
 const PORTFOLIO = {
-  totalShares: 1100,          // MUU 總股數 (1100核心 + 0游擊，11/20已清空150股游擊倉抽回$1,596現金)
-  avgCost: 37.807,            // 整體實質均價 (USD)
-  totalCost: 41587.91,        // 總投入淨成本 (USD)
-  swingShares: 0,             // 游擊倉股數 (空手待止跌，握有$1,596現金子彈)
+  totalShares: 850,           // MUU 總股數 (850核心 + 0游擊，11/20+11/23共減碼400股抽回$4,637現金，11/24撥4.4萬買00981A 2張)
+  avgCost: 45.349,            // 整體實質均價 (USD)
+  totalCost: 38546.91,        // 總投入淨成本 (USD)
+  swingShares: 0,             // 游擊倉股數 (0股)
   swingCost: 0,               // 游擊倉均價
-  muDefense: 585.25,          // MU 11/20 盤中低點短線防守
-  muResistance1: 715.00       // MU 200MA 年線反壓
+  muDefense: 666.66,          // MU 11/23 雙底短線防守
+  muResistance1: 720.00       // MU 200MA / Gamma Flip 反壓
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 594.51, prevClose: 690.44, changePct: -13.89 },
-  MUU: { price: 9.64, prevClose: 13.37, changePct: -27.9 },
-  headline: "美光預估本益比剩3.8倍還在跌！記憶體股下一關看什麼？",
-  lastPushDate: "2026-11-21"
+  MU: { price: 704.89, prevClose: 594.51, changePct: 18.57 },
+  MUU: { price: 13.33, prevClose: 9.64, changePct: 38.28 },
+  headline: "黃仁勳復職引爆費半飆14%！MU強彈18.6%直撞$720反壓，緊盯週三Core PCE",
+  lastPushDate: "2026-11-24"
 };
 
 async function fetchQuote(symbol, fallback) {

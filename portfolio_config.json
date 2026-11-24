@@ -1,7 +1,7 @@
 {
   "muu": {
     "total_shares": 850,
-    "core_shares": 1100,
+    "core_shares": 850,
     "swing_shares": 0,
     "swing_cost": 0,
     "swing_target_min": 18.5,
@@ -14,48 +14,53 @@
     "total_cost_twd": 227327,
     "avg_cost_twd": 11366.35
   },
+  "tw00981a": {
+    "shares": 2000,
+    "total_cost_twd": 44000,
+    "avg_cost_twd": 22.0
+  },
   "levels": {
-    "mu_defense": 585.25,
-    "mu_support1": 509,
-    "mu_res1_min": 637,
-    "mu_res1_max": 650,
-    "mu_50ma": 715
+    "mu_defense": 666.66,
+    "mu_support1": 585.25,
+    "mu_res1_min": 715,
+    "mu_res1_max": 725,
+    "mu_50ma": 793
   },
   "alerts": {
     "enabled": true,
     "cooldown_minutes": 180,
     "us_rules": [
       {
-        "id": "muu_deleverage_tranche1",
-        "symbol": "MUU",
-        "op": ">=",
-        "target": 10.2,
-        "title": "🟠 減碼第1批｜MUU 彈抵 $10.20~$10.45 逃生窗",
-        "action": "對應 MU $610~$620，趁 22:30~23:00 0DTE Vanna 急拉先減 100 股 MUU 鎖定現金防踏空！週三 PCE 前嚴禁買股。"
-      },
-      {
-        "id": "mu_reclaim_650",
+        "id": "mu_breakout_725",
         "symbol": "MU",
         "op": ">=",
-        "target": 637,
-        "title": "🚀 劇本 A｜MU 反彈進入 $637~$650 頸線強壓區",
-        "action": "對應 MUU $11.00~$11.60，黃金去槓桿逃生窗！嚴禁追高，執行第2~3批減碼（累計減 200~250 股）純留現金待週三 PCE。"
+        "target": 725,
+        "title": "🚀 劇本 B｜MU 放量站穩 $725 突破 200MA / Gamma Flip",
+        "action": "造市商轉入正 Gamma 護盤區！850 股核心穩抱吃主升段，11/25 Core PCE 落地前嚴禁追高。"
       },
       {
-        "id": "muu_script_a_bounce",
+        "id": "muu_res_1410",
         "symbol": "MUU",
         "op": ">=",
-        "target": 10.65,
-        "title": "🟡 減碼第2批｜MUU 彈抵 $10.65~$11.00 反壓區",
-        "action": "切忌追買！按紀律執行第2批減碼 100 股 MUU 降波動稅，週三 Core PCE 落地前 100% 純留現金。"
+        "target": 14.1,
+        "title": "🟡 反壓觀察｜MUU 彈抵 $14.10+ 強壓區 (MU ~$720~$725)",
+        "action": "已減碼至 850 股結構健康；若量縮滯漲可依個人心態微調 50 股鎖利，否則 850 股續抱過關！"
+      },
+      {
+        "id": "muu_retest_1180",
+        "symbol": "MUU",
+        "op": "<=",
+        "target": 11.8,
+        "title": "🟢 回測觀察｜MUU 回測昨日低點支撐 $11.80 (MU $666.66)",
+        "action": "已低於 11/23 減碼均價 $12.164！限 11/25 Core PCE 落地止穩後，評估優先轉進 0% 耗損之 1X 正股 MU。"
       },
       {
         "id": "muu_script_d_break",
         "symbol": "MUU",
         "op": "<=",
         "target": 9.29,
-        "title": "🚨 破位紅線｜MUU 跌破週五低點 $9.29 (MU $585.25)",
-        "action": "下方直通 $509~$530 負 Gamma 空氣口袋！嚴禁接刀動用 $1,596，帶量跌破逾 15 分鐘無反抽須強制減碼 150~200 股保命。"
+        "title": "🚨 破位紅線｜MUU 跌破 11/20 低點 $9.29 (MU $585.25)",
+        "action": "下方直通 $509~$530 負 Gamma 空氣口袋！嚴禁左側接刀，待 PCE 後實體紅K止穩再議。"
       },
       {
         "id": "muu_deep_value",
@@ -72,27 +77,27 @@
     },
     "tw_rules": [
       {
-        "id": "tw2059_reclaim_5ma",
+        "id": "tw2059_res_6520",
         "symbol": "2059",
         "op": ">=",
-        "target": 6010,
-        "title": "🚀 川湖 (2059) 站回動態 5MA (~6,010 元)",
-        "action": "目前留 20 股核心（11/23 已於 5,680 減碼 2 股抽回 11,360 元）；確認外資連買與融資續降才檢討後續操作。"
+        "target": 6520,
+        "title": "🚀 川湖 (2059) 續攻挑戰 6,520~6,800 反壓區",
+        "action": "11/24 一字漲停 6,200 站上 5MA；20 股核心續抱觀察量能，無量遇壓可再評估微調 1~2 股。"
       },
       {
-        "id": "tw2059_res_5940",
+        "id": "tw2059_retest_5600",
         "symbol": "2059",
-        "op": ">=",
-        "target": 5940,
-        "title": "🟡 川湖 (2059) 反彈進入 5,940 元強壓區",
-        "action": "留意百億 CB 尚未訂價與美國 PCE 變數，若無量遇壓可再評估減 1~2 股降曝險。"
+        "op": "<=",
+        "target": 5600,
+        "title": "🟢 川湖 (2059) 回測 5,600 元以下（低於 11/23 賣價 5,680）",
+        "action": "限 11/25 Core PCE 落地且量縮守穩後，評估用台幣備用金反 T 買回 2 股降均價。"
       },
       {
         "id": "tw2059_support_4980",
         "symbol": "2059",
         "op": "<=",
         "target": 4980,
-        "title": "⚠️ 川湖 (2059) 回測 11/23 早盤低點 4,980 元",
+        "title": "⚠️ 川湖 (2059) 回測 11/23 破底翻低點 4,980 元",
         "action": "20 股核心勿恐慌砍地板，週三 PCE 落地前亦嚴禁左側急著攤平。"
       }
     ],

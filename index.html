@@ -139,8 +139,8 @@
             </div>
           </div>
           <div class="mt-3 pt-2.5 border-t border-slate-700/60 text-[11px] text-slate-300 flex justify-between">
-            <span id="dash-swing-label">游擊 0 股 (現金 $1,596)</span>
-            <span id="swing-badge" class="font-bold text-slate-400">空手待命</span>
+            <span id="dash-swing-label">核心 850 股・餘額 ~12萬台幣</span>
+            <span id="swing-badge" class="font-bold text-emerald-400">已減碼控險</span>
           </div>
         </div>
       </div>
@@ -679,10 +679,10 @@
 
   <script>
     const DEFAULT_PORTFOLIO = {
-      totalShares: 1100,
-      coreShares: 1100,
-      totalCost: 41587.91,
-      avgCost: 37.807,
+      totalShares: 850,
+      coreShares: 850,
+      totalCost: 38546.91,
+      avgCost: 45.349,
       swingShares: 0,
       swingCost: 0,
       customTrades: []
@@ -690,16 +690,16 @@
 
     // 核心狀態與最新快照資料
     const STATE = {
-      muPrice: 594.51,
-      muPrevClose: 690.44,
-      muLow: 585.25,
-      muuPrice: 9.64,
-      muuPrevClose: 13.37,
-      muuLow: 9.29,
-      totalShares: 1100,
-      coreShares: 1100,
-      totalCost: 41587.91,
-      avgCost: 37.807,
+      muPrice: 704.89,
+      muPrevClose: 594.51,
+      muLow: 666.66,
+      muuPrice: 13.33,
+      muuPrevClose: 9.64,
+      muuLow: 11.78,
+      totalShares: 850,
+      coreShares: 850,
+      totalCost: 38546.91,
+      avgCost: 45.349,
       swingShares: 0,
       swingCost: 0,
       customTrades: [],
@@ -849,6 +849,30 @@
       const defaultHtml = `
         <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
           <div>
+            <span class="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold text-[10px]">BUY-ETF</span>
+            <strong class="text-white ml-1">00981A 主動統一台股增長 2張 @ NT$22.00</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/24 建立台股AI主動增長倉 2,000 股（含台積/奇鋐/智邦/台光電，12月除息），剩餘現金池約 12.0 萬</div>
+          </div>
+          <span class="text-sky-400 font-mono font-bold">-NT$44,000</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
+            <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[10px]">DELEVER</span>
+            <strong class="text-white ml-1">MUU 減碼250股 @ 均價 $12.164</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/23 趁反彈分3批（100@10.81 / 100@13.00 / 50@13.20）再抽回 +$3,041，總持股降至 850 股、均價 $45.349</div>
+          </div>
+          <span class="text-amber-300 font-mono font-bold">+$3,041.0</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
+            <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[10px]">TRIM</span>
+            <strong class="text-white ml-1">2059 川湖 減碼2股 @ NT$5,680</strong>
+            <div class="text-[11px] text-slate-400 mt-0.5">11/23 禁空令首日午後急拉反壓區減碼2股抽回現金，總持股降至 20 股、均價 NT$11,366</div>
+          </div>
+          <span class="text-amber-300 font-mono font-bold">+NT$11,360</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+          <div>
             <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">STOP-RISK</span>
             <strong class="text-white ml-1">MUU 減碼150股 @ 均價 $10.64</strong>
             <div class="text-[11px] text-slate-400 mt-0.5">11/20 分3批（50@10.70 / 50@10.60 / 50@10.62）清空游擊倉，抽回 +$1,596 現金，回歸 1,100 核心</div>
@@ -904,20 +928,21 @@
 
 【我的最新即時持倉與成本結構】
 1. 美股 MUU (Direxion Daily MU Bull 2X ETF)：
-   - 目前總持股：${STATE.totalShares.toLocaleString()} 股（核心底倉 ${STATE.coreShares.toLocaleString()} 股 + 短線游擊倉 ${STATE.swingShares} 股 @ 均價 $${STATE.swingCost.toFixed(2)} USD）
-   - 游擊倉明細：11/12 買回 100 股 @ $17.28 + 11/16 回測年線買回 50 股 @ $14.70（11/12~11/16 整輪 200 股反T已淨收回 +$208.29 USD 現金）
+   - 目前總持股：${STATE.totalShares.toLocaleString()} 股（核心底倉 ${STATE.coreShares.toLocaleString()} 股 + 游擊倉 ${STATE.swingShares} 股；11/20+11/23 累計減碼 400 股抽回 $4,637 USD 降槓桿）
    - 實質總投入淨成本：$${STATE.totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD
    - 整體損益兩平實質均價：$${STATE.avgCost.toFixed(3)} USD / 股
 2. 台股 2059.TW 川湖：
-   - 目前總持股：20 股（17 股核心 + 3 股游擊；11/23 趁禁空令反彈於 5,680 元減碼 2 股收回 +11,360 TWD）
+   - 目前總持股：20 股（11/23 於 5,680 元減碼 2 股收回 +11,360 TWD；11/24 一字漲停 6,200 元）
    - 實質總投入成本：227,327 TWD｜有效均價：11,366.35 TWD
+3. 台股 00981A.TW 主動統一台股增長：
+   - 目前總持股：2,000 股（2 張；11/24 於 22.00 元建倉，總投入 44,000 TWD；複委託與台幣合計剩餘現金池約 12.0 萬 TWD）
 
 【最新盤面報價與關鍵價位】
 - MU 現價/收盤：$${STATE.muPrice.toFixed(2)}（前收 $${STATE.muPrevClose.toFixed(2)}，日低 $${STATE.muLow.toFixed(2)}）
 - MUU 現價/收盤：$${STATE.muuPrice.toFixed(2)}（前收 $${STATE.muuPrevClose.toFixed(2)}，日低 $${STATE.muuLow.toFixed(2)}）
-- 下檔關鍵支撐：200MA 年線多空生命線 MU $715.00~$716.38（對應 MUU $14.35~$14.44）
-- 短線第一反壓：5MA/10MA 與缺口區 MU $750.00~$780.00（對應 MUU $15.80~$17.10，可優先調節 50 股 @$14.70 低接游擊倉）
-- 波段頸線與月線反壓：MU $827.58~$855.00（對應 MUU $19.40~$20.80，分批調節 100 股 @$17.28 游擊倉）
+- 下檔關鍵支撐：昨日雙底低點 MU $666.66（對應 MUU ~$11.80）與 11/20 低點 $585.25（MUU $9.29）
+- 短線第一反壓：200MA / Gamma Flip MU $715.00~$725.00（對應 MUU $13.80~$14.10）
+- 波段月線反壓：20MA MU ~$793.00
 
 請結合上述【六大維度】與我的最新持倉數據，為我分析當前的多空局勢與具體操作策略（含進出場價位與部位風控）：`;
 
@@ -925,7 +950,7 @@
         await navigator.clipboard.writeText(promptText);
         const btnText = document.getElementById('copy-gemini-text');
         if (btnText) btnText.textContent = '已複製！';
-        alert('✅ 已將「最新 1,250 股庫存 + 即時報價 + 技術水位」完整複製到剪貼簿！\n\n現在直接打開手機 Gemini App 貼上，就能 100% 讀取所有數據（不受 GitHub 爬蟲限制）！');
+        alert(`✅ 已將「最新 ${STATE.totalShares.toLocaleString()} 股 MUU + 20 股川湖 + 2 張 00981A 庫存」完整複製到剪貼簿！\n\n現在直接打開手機 Gemini App 貼上，就能 100% 讀取所有數據！`);
         setTimeout(() => { if (btnText) btnText.textContent = '複製給 Gemini'; }, 2500);
       } catch (e) {
         alert('複製失敗，請確認瀏覽器剪貼簿權限');
