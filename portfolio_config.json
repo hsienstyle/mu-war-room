@@ -1,7 +1,7 @@
 {
   "muu": {
     "total_shares": 800,
-    "core_shares": 850,
+    "core_shares": 800,
     "swing_shares": 0,
     "swing_cost": 0,
     "swing_target_min": 18.5,
@@ -36,7 +36,7 @@
         "op": ">=",
         "target": 725,
         "title": "🚀 站穩 $725 正 Gamma 順風區！",
-        "action": "850 股 MUU 抱牢吃主升段不碎賣！亦可搭配 5.8 萬台幣現金等敞口換入 5 股 1X MU 先砍波動稅。"
+        "action": "800 股 MUU 抱牢吃主升段不碎賣！亦可搭配台幣現金等敞口換入 1X MU 先砍波動稅。"
       },
       {
         "id": "mu_stage2_780",
