@@ -20,13 +20,13 @@
     "avg_cost_twd": 14638.92
   },
   "tw00981a": {
-    "shares": 2000,
-    "total_cost_twd": 44000,
-    "avg_cost_twd": 22
+    "shares": 4000,
+    "total_cost_twd": 84000,
+    "avg_cost_twd": 21
   },
   "capital": {
     "initial_capital_twd": 1662029,
-    "cash_pool_twd": 189660
+    "cash_pool_twd": 149660
   },
   "levels": {
     "mu_defense": 666.66,
