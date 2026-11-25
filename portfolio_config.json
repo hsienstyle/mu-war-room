@@ -1,13 +1,13 @@
 {
   "muu": {
-    "total_shares": 600,
-    "core_shares": 600,
+    "total_shares": 400,
+    "core_shares": 400,
     "swing_shares": 0,
     "swing_cost": 0,
     "swing_target_min": 18.5,
     "swing_target_max": 20.5,
-    "total_cost_usd": 36361.91,
-    "avg_cost_usd": 60.603
+    "total_cost_usd": 34561.91,
+    "avg_cost_usd": 86.405
   },
   "mu": {
     "shares": 0,
@@ -26,7 +26,7 @@
   },
   "capital": {
     "initial_capital_twd": 1662029,
-    "cash_pool_twd": 204203
+    "cash_pool_twd": 263990
   },
   "levels": {
     "mu_defense": 666.66,
