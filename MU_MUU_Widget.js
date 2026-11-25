@@ -20,10 +20,10 @@ const PORTFOLIO = {
 };
 
 const FALLBACK_DATA = {
-  MU: { price: 704.89, prevClose: 594.51, changePct: 18.57 },
-  MUU: { price: 13.33, prevClose: 9.64, changePct: 38.28 },
-  headline: "黃仁勳復職引爆費半飆14%！MU強彈18.6%直撞$720反壓，緊盯週三Core PCE",
-  lastPushDate: "2026-11-24"
+  MU: { price: 629.79, prevClose: 707.71, changePct: -11.01 },
+  MUU: { price: 10.38, prevClose: 13.33, changePct: -22.13 },
+  headline: "美光 12月9日將迎《晶片法案》兩週年！史上最大 351.16 億美元庫藏股授權啟動，能撐起 AI 記憶體股價嗎？｜美股觀察",
+  lastPushDate: "2026-11-25"
 };
 
 async function fetchQuote(symbol, fallback) {
