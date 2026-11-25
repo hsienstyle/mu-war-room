@@ -42,25 +42,25 @@
 
 ---
 
-## 4. 雲端全自動化架構（v5.2）與跨平台（Windows / macOS）檔案結構
+## 4. 雲端全自動化架構（v6.0 單一 CIO 回本專注版）與跨平台（Windows / macOS）檔案結構
 本專案已升級為 **零月費、免開機、24/7 雲端全自動架構**（GitHub 儲存庫：`https://github.com/hsienstyle/mu-war-room`，iOS PWA 戰情室：`https://hsienstyle.github.io/mu-war-room/`，Google Apps Script 專案：`美股記憶體與川湖_雲端排程`），支援 **Windows** 與 **macOS** 雙平台無縫同步操作，**一律使用專案相對路徑，禁止寫死單一作業系統之絕對路徑**：
 
 ### 核心雲端與本機檔案對照
 | 相對路徑 | 檔案功能說明 |
 | :--- | :--- |
-| `GEMINI.md` | 專案核心規則、`開會` Swarm 指令約定與跨平台同步準則（Windows / Mac 共用） |
-| `portfolio_config.json` | **單一真相設定檔**：記錄 `MUU` 總股數/核心/游擊/均價、`2059.TW` 持倉、關鍵支撐壓力位與盤中警報規則 `alerts`（改此檔全端自動生效） |
-| `portfolio/trades.csv` | 歷史交易與做 T 明細帳本（可由 LINE 雙向機器人 `買/賣` 指令自動追加） |
+| `GEMINI.md` | 專案核心規則、單一 CIO `開會` 指令約定與跨平台同步準則（Windows / Mac 共用） |
+| `portfolio_config.json` | **單一真相設定檔**：記錄 `MUU` / `1X MU` / `2059.TW` / `00981A.TW` 持倉、`capital`（原始本金 `1,662,029` 與可動用現金池）、關鍵支撐壓力位與盤中警報規則 `alerts`（改此檔全端自動生效） |
+| `portfolio/trades.csv` | 歷史交易與轉倉明細帳本（可由 LINE 雙向機器人 `買/賣` 指令自動追加並連動現金池） |
 | `watchlist.md` | 核心標的與產業鏈觀察清單 |
 | `notes/` | 技術面關鍵價位分析 (`notes/MU_MUU_technical_analysis.md`) 與歷日戰情筆記 |
 | `index.html` / `dashboard.html` | **iOS PWA 戰情室主頁與 120 日量化儀表板**（Tab 1 即時戰情、Tab 2 自動更新 3 張情報卡、Tab 3 部位與川湖籌碼卡） |
 | `MU_MUU_Widget.js` | **iOS Scriptable 桌面即時小工具腳本** |
-| `cloud_daily_job.py` | **美股 08:00 六維度晨報 & 4-Agent 委員會主程式**（純標準庫：CNBC/Stooq/Yahoo/TWSE + CBOE 官方選擇權 Max Pain/GEX/IV + MUU 耗損 + 3 專家 `gemini-3.6-flash` 並行 → CIO `gemini-3.7-flash` 裁決 + 更新 Tab 1/Tab 2 與 LINE 推播） |
-| `cloud_tw2059_chips.py` | **川湖 16:35 盤後籌碼專報主程式**（純標準庫：TWSE 5 大官方 API 三大法人/融資券/借券/當沖 + `gemini-3.6-flash` 判讀 + 更新 Tab 2/Tab 3 與 LINE 推播） |
-| `daily_macro_options.json` | 每日雲端快照：總經、同業共振、CBOE `MU` 選擇權、MUU 耗損與 4-Agent 委員會紀錄 |
+| `cloud_daily_job.py` | **美股 08:00 六維度晨報 & 單一 CIO 回本裁決主程式（v6.0）**（純標準庫：CNBC/Stooq/Yahoo/TWSE 四標的報價 + CBOE 官方選擇權 Max Pain/GEX/IV + MUU 耗損 + 單一旗艦 CIO `gemini-3.7-flash` 直球裁決 + 全資產台幣回本進度條 + 更新 Tab 1/Tab 2 與 LINE 推播） |
+| `cloud_tw2059_chips.py` | **川湖 16:35 盤後籌碼專報主程式（v6.0）**（純標準庫：TWSE 5 大官方 API 三大法人/融資券/借券/當沖 + 區分自營商避險與 1X 波段續抱判讀 + 更新 Tab 2/Tab 3 與 LINE 推播） |
+| `daily_macro_options.json` | 每日雲端快照：總經、同業共振、CBOE `MU` 選擇權、MUU 耗損與單一 CIO 裁決紀錄 |
 | `tw2059_chips.json` | 川湖近 30 個交易日盤後籌碼歷史資料庫 |
 | `.github/workflows/` | `daily_war_room.yml`（08:00 美股晨報）與 `tw2059_chips.yml`（16:35 川湖籌碼）雙排程設定 |
-| `google_apps_script_trigger.gs` | **Google Apps Script 總指揮中心（v5.2，置於本機根目錄且已列於 `.gitignore`）**：每 5 分鐘巡檢（08:00 晨報、08:05 & 16:40 Google Drive 含原生 Google Doc 自動同步、09:05~13:35 川湖盤中狙擊、16:35 川湖籌碼、21:00~05:15 美股盤前/盤中狙擊）＋ **LINE 雙向機器人 Web App**（`報價`/`倉位`/`算T`/`籌碼`/`選擇權`/`警報`/`買賣記帳`/`同步`/`問`/`開會` 4-Agent `gemini-3.6-flash` 並行） |
+| `google_apps_script_trigger.gs` | **Google Apps Script 總指揮中心（v6.0 單一CIO回本專注版，置於本機根目錄且已列於 `.gitignore`）**：每 5 分鐘巡檢（08:00 晨報、08:05 & 16:40 Google Drive 含原生 Google Doc 自動同步、09:05~13:35 台股盤中雷達、16:35 川湖籌碼、21:00~05:15 美股盤前/盤中雷達）＋ **LINE 雙向機器人 Web App**（`報價`/`倉位`/`回本`/`轉倉`/`現金`/`算T`/`籌碼`/`選擇權`/`警報`/`買賣記帳` 支援四標的連動現金池/`同步`/`問`/`開會` 單一旗艦 CIO 直球決策；`四人開會` 僅限重大轉折日） |
 | `notebooks/MU_WarRoom_Quant_Lab.ipynb` | **Google Colab 機構級量化實驗室**（直開連結：`https://colab.research.google.com/drive/122LnxDw4vJf6cJwpxiy7ekcQKYOfvRiP`）：`MUU` 50,000 次蒙地卡羅耗損模擬、`MU` 全到期日 GEX / IV 期限結構、5 年急殺重啟游擊倉回測與 `2059.TW` 籌碼疊圖 |
 
 ### 資安紅線（嚴格遵守）

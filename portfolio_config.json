@@ -9,6 +9,11 @@
     "total_cost_usd": 38001.91,
     "avg_cost_usd": 47.502
   },
+  "mu": {
+    "shares": 0,
+    "total_cost_usd": 0,
+    "avg_cost_usd": 0
+  },
   "tw2059": {
     "shares": 20,
     "total_cost_twd": 227327,
@@ -18,6 +23,10 @@
     "shares": 2000,
     "total_cost_twd": 44000,
     "avg_cost_twd": 22
+  },
+  "capital": {
+    "initial_capital_twd": 1662029,
+    "cash_pool_twd": 138000
   },
   "levels": {
     "mu_defense": 666.66,

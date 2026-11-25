@@ -596,80 +596,83 @@ def _parse_agent_score_and_text(raw_text, default_score=0):
     return score, analysis
 
 
-def generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg):
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not api_key:
-        return None
+def _build_progress_bar(pct):
+    clamped = max(0.0, min(100.0, pct))
+    filled = int(round(clamped / 10.0))
+    return "█" * filled + "░" * (10 - filled) + f" {pct:.1f}%"
 
-    macro = macro or {}
-    tech_slip = tech_slip or {}
-    headlines_text = "\n".join([f"- {n['title']}" for n in news_items]) if news_items else "無最新標題"
-    p_muu = cfg["muu"]
 
-    macro_lines = []
-    if macro.get("us10y"):
-        macro_lines.append(f"US10Y 美債殖利率: {macro['us10y']['price']:.2f}% ({macro['us10y']['change_pct']:+.2f}%)")
-    if macro.get("sox"):
-        macro_lines.append(f"SOX 費半: {macro['sox']['price']:,.1f} ({macro['sox']['change_pct']:+.2f}%)")
-    if macro.get("nvda"):
-        macro_lines.append(f"NVDA: ${macro['nvda']['price']:.2f} ({macro['nvda']['change_pct']:+.2f}%)")
-    if macro.get("wdc"):
-        macro_lines.append(f"WDC: ${macro['wdc']['price']:.2f} ({macro['wdc']['change_pct']:+.2f}%)")
-    if macro.get("avgo"):
-        macro_lines.append(f"AVGO: ${macro['avgo']['price']:.2f} ({macro['avgo']['change_pct']:+.2f}%)")
+def compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate):
+    p_muu = cfg.get("muu") or {}
+    p_mu = cfg.get("mu") or {}
+    p_2059 = cfg.get("tw2059") or {}
+    p_981 = cfg.get("tw00981a") or {}
+    cap = cfg.get("capital") or {}
 
-    opt_line = "無最新選擇權數據"
-    if options_info:
-        opt_line = (
-            f"到期 {options_info['expiration']}｜Max Pain ${options_info['max_pain']}｜"
-            f"Vol P/C {options_info['vol_pcr']} / OI P/C {options_info['oi_pcr']}｜"
-            f"Call牆 ${options_info['call_wall']['strike']} ({options_info['call_wall']['oi']:,}) / "
-            f"Put牆 ${options_info['put_wall']['strike']} ({options_info['put_wall']['oi']:,})｜"
-            f"ATM IV {options_info['atm_iv_pct']}%"
-        )
+    init_cap_twd = float(cap.get("initial_capital_twd", 1662029))
+    cash_twd = float(cap.get("cash_pool_twd", 138000))
 
-    slip20 = tech_slip.get("slippage_20d")
-    slip_line = (
-        f"20日 MU {slip20['mu_ret_pct']:+.1f}% vs MUU {slip20['muu_ret_pct']:+.1f}% (槓桿耗損 {slip20['slippage_pct']:+.1f}%)"
-        if slip20
-        else "無"
+    muu_shares = int(p_muu.get("total_shares", 0))
+    mu_shares = int(p_mu.get("shares", 0))
+    tw2059_shares = int(p_2059.get("shares", 0))
+    tw981_shares = int(p_981.get("shares", 0))
+
+    muu_val_usd = round(muu["price"] * muu_shares, 2)
+    mu_val_usd = round(mu["price"] * mu_shares, 2)
+    tw2059_val_twd = round(tw2059["price"] * tw2059_shares, 0)
+    p981_price = (tw00981a or {}).get("price") or float(p_981.get("avg_cost_twd", 22.0))
+    tw981_val_twd = round(p981_price * tw981_shares, 0)
+
+    total_nav_twd = (muu_val_usd + mu_val_usd) * fx_rate + tw2059_val_twd + tw981_val_twd + cash_twd
+    recovery_pct = (total_nav_twd / init_cap_twd) * 100.0 if init_cap_twd > 0 else 0.0
+    gap_twd = max(0.0, init_cap_twd - total_nav_twd)
+
+    return {
+        "fx_rate": fx_rate,
+        "init_cap_twd": init_cap_twd,
+        "cash_twd": cash_twd,
+        "muu_shares": muu_shares,
+        "mu_shares": mu_shares,
+        "tw2059_shares": tw2059_shares,
+        "tw981_shares": tw981_shares,
+        "p981_price": p981_price,
+        "muu_val_usd": muu_val_usd,
+        "muu_val_twd": muu_val_usd * fx_rate,
+        "mu_val_usd": mu_val_usd,
+        "mu_val_twd": mu_val_usd * fx_rate,
+        "tw2059_val_twd": tw2059_val_twd,
+        "tw981_val_twd": tw981_val_twd,
+        "total_nav_twd": total_nav_twd,
+        "recovery_pct": recovery_pct,
+        "gap_twd": gap_twd,
+        "bar": _build_progress_bar(recovery_pct),
+    }
+
+
+def generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=None):
+    text, _ = generate_gemini_committee_summary(
+        mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=tw00981a
     )
-
-    prompt = f"""你是機構級美股記憶體 (MU/MUU) 與台股川湖 (2059.TW) 戰情分析師。請根據以下六大維度最新數據，用繁體中文純文字（不可使用 ** 或 # 符號）撰寫 4 點精簡扼要（每點 50~70 字）的晨間分析（不要加任何開場白）：
-1. 【總經與同業共振】：結合 US10Y、SOX、NVDA、SK Hynix 與外電，判斷今日走勢是美光個股因素還是大盤/美債估值壓抑。
-2. 【技術位階與動能】：結合 MU 收盤 (${mu['price']})、5MA/20MA/RSI(14) 與 200MA 防守線 (${cfg['levels']['mu_defense']}) 評估多空結構。
-3. 【選擇權微結構與 MUU 耗損】：解讀 Max Pain、Call/Put OI 牆、P/C Ratio 與 MUU 20日波動率耗損對短線震盪的影響。
-4. 【MUU 做T與風控建議】：針對持有 {p_muu['total_shares']} 股 MUU（實質均價 ${p_muu['avg_cost_usd']}，含 {p_muu['swing_shares']} 股 @${p_muu['swing_cost']} 游擊倉）給出今日具體執行與停利/停損紀律。
-
-今日數據：
-- MU：${mu['price']} ({mu['change_pct']:+.2f}%)，高 ${mu['high']} / 低 ${mu['low']}｜5MA ${tech_slip.get('mu_ma5', '--')} / 20MA ${tech_slip.get('mu_ma20', '--')} / RSI14 {tech_slip.get('mu_rsi14', '--')}
-- MUU：${muu['price']} ({muu['change_pct']:+.2f}%)，高 ${muu['high']} / 低 ${muu['low']}｜{slip_line}
-- 川湖 (2059.TW)：{tw2059['price']} 元 ({tw2059['change_pct']:+.2f}%)
-- 宏觀與同業：{'｜'.join(macro_lines) if macro_lines else '暫缺'}
-- MU 選擇權：{opt_line}
-- 最新新聞標題：
-{headlines_text}
-"""
-    return call_gemini_text(api_key, prompt, max_tokens=2048, temperature=0.3)
+    return text
 
 
-def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg):
-    """雲端免費版 4-Agent 投資委員會：
-    Stage 1 (ThreadPoolExecutor 平行 3 專家): macro_agent + quant_agent + bear_agent
-    Stage 2 (Synthesizer): cio_agent 統整 3 專家觀點與實盤部位給出最終操作裁決
+def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=None):
+    """v6.0 單一旗艦 CIO 直球回本決策模式（廢除易引發處置效應碎賣之 4-Agent 死空頭辯論）：
+    單次深度呼叫 gemini-3.7-flash -> 3.6-flash -> 3.5-flash -> 2.5-flash，
+    統整六大維度與全資產台幣淨值，直出 4 點清晰攻守與 2X→1X 轉倉裁決。
     回傳 (formatted_summary_text, committee_data_dict)
     """
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
-        print("[INFO] GEMINI_API_KEY not set; skipping 4-Agent Investment Committee.")
+        print("[INFO] GEMINI_API_KEY not set; skipping Single-CIO recovery briefing.")
         return None, None
 
     macro = macro or {}
     tech_slip = tech_slip or {}
     news_items = news_items or []
-    p_muu = cfg.get("muu", {})
-    p_tw = cfg.get("tw2059", {})
     levels = cfg.get("levels", {})
+    fx_rate = (macro.get("usdtwd") or {}).get("price", 32.5)
+    snap = compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate)
 
     headlines_text = "\n".join([f"- {n['title']}" for n in news_items]) if news_items else "無最新新聞標題"
 
@@ -719,190 +722,97 @@ def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options
     tech_summary_str = (
         f"MU 收 ${mu['price']:.2f} ({mu['change_pct']:+.2f}%，高 ${mu['high']:.2f}/低 ${mu['low']:.2f})｜"
         f"5MA ${tech_slip.get('mu_ma5', '--')} / 20MA ${tech_slip.get('mu_ma20', '--')} / "
-        f"200MA防守線 ${levels.get('mu_defense', '--')} / RSI14 {tech_slip.get('mu_rsi14', '--')}"
+        f"頸線警戒 ${levels.get('mu_defense', 666.66)} / 前低硬底線 ${levels.get('mu_support1', 585.25)} / RSI14 {tech_slip.get('mu_rsi14', '--')}"
     )
 
-    macro_prompt = f"""你是「🌐 總經與同業分析師」。請針對以下總體經濟、半導體同業與新聞標題，從資金與產業共振角度評估美光 (MU) 與川湖 (2059.TW)。
-請嚴格以繁體中文純文字輸出兩行（禁止使用 **、# 或任何 Markdown 符號，不要開場白）：
-分數：<整數 -5 到 +5，-5極空、0中性、+5極多，請帶正負號如 +2 或 -2>
-分析：<60~80字精簡專業結論>
+    mu_1x_txt = f"＋ 1X MU {snap['mu_shares']} 股" if snap["mu_shares"] > 0 else ""
+    p981_chg = (tw00981a or {}).get("change_pct", 0.0)
 
-數據：
-- MU：${mu['price']:.2f} ({mu['change_pct']:+.2f}%)｜MUU：${muu['price']:.2f} ({muu['change_pct']:+.2f}%)｜川湖 2059.TW：{tw2059['price']:.0f} ({tw2059['change_pct']:+.2f}%)
-- 總經與同業：{macro_summary_str}
-- 最新新聞標題：
-{headlines_text}
-"""
+    cio_prompt = f"""你是投資人唯一的「🏛️ 單一旗艦首席投資長 (CIO)」。我們已廢除吵雜且容易引發恐慌碎賣的多代理人辯論，全面改採「回本導向 × 對稱凸性風控」單一 CIO 直球決策模式。
 
-    quant_prompt = f"""你是「🧮 量化與微結構師」。請根據 MU 技術均線/動能、CBOE 選擇權微結構（Max Pain、P/C Ratio、Call/Put OI 牆、ATM IV、Net GEX）與 MUU 2X 槓桿耗損，評估短線籌碼與波動結構。
-請嚴格以繁體中文純文字輸出兩行（禁止使用 **、# 或任何 Markdown 符號，不要開場白）：
-分數：<整數 -5 到 +5，-5極空、0中性、+5極多，請帶正負號如 +2 或 -2>
-分析：<60~80字精簡專業結論>
+【核心操盤三大鐵律】
+1. 拒絕處置效應（Disposition Effect）與驚弓之鳥碎賣：只要日線收盤未有效跌破結構硬底線，嚴禁因盤中雜訊或反彈幾%就建議「碎賣 50 股核心倉」，避免跌時滿倉扛、起漲山腳賣光阻礙回本！
+2. 廢除沉沒成本均價焦慮：複委託以台幣交割，一切決策以「當前全資產台幣總淨值 NT$ {snap['total_nav_twd']:,.0f} 重返原始本金 NT$ {snap['init_cap_twd']:,.0f}（達成率 {snap['recovery_pct']:.1f}%、缺口 {snap['gap_twd']/10000:.1f} 萬）」與「上檔達標 ($780 / $880) 將 2X MUU 同日等額換入 0% 耗損之 1X MU 正股（零踏空去耗損轉倉）」為唯一準繩。
+3. 第一性原理微結構判讀：嚴格區分 ETF 即時淨值 iNAV 與折溢價、區分自營商避險與自行買賣。
 
-數據：
-- 技術位階：{tech_summary_str}
+【最新六維度數據與全資產部位】
+- 技術與價位：{tech_summary_str}
 - MUU 收盤：${muu['price']:.2f} ({muu['change_pct']:+.2f}%)｜槓桿耗損：{slip_summary_str}
-- CBOE MU 選擇權：{opt_summary_str}
-"""
-
-    bear_prompt = f"""你是「🛡️ 空頭魔鬼代言人（強制風控反方）」。你的唯一職責是嚴格挑出下行風險、技術破位觸發點、高 IV 槓桿耗損陷阱，以及此刻「不應盲目加碼槓桿」的硬理由。
-請嚴格以繁體中文純文字輸出兩行（禁止使用 **、# 或任何 Markdown 符號，不要開場白）：
-分數：<整數 -5 到 +5，代表風險評分，負分越深風險越高如 -4，風險可控則近 0>
-分析：<60~80字精簡犀利風控警示>
-
-數據：
-- 技術與防守線：{tech_summary_str}｜關鍵支撐1 ${levels.get('mu_support1', '--')}
-- MUU：${muu['price']:.2f} ({muu['change_pct']:+.2f}%)｜槓桿耗損：{slip_summary_str}
 - 總經與同業：{macro_summary_str}
 - CBOE MU 選擇權：{opt_summary_str}
-- 川湖 2059.TW：{tw2059['price']:.0f} ({tw2059['change_pct']:+.2f}%)
+- 台股部位：川湖 2059.TW 收 {tw2059['price']:,.0f} 元 ({tw2059['change_pct']:+.2f}%)；主動 ETF 00981A.TW 收 {snap['p981_price']:.2f} 元 ({p981_chg:+.2f}%)
+- 實盤全資產：MUU {snap['muu_shares']:,} 股{mu_1x_txt}｜川湖 {snap['tw2059_shares']} 股｜00981A {snap['tw981_shares']:,} 股｜可動用現金池 NT$ {snap['cash_twd']:,.0f}
 - 最新新聞標題：
 {headlines_text}
-"""
-
-    specialist_specs = [
-        ("macro", "🌐 總經與同業分析師", macro_prompt),
-        ("quant", "🧮 量化與微結構師", quant_prompt),
-        ("bear", "🛡️ 空頭魔鬼代言人", bear_prompt),
-    ]
-
-    def _run_specialist(key, role, prompt_text):
-        try:
-            raw = call_gemini_text(api_key, prompt_text, max_tokens=4096, temperature=0.3)
-            if not raw:
-                return key, {"role": role, "score": 0, "analysis": "", "ok": False}
-            sc, ana = _parse_agent_score_and_text(raw, default_score=0)
-            return key, {"role": role, "score": sc, "analysis": ana, "ok": True}
-        except Exception as e:
-            print(f"[WARN] Committee specialist {key} failed: {e}")
-            return key, {"role": role, "score": 0, "analysis": "", "ok": False}
-
-    stage1 = {}
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = {
-            executor.submit(_run_specialist, key, role, ptxt): (key, role)
-            for key, role, ptxt in specialist_specs
-        }
-        for fut, (key, role) in futures.items():
-            try:
-                k, res = fut.result()
-                stage1[k] = res
-            except Exception as e:
-                print(f"[WARN] Committee future {key} exception: {e}")
-                stage1[key] = {"role": role, "score": 0, "analysis": "", "ok": False}
-
-    ok_count = sum(1 for v in stage1.values() if v.get("ok"))
-    if ok_count == 0:
-        print("[WARN] Stage 1 specialists all failed; falling back to single-call generate_gemini_summary.")
-        fallback_text = generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg)
-        return fallback_text, None
-
-    # 補齊個別失敗專家的中性預設說明
-    for key, role, _ in specialist_specs:
-        if not stage1[key].get("analysis"):
-            stage1[key]["analysis"] = f"{role}暫未取得模型回應，以盤面數據中性看待。"
-
-    s_macro = stage1["macro"]["score"]
-    s_quant = stage1["quant"]["score"]
-    s_bear = stage1["bear"]["score"]
-    total_score = s_macro + s_quant + s_bear
-    stance = "偏多" if total_score >= 3 else ("偏空" if total_score <= -3 else "中性")
-    score_header = (
-        f"⚖️ 委員會多空總分：{_fmt_signed_score(total_score)}/15（{stance}）｜"
-        f"總經 {_fmt_signed_score(s_macro)}・量化 {_fmt_signed_score(s_quant)}・風控 {_fmt_signed_score(s_bear)}"
-    )
-
-    cio_prompt = f"""你是「🏛️ 首席投資長 (CIO)」。你已聽取三位專職分析師的簡報，請結合投資人的真實持倉與關鍵防守價位，統整出今日最終晨間操作裁決。
-
-【三位專職分析師報告】
-- 總經與同業分析師（評分 {_fmt_signed_score(s_macro)}）：{stage1['macro']['analysis']}
-- 量化與微結構師（評分 {_fmt_signed_score(s_quant)}）：{stage1['quant']['analysis']}
-- 空頭魔鬼代言人（評分 {_fmt_signed_score(s_bear)}）：{stage1['bear']['analysis']}
-- 委員會多空總分：{_fmt_signed_score(total_score)}/15（{stance}）
-
-【投資人實盤部位與關鍵價位】
-- MUU 總持股：{p_muu.get('total_shares', 1250):,} 股（核心 {p_muu.get('core_shares', 1100):,} 股 + 游擊 {p_muu.get('swing_shares', 150)} 股 @${p_muu.get('swing_cost', 16.42)}，實質均價 ${p_muu.get('avg_cost_usd', 34.547)}，現價 ${muu['price']:.2f}）
-- 川湖 (2059.TW)：{p_tw.get('shares', 22)} 股（均價 {p_tw.get('avg_cost_twd', 10849.41):,.0f} 元，現價 {tw2059['price']:,.0f} 元）
-- MU 關鍵價位：現價 ${mu['price']:.2f}｜200MA 防守線 ${levels.get('mu_defense', 715.0)}｜支撐1 ${levels.get('mu_support1', 716.38)}｜反壓區 ${levels.get('mu_res1_min', 780.0)}~${levels.get('mu_res1_max', 830.0)}｜50MA ${levels.get('mu_50ma', 983.23)}
 
 【嚴格輸出格式要求】
 1. 僅使用繁體中文純文字，絕對不可包含 **、#、項目符號或任何開場白/結語。
-2. 不要重複輸出總分行（系統會自動加上），直接輸出以下 4 行編號內容（每點精簡 55~80 字）：
-1. 【總經與同業】...
-2. 【量化與微結構】...
-3. 【空頭風控警示】...
-4. 【CIO 最終操作裁決】...（務必針對 MUU {p_muu.get('total_shares', 1250):,} 股含 {p_muu.get('swing_shares', 150)} 股游擊倉 與 川湖 {p_tw.get('shares', 22)} 股給出今日具體執行、停利/減碼或觀望紀律）
+2. 直接輸出以下 4 行編號內容（每點精簡直球 55~80 字，給明確收盤硬底線與目標價，中間震盪一律抱牢不動）：
+1. 【現況一句話定調】...（點出當前多空階段與今日唯一關鍵邊際變數）
+2. 【技術與選擇權微結構】...（結合均線、GEX/Max Pain/IV 與 MUU 耗損，確立唯一日線收盤硬底線）
+3. 【美股 MUU→MU 攻守指令】...（針對 {snap['muu_shares']:,} 股 MUU 給出 1 條收盤硬底線與 $780/$880 零踏空轉倉 1X MU 紀律，嚴禁碎賣）
+4. 【台股川湖・00981A 與現金池】...（針對川湖 {snap['tw2059_shares']} 股、00981A {snap['tw981_shares']:,} 股與 NT$ {snap['cash_twd']:,.0f} 預備金給出波段續抱與動用條件）
 """
 
-    # CIO 最終裁決採用更深推理的 gemini-3.7-flash 優先，逾時或限流無縫降級 3.6 -> 3.5 -> 2.5
     cio_model_specs = [
         ("gemini-3.7-flash", False),
+        ("gemini-3.6-flash", True),
         ("gemini-3.6-flash", False),
         ("gemini-3.5-flash", False),
         ("gemini-2.5-flash", True),
     ]
     cio_raw = call_gemini_text(
-        api_key, cio_prompt, max_tokens=8192, temperature=0.3,
+        api_key, cio_prompt, max_tokens=8192, temperature=0.25,
         model_specs=cio_model_specs, timeout=55
     )
     cio_body = ""
     if cio_raw:
-        cio_lines = []
-        for ln in cio_raw.splitlines():
-            s = ln.strip()
-            if not s:
-                continue
-            if s.startswith("⚖️") or s.startswith("委員會多空總分"):
-                continue
-            cio_lines.append(s)
+        cio_lines = [ln.strip() for ln in cio_raw.splitlines() if ln.strip()]
         cio_body = "\n".join(cio_lines).strip()
 
-    if not cio_body:
-        print("[WARN] Stage 2 CIO synthesis failed; falling back to single-call or rule-based committee synthesis.")
-        fallback_single = generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg)
-        if fallback_single:
-            committee_data = {
-                "total_score": total_score,
-                "stance": stance,
-                "summary_line": score_header,
-                "macro": {"role": stage1["macro"]["role"], "score": s_macro, "analysis": stage1["macro"]["analysis"]},
-                "quant": {"role": stage1["quant"]["role"], "score": s_quant, "analysis": stage1["quant"]["analysis"]},
-                "bear": {"role": stage1["bear"]["role"], "score": s_bear, "analysis": stage1["bear"]["analysis"]},
-                "cio": {"role": "🏛️ 首席投資長", "verdict": fallback_single, "fallback": True},
-            }
-            return fallback_single, committee_data
+    stance = "多頭順風" if mu["price"] >= levels.get("mu_res1_min", 715) else (
+        "築底修復" if mu["price"] >= levels.get("mu_defense", 666.66) else "回測支撐"
+    )
+    summary_header = (
+        f"🎯 回本進度：{snap['bar']}（淨值 NT$ {snap['total_nav_twd']:,.0f} / 缺口 {snap['gap_twd']/10000:.1f}萬｜{stance}）"
+    )
 
+    if not cio_body:
+        print("[WARN] Single-CIO Gemini call failed; falling back to rule-based CIO tactical summary.")
         tactical_fallback = build_tactical_commentary(mu, muu, cfg)
         cio_body = "\n".join([
-            f"1. 【總經與同業】{stage1['macro']['analysis']}",
-            f"2. 【量化與微結構】{stage1['quant']['analysis']}",
-            f"3. 【空頭風控警示】{stage1['bear']['analysis']}",
-            f"4. 【CIO 最終操作裁決】{tactical_fallback}",
+            f"1. 【現況一句話定調】{macro_summary_str}，盤勢處於「{stance}」階段。",
+            f"2. 【技術與選擇權微結構】{tech_summary_str}；{opt_summary_str}。",
+            f"3. 【美股 MUU→MU 攻守指令】{tactical_fallback}",
+            f"4. 【台股川湖・00981A 與現金池】川湖 {snap['tw2059_shares']} 股守 5,900 看月線 ~8,000、00981A {snap['tw981_shares']:,} 股守季線續抱；現金池 NT$ {snap['cash_twd']:,.0f} 嚴禁攤平 2X。",
         ])
 
-    final_text = f"{score_header}\n{cio_body}"
+    final_text = cio_body
     committee_data = {
-        "total_score": total_score,
+        "mode": "single_cio_v6",
         "stance": stance,
-        "summary_line": score_header,
-        "macro": {"role": stage1["macro"]["role"], "score": s_macro, "analysis": stage1["macro"]["analysis"]},
-        "quant": {"role": stage1["quant"]["role"], "score": s_quant, "analysis": stage1["quant"]["analysis"]},
-        "bear": {"role": stage1["bear"]["role"], "score": s_bear, "analysis": stage1["bear"]["analysis"]},
-        "cio": {"role": "🏛️ 首席投資長", "verdict": cio_body, "full_text": final_text},
+        "recovery_pct": round(snap["recovery_pct"], 2),
+        "total_nav_twd": round(snap["total_nav_twd"], 0),
+        "summary_line": summary_header,
+        "cio": {"role": "🏛️ 單一旗艦首席投資長", "verdict": cio_body, "full_text": f"{summary_header}\n{cio_body}"},
     }
-    print(f"[OK] 4-Agent Investment Committee completed: {score_header}")
+    print(f"[OK] Single-CIO Recovery Briefing completed: {summary_header}")
     return final_text, committee_data
 
 
 def build_tactical_commentary(mu, muu, cfg):
     defense = cfg["levels"]["mu_defense"]
-    res1_min = cfg["levels"]["mu_res1_min"]
-    if mu["price"] >= res1_min:
-        return f"👉 MU 成功站上 ${res1_min:.0f} 反壓區！短線多頭動能轉強，游擊 {cfg['muu']['swing_shares']} 股 (@${cfg['muu']['swing_cost']}) 可於劇本 A/B 區間分批獲利收割。"
+    sup1 = cfg["levels"]["mu_support1"]
+    res1_max = cfg["levels"]["mu_res1_max"]
+    shares = cfg["muu"]["total_shares"]
+    if mu["price"] >= 780:
+        return f"👉 MU 攻抵 ${mu['price']:.2f} 轉倉窗！可執行 Stage 2 將 300 股 MUU 同日全額換買 1X MU 正股，零踏空鎖利砍波動稅。"
+    elif mu["price"] >= res1_max:
+        return f"👉 MU 站穩 ${res1_max:.0f} 正 Gamma 順風區！{shares} 股 MUU 核心抱牢讓獲利奔跑，未達 $780 轉倉窗前嚴禁碎賣下車。"
     elif mu["price"] >= defense:
-        return f"👉 MU 站回 200MA 防守線 (${defense}) 之上，留意放量突破前高加速破底翻，依劇本 A ($15.50~$16.50) 準備收割 50 股。"
+        return f"👉 MU 守穩雙底頸線 (${defense}) 之上，{shares} 股 MUU 抱牢待攻 ${res1_max:.0f}~$780 轉倉區，中間震盪不碎賣。"
     else:
-        return f"⚠️ MU 收盤 (${mu['price']:.2f}) 暫壓於 ${defense} 年線下方（低點 ${mu['low']:.2f}），高 IV 震盪期嚴禁無腦加碼槓桿，靜待站回 ${defense} 之上再積極操作！"
+        return f"🛡️ MU 收 ${mu['price']:.2f} 回測頸線 ${defense} 下方，盤中不追殺、嚴禁加買 2X 攤平，唯一死守前低收盤硬底線 ${sup1}！"
 
 
 def update_frontend_files(mu, muu, tw2059, headline, news_block=None, macro=None, tech_slip=None, options_info=None, tactical_line=None, cfg=None):
@@ -1076,11 +986,14 @@ def update_frontend_files(mu, muu, tw2059, headline, news_block=None, macro=None
             f.write(dhtml)
 
 
-def save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=None):
+def save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=None, tw00981a=None):
+    core_dict = {"MU": mu, "MUU": muu, "2059.TW": tw2059}
+    if tw00981a:
+        core_dict["00981A.TW"] = tw00981a
     out = {
         "updated_at": NOW_TW.strftime("%Y-%m-%d %H:%M:%S+08:00"),
         "date": TODAY_STR,
-        "core": {"MU": mu, "MUU": muu, "2059.TW": tw2059},
+        "core": core_dict,
         "macro_and_peers": macro,
         "mu_tech_and_muu_slippage": tech_slip,
         "mu_options": options_info,
@@ -1147,10 +1060,11 @@ def main():
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
-    # 1. 核心三檔報價
-    mu = fetch_quote_multi("MU", "mu.us", {"price": 705.27, "prev_close": 712.42, "high": 722.96, "low": 687.33, "change_pct": -1.00})
-    muu = fetch_quote_multi("MUU", "muu.us", {"price": 13.94, "prev_close": 14.21, "high": 14.65, "low": 13.26, "change_pct": -1.90})
-    tw2059 = fetch_quote_multi("2059.TW", None, {"price": 6520.0, "prev_close": 6565.0, "high": 6750.0, "low": 6210.0, "change_pct": -0.69})
+    # 1. 核心四檔報價
+    mu = fetch_quote_multi("MU", "mu.us", {"price": 628.00, "prev_close": 705.27, "high": 690.00, "low": 620.00, "change_pct": -10.96})
+    muu = fetch_quote_multi("MUU", "muu.us", {"price": 10.29, "prev_close": 13.10, "high": 12.60, "low": 10.05, "change_pct": -21.45})
+    tw2059 = fetch_quote_multi("2059.TW", None, {"price": 6200.0, "prev_close": 5640.0, "high": 6200.0, "low": 5700.0, "change_pct": 9.93})
+    tw00981a = fetch_quote_multi("00981A.TW", None, {"price": 22.04, "prev_close": 22.00, "high": 22.15, "low": 21.95, "change_pct": 0.18})
 
     # 2. 宏觀與同業共振 + 技術指標/耗損 + MU 選擇權微結構
     macro = fetch_macro_and_peers()
@@ -1161,28 +1075,16 @@ def main():
     tw_news = fetch_google_news_tw("2059 川湖", max_items=2)
     all_news = mu_news + tw_news
 
-    top_headline = mu_news[0]["title"] if mu_news else f"MU 收 ${mu['price']:.2f} ({mu['change_pct']:+.2f}%)｜緊盯 US10Y 與 200MA 攻防"
+    top_headline = mu_news[0]["title"] if mu_news else f"MU 收 ${mu['price']:.2f} ({mu['change_pct']:+.2f}%)｜緊盯硬底線與 2X→1X 轉倉節奏"
 
-    # 3. 部位與跨市場台幣結算
+    # 3. 全資產台幣結算與 166.2 萬回本進度
     p_muu = cfg["muu"]
-    mkt_val = round(muu["price"] * p_muu["total_shares"], 2)
-    unrealized_usd = round(mkt_val - p_muu["total_cost_usd"], 2)
-    unrealized_pct = round((unrealized_usd / p_muu["total_cost_usd"]) * 100.0, 2)
-
-    swing_diff_pct = round(((muu["price"] - p_muu["swing_cost"]) / p_muu["swing_cost"]) * 100.0, 2)
-    swing_diff_usd = round((muu["price"] - p_muu["swing_cost"]) * p_muu["swing_shares"], 2)
-
     fx_rate = (macro.get("usdtwd") or {}).get("price", 32.5)
-    tw_val = tw2059["price"] * cfg["tw2059"]["shares"]
-    tw_cost = cfg["tw2059"]["total_cost_twd"]
-    total_nav_twd = mkt_val * fx_rate + tw_val
-    total_cost_twd = p_muu["total_cost_usd"] * fx_rate + tw_cost
-    total_pnl_twd = total_nav_twd - total_cost_twd
-    total_pnl_pct = (total_pnl_twd / total_cost_twd) * 100.0 if total_cost_twd else 0.0
+    snap = compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate)
 
     tactical_line = build_tactical_commentary(mu, muu, cfg)
     committee_text, committee_data = generate_gemini_committee_summary(
-        mu, muu, tw2059, macro, tech_slip, options_info, all_news, cfg
+        mu, muu, tw2059, macro, tech_slip, options_info, all_news, cfg, tw00981a=tw00981a
     )
 
     if committee_text:
@@ -1227,7 +1129,7 @@ def main():
             f"支撐 Put ${options_info['put_wall']['strike']:.0f} ({options_info['put_wall']['oi']:,})"
         )
     else:
-        opt_lines.append("• 選擇權：Yahoo Options 暫無最新報價")
+        opt_lines.append("• 選擇權：Yahoo/CBOE 暫無最新報價")
 
     s5 = tech_slip.get("slippage_5d")
     s20 = tech_slip.get("slippage_20d")
@@ -1244,8 +1146,29 @@ def main():
     opt_lines.append(f"• 動能與耗損：{tech_str or '--'}｜MUU耗損 {' / '.join(slip_parts) if slip_parts else '--'}")
     micro_block = "\n".join(opt_lines)
 
-    line_msg = f"""☀️【MU / MUU 六維度雲端 AI 戰情日報】
-📅 日期：{TODAY_STR}（GitHub + Gemini 自動結算）
+    pos_lines = [
+        f"• MUU ({snap['muu_shares']:,}股)：市值 NT$ {snap['muu_val_twd']:,.0f} (${snap['muu_val_usd']:,.0f})"
+    ]
+    if snap["mu_shares"] > 0:
+        pos_lines.append(
+            f"• MU 1X ({snap['mu_shares']}股)：市值 NT$ {snap['mu_val_twd']:,.0f} (${snap['mu_val_usd']:,.0f})"
+        )
+    if p_muu.get("swing_shares", 0) > 0 and p_muu.get("swing_cost", 0) > 0:
+        sw_usd = (muu["price"] - p_muu["swing_cost"]) * p_muu["swing_shares"]
+        sw_pct = ((muu["price"] - p_muu["swing_cost"]) / p_muu["swing_cost"]) * 100.0
+        pos_lines.append(f"• ⚡ 游擊倉 ({p_muu['swing_shares']}股 @${p_muu['swing_cost']:.2f})：{sw_usd:+.0f} USD ({sw_pct:+.2f}%)")
+    pos_lines.append(
+        f"• 🏭 川湖 ({snap['tw2059_shares']}股)：收 {tw2059['price']:,.0f} ({tw2059['change_pct']:+.2f}%)｜市值 NT$ {snap['tw2059_val_twd']:,.0f}"
+    )
+    if snap["tw981_shares"] > 0:
+        pos_lines.append(
+            f"• 📈 00981A ({snap['tw981_shares']:,}股)：收 {snap['p981_price']:.2f} ({tw00981a['change_pct']:+.2f}%)｜市值 NT$ {snap['tw981_val_twd']:,.0f}"
+        )
+    pos_lines.append(f"• 💵 可動用現金池：NT$ {snap['cash_twd']:,.0f}")
+    pos_block = "\n".join(pos_lines)
+
+    line_msg = f"""☀️【單一 CIO 六維度雲端回本晨報】
+📅 日期：{TODAY_STR}（GitHub + Gemini CIO 自動結算）
 ━━━━━━━━━━━━━━
 📈 核心收盤行情：
 • MU ：${mu['price']:.2f} ({mu['change_pct']:+.2f}%) 高${mu['high']:.2f} / 低${mu['low']:.2f}
@@ -1258,14 +1181,13 @@ def main():
 🧮 MU 選擇權微結構 & MUU 槓桿耗損：
 {micro_block}
 
-🏛️ 4-Agent 投資委員會裁決：
+🏛️ 單一旗艦 CIO 直球回本裁決：
 {news_block}
 
-💼 雙市場持倉結算：
-• MUU ({p_muu['total_shares']:,}股｜均價 ${p_muu['avg_cost_usd']:.3f})：市值 ${mkt_val:,.0f}｜損益 {unrealized_usd:+,.0f} USD ({unrealized_pct:+.2f}%)
-• ⚡ 游擊 {p_muu['swing_shares']} 股 (@${p_muu['swing_cost']:.2f})：{swing_diff_usd:+.0f} USD ({swing_diff_pct:+.2f}%)
-• 🏭 川湖 ({cfg['tw2059']['shares']}股｜均價 {cfg['tw2059']['avg_cost_twd']:,.0f})：收 {tw2059['price']:,.0f} ({tw2059['change_pct']:+.2f}%)
-• 💰 合計總淨值 (USD/TWD {fx_rate:.2f})：NT$ {total_nav_twd:,.0f}（總損益 NT$ {total_pnl_twd:+,.0f} / {total_pnl_pct:+.2f}%）
+🏆 全資產回本進度（USD/TWD {fx_rate:.2f}）：
+{snap['bar']}
+• 當前總淨值：NT$ {snap['total_nav_twd']:,.0f}（原始本金 {snap['init_cap_twd']/10000:.1f} 萬｜缺口 {snap['gap_twd']/10000:.1f} 萬）
+{pos_block}
 
 📱 iOS 戰情室：https://hsienstyle.github.io/mu-war-room/
 📊 120日儀表板：https://hsienstyle.github.io/mu-war-room/dashboard.html"""
@@ -1276,7 +1198,7 @@ def main():
         print("[DRY-RUN] 測試完成，未寫入檔案與發送 LINE。")
         return
 
-    save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=committee_data)
+    save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=committee_data, tw00981a=tw00981a)
     if args.save_json_only:
         print("[SAVE-JSON-ONLY] 已儲存 daily_macro_options.json，略過前端修改與 LINE 推播。")
         return

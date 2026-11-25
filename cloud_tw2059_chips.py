@@ -413,11 +413,11 @@ def build_rule_commentary(summary, cfg):
     lines.append(f"2. 【散戶與空方籌碼】：{m_txt}；{sbl_txt}。留意借券賣出若轉為還券回補，將是千金股止跌反攻領先訊號。")
 
     # 3. 位階與持倉
-    avg_cost = cfg["tw2059"]["avg_cost_twd"]
+    shares = cfg["tw2059"]["shares"]
     ma5 = p.get("ma5")
     ma5_txt = f"5MA ({ma5:,.0f} 元)" if ma5 else "短均線"
     pos_txt = "站上" if (ma5 and p["close"] >= ma5) else "仍壓於"
-    lines.append(f"3. 【位階與 22 股操作】：收盤 {p['close']:,.0f} 元（{p['change_pct']:+.2f}%）{pos_txt} {ma5_txt}，持倉均價 {avg_cost:,.0f} 元為現股無斷頭壓力，聚焦 5 日量能與外資轉買訊號決定是否做 T 降本。")
+    lines.append(f"3. 【位階與 {shares} 股波段紀律】：收盤 {p['close']:,.0f} 元（{p['change_pct']:+.2f}%）{pos_txt} {ma5_txt}，1X 現股零波動耗損無斷頭壓力，守穩 5,900 元結構支撐續抱朝月線 ~8,000 元修復，不因短線震盪碎賣。")
     return "\n".join(lines)
 
 
@@ -455,11 +455,16 @@ def generate_gemini_chips_insight(summary, news_items, cfg):
     )
 
     headlines = "\n".join([f"- {n['title']}" for n in news_items]) if news_items else "無最新新聞標題"
-    prompt = f"""你是台股 AI 伺服器供應鏈與千金股籌碼分析師，專精解讀 2059 川湖（AI 伺服器導軌龍頭）的法人與信用籌碼。
-請根據以下 {summary['trade_date']} 最新盤後數據，用繁體中文撰寫 3 點精簡扼要（每點約 50~70 字）的盤後籌碼專報洞察（不要加任何開場白）：
-1. 【三大法人與土洋結構】：判讀外資 ({fmt_lots(t86['foreign_lots'])} 張，{f_dir}{f_days}日)、投信 ({fmt_lots(t86['trust_lots'])} 張，{t_dir}{t_days}日)、自營商與近 5 日累計動向。
-2. 【融資券與借券空方壓力】：評估融資增減、借券賣出餘額變化與當沖比，判斷散戶籌碼浮額與外資空方回補力道（若欄位標註尚未公布則以已公布項目為主）。
-3. 【技術位階與持倉建議】：針對持有 {tw_cfg['shares']} 股（實質均價 NT$ {tw_cfg['avg_cost_twd']:,.2f}）給出明確風控、續抱或游擊做 T 建議。
+    prompt = f"""你是「🏛️ 單一旗艦 CIO 麾下台股 AI 伺服器與千金股籌碼專家」，專精解讀 2059 川湖（GB300 / Vera Rubin 導軌龍頭）的法人與信用籌碼。
+核心操盤鐵律：
+1. 川湖為 1X 現股（0% 波動率耗損、無斷頭壓力），只要日線收盤未爆量跌破 5,900 元結構硬底線，嚴禁因反彈幾%就建議碎賣核心倉（拒絕處置效應）！
+2. 廢除沉沒成本帳面均價焦慮，專注於籌碼沉澱度與重返月線 (~8,000 元) 乃至萬元回本路徑。
+3. 判讀自營商買賣超時，務必區分「ETF 申贖被動避險造市」與「自行買賣方向性部位」，勿將被動避險誤判為主力看空。
+
+請根據以下 {summary['trade_date']} 最新盤後數據，用繁體中文純文字（禁止 ** 或 #）撰寫 3 點精簡直球（每點約 50~70 字）的盤後籌碼裁決（不要加開場白）：
+1. 【三大法人與土洋結構】：判讀外資 ({fmt_lots(t86['foreign_lots'])} 張，{f_dir}{f_days}日)、投信 ({fmt_lots(t86['trust_lots'])} 張，{t_dir}{t_days}日)、自營商（注意避險屬性）與近 5 日累計動向。
+2. 【融資券與借券空方壓力】：評估融資增減、借券賣出餘額變化與當沖比，判斷散戶籌碼安定度與外資空方回補力道（若標註尚未公布則以已公布項目為主）。
+3. 【硬底線與 {tw_cfg['shares']} 股波段指令】：針對現有 {tw_cfg['shares']} 股川湖，給出唯一收盤硬底線（5,900 元）與上檔波段修復目標（~8,000 元月線），中間抱牢不動。
 
 今日盤後數據 ({summary['trade_date']})：
 - 收盤：{p['close']:,.0f} 元 ({p['change']:+,.0f} / {p['change_pct']:+.2f}%)，高 {p['high']:,.0f} / 低 {p['low']:,.0f}
@@ -747,12 +752,12 @@ def build_line_message(summary, insight_text, cfg):
 {sbl_block}
 {dt_line}
 
-🧠 Gemini AI 籌碼判讀與策略：
+🏛️ 單一旗艦 CIO 籌碼判讀與波段指令：
 {insight_text}
 
-💼 川湖持倉結算（{shares} 股｜均價 NT$ {avg_cost:,.0f}）：
-• 最新市值：NT$ {mkt_val:,.0f}（成本 NT$ {total_cost:,.0f}）
-• 未實現損益：NT$ {unrealized:+,.0f} ({unrealized_pct:+.2f}%)
+💼 川湖持倉與攻守座標（{shares} 股｜1X 現股零耗損）：
+• 最新市值：NT$ {mkt_val:,.0f}
+• 唯一攻守：收盤硬底線 5,900 元｜修復目標月線 ~8,000 元 → 萬元回本（中間抱牢不碎賣）
 
 📱 iOS 戰情室：https://hsienstyle.github.io/mu-war-room/"""
 
