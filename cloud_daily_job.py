@@ -602,11 +602,12 @@ def _build_progress_bar(pct):
     return "█" * filled + "░" * (10 - filled) + f" {pct:.1f}%"
 
 
-def compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate):
+def compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate, tw00631l=None):
     p_muu = cfg.get("muu") or {}
     p_mu = cfg.get("mu") or {}
     p_2059 = cfg.get("tw2059") or {}
     p_981 = cfg.get("tw00981a") or {}
+    p_631 = cfg.get("tw00631l") or {}
     cap = cfg.get("capital") or {}
 
     init_cap_twd = float(cap.get("initial_capital_twd", 1662029))
@@ -616,14 +617,17 @@ def compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate):
     mu_shares = int(p_mu.get("shares", 0))
     tw2059_shares = int(p_2059.get("shares", 0))
     tw981_shares = int(p_981.get("shares", 0))
+    tw631_shares = int(p_631.get("shares", 0))
 
     muu_val_usd = round(muu["price"] * muu_shares, 2)
     mu_val_usd = round(mu["price"] * mu_shares, 2)
     tw2059_val_twd = round(tw2059["price"] * tw2059_shares, 0)
-    p981_price = (tw00981a or {}).get("price") or float(p_981.get("avg_cost_twd", 22.0))
+    p981_price = (tw00981a or {}).get("price") or float(p_981.get("avg_cost_twd", 21.0))
     tw981_val_twd = round(p981_price * tw981_shares, 0)
+    p631_price = (tw00631l or {}).get("price") or float(p_631.get("avg_cost_twd", 25.0))
+    tw631_val_twd = round(p631_price * tw631_shares, 0)
 
-    total_nav_twd = (muu_val_usd + mu_val_usd) * fx_rate + tw2059_val_twd + tw981_val_twd + cash_twd
+    total_nav_twd = (muu_val_usd + mu_val_usd) * fx_rate + tw2059_val_twd + tw981_val_twd + tw631_val_twd + cash_twd
     recovery_pct = (total_nav_twd / init_cap_twd) * 100.0 if init_cap_twd > 0 else 0.0
     gap_twd = max(0.0, init_cap_twd - total_nav_twd)
 
@@ -635,13 +639,16 @@ def compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate):
         "mu_shares": mu_shares,
         "tw2059_shares": tw2059_shares,
         "tw981_shares": tw981_shares,
+        "tw631_shares": tw631_shares,
         "p981_price": p981_price,
+        "p631_price": p631_price,
         "muu_val_usd": muu_val_usd,
         "muu_val_twd": muu_val_usd * fx_rate,
         "mu_val_usd": mu_val_usd,
         "mu_val_twd": mu_val_usd * fx_rate,
         "tw2059_val_twd": tw2059_val_twd,
         "tw981_val_twd": tw981_val_twd,
+        "tw631_val_twd": tw631_val_twd,
         "total_nav_twd": total_nav_twd,
         "recovery_pct": recovery_pct,
         "gap_twd": gap_twd,
@@ -649,14 +656,14 @@ def compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate):
     }
 
 
-def generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=None):
+def generate_gemini_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=None, tw00631l=None):
     text, _ = generate_gemini_committee_summary(
-        mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=tw00981a
+        mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=tw00981a, tw00631l=tw00631l
     )
     return text
 
 
-def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=None):
+def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options_info, news_items, cfg, tw00981a=None, tw00631l=None):
     """v6.0 單一旗艦 CIO 直球回本決策模式（廢除易引發處置效應碎賣之 4-Agent 死空頭辯論）：
     單次深度呼叫 gemini-3.7-flash -> 3.6-flash -> 3.5-flash -> 2.5-flash，
     統整六大維度與全資產台幣淨值，直出 4 點清晰攻守與 2X→1X 轉倉裁決。
@@ -672,7 +679,7 @@ def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options
     news_items = news_items or []
     levels = cfg.get("levels", {})
     fx_rate = (macro.get("usdtwd") or {}).get("price", 32.5)
-    snap = compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate)
+    snap = compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate, tw00631l=tw00631l)
 
     headlines_text = "\n".join([f"- {n['title']}" for n in news_items]) if news_items else "無最新新聞標題"
 
@@ -727,6 +734,8 @@ def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options
 
     mu_1x_txt = f"＋ 1X MU {snap['mu_shares']} 股" if snap["mu_shares"] > 0 else ""
     p981_chg = (tw00981a or {}).get("change_pct", 0.0)
+    p631_chg = (tw00631l or {}).get("change_pct", 0.0)
+    p631_txt = f"｜00631L {snap['tw631_shares']:,} 股(收 {snap['p631_price']:.2f}, {p631_chg:+.2f}%)" if snap["tw631_shares"] > 0 else ""
 
     cio_prompt = f"""你是投資人唯一的「🏛️ 單一旗艦首席投資長 (CIO)」。我們已廢除吵雜且容易引發恐慌碎賣的多代理人辯論，全面改採「回本導向 × 對稱凸性風控」單一 CIO 直球決策模式。
 
@@ -741,7 +750,7 @@ def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options
 - 總經與同業：{macro_summary_str}
 - CBOE MU 選擇權：{opt_summary_str}
 - 台股部位：川湖 2059.TW 收 {tw2059['price']:,.0f} 元 ({tw2059['change_pct']:+.2f}%)；主動 ETF 00981A.TW 收 {snap['p981_price']:.2f} 元 ({p981_chg:+.2f}%)
-- 實盤全資產：MUU {snap['muu_shares']:,} 股{mu_1x_txt}｜川湖 {snap['tw2059_shares']} 股｜00981A {snap['tw981_shares']:,} 股｜可動用現金池 NT$ {snap['cash_twd']:,.0f}
+- 實盤全資產：MUU {snap['muu_shares']:,} 股{mu_1x_txt}｜川湖 {snap['tw2059_shares']} 股｜00981A {snap['tw981_shares']:,} 股{p631_txt}｜可動用現金池 NT$ {snap['cash_twd']:,.0f}
 - 最新新聞標題：
 {headlines_text}
 
@@ -986,10 +995,12 @@ def update_frontend_files(mu, muu, tw2059, headline, news_block=None, macro=None
             f.write(dhtml)
 
 
-def save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=None, tw00981a=None):
+def save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=None, tw00981a=None, tw00631l=None):
     core_dict = {"MU": mu, "MUU": muu, "2059.TW": tw2059}
     if tw00981a:
         core_dict["00981A.TW"] = tw00981a
+    if tw00631l:
+        core_dict["00631L.TW"] = tw00631l
     out = {
         "updated_at": NOW_TW.strftime("%Y-%m-%d %H:%M:%S+08:00"),
         "date": TODAY_STR,
@@ -1060,11 +1071,12 @@ def main():
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
-    # 1. 核心四檔報價
-    mu = fetch_quote_multi("MU", "mu.us", {"price": 628.00, "prev_close": 705.27, "high": 690.00, "low": 620.00, "change_pct": -10.96})
-    muu = fetch_quote_multi("MUU", "muu.us", {"price": 10.29, "prev_close": 13.10, "high": 12.60, "low": 10.05, "change_pct": -21.45})
-    tw2059 = fetch_quote_multi("2059.TW", None, {"price": 6200.0, "prev_close": 5640.0, "high": 6200.0, "low": 5700.0, "change_pct": 9.93})
-    tw00981a = fetch_quote_multi("00981A.TW", None, {"price": 22.04, "prev_close": 22.00, "high": 22.15, "low": 21.95, "change_pct": 0.18})
+    # 1. 核心五檔報價
+    mu = fetch_quote_multi("MU", "mu.us", {"price": 601.25, "prev_close": 629.79, "high": 604.95, "low": 548.13, "change_pct": -4.53})
+    muu = fetch_quote_multi("MUU", "muu.us", {"price": 9.43, "prev_close": 10.38, "high": 9.53, "low": 7.67, "change_pct": -9.15})
+    tw2059 = fetch_quote_multi("2059.TW", None, {"price": 7155.0, "prev_close": 6505.0, "high": 7155.0, "low": 6600.0, "change_pct": 9.99})
+    tw00981a = fetch_quote_multi("00981A.TW", None, {"price": 21.54, "prev_close": 20.53, "high": 21.85, "low": 21.13, "change_pct": 4.92})
+    tw00631l = fetch_quote_multi("00631L.TW", None, {"price": 24.94, "prev_close": 23.78, "high": 25.58, "low": 24.49, "change_pct": 4.88})
 
     # 2. 宏觀與同業共振 + 技術指標/耗損 + MU 選擇權微結構
     macro = fetch_macro_and_peers()
@@ -1080,11 +1092,11 @@ def main():
     # 3. 全資產台幣結算與 166.2 萬回本進度
     p_muu = cfg["muu"]
     fx_rate = (macro.get("usdtwd") or {}).get("price", 32.5)
-    snap = compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate)
+    snap = compute_recovery_snapshot(cfg, mu, muu, tw2059, tw00981a, fx_rate, tw00631l=tw00631l)
 
     tactical_line = build_tactical_commentary(mu, muu, cfg)
     committee_text, committee_data = generate_gemini_committee_summary(
-        mu, muu, tw2059, macro, tech_slip, options_info, all_news, cfg, tw00981a=tw00981a
+        mu, muu, tw2059, macro, tech_slip, options_info, all_news, cfg, tw00981a=tw00981a, tw00631l=tw00631l
     )
 
     if committee_text:
@@ -1164,6 +1176,10 @@ def main():
         pos_lines.append(
             f"• 📈 00981A ({snap['tw981_shares']:,}股)：收 {snap['p981_price']:.2f} ({tw00981a['change_pct']:+.2f}%)｜市值 NT$ {snap['tw981_val_twd']:,.0f}"
         )
+    if snap["tw631_shares"] > 0:
+        pos_lines.append(
+            f"• ⚡ 00631L ({snap['tw631_shares']:,}股)：收 {snap['p631_price']:.2f} ({tw00631l['change_pct']:+.2f}%)｜市值 NT$ {snap['tw631_val_twd']:,.0f}"
+        )
     pos_lines.append(f"• 💵 可動用現金池：NT$ {snap['cash_twd']:,.0f}")
     pos_block = "\n".join(pos_lines)
 
@@ -1198,7 +1214,7 @@ def main():
         print("[DRY-RUN] 測試完成，未寫入檔案與發送 LINE。")
         return
 
-    save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=committee_data, tw00981a=tw00981a)
+    save_macro_options_json(mu, muu, tw2059, macro, tech_slip, options_info, committee=committee_data, tw00981a=tw00981a, tw00631l=tw00631l)
     if args.save_json_only:
         print("[SAVE-JSON-ONLY] 已儲存 daily_macro_options.json，略過前端修改與 LINE 推播。")
         return
