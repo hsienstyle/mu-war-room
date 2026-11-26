@@ -755,11 +755,11 @@ def generate_gemini_committee_summary(mu, muu, tw2059, macro, tech_slip, options
 """
 
     cio_model_specs = [
-        ("gemini-3.7-flash", False),
-        ("gemini-3.6-flash", True),
-        ("gemini-3.6-flash", False),
-        ("gemini-3.5-flash", False),
+        ("gemini-3-flash-preview", True),
         ("gemini-2.5-flash", True),
+        ("gemini-3.5-flash-lite", True),
+        ("gemini-2.5-flash-lite", True),
+        ("gemini-3.6-flash", True),
     ]
     cio_raw = call_gemini_text(
         api_key, cio_prompt, max_tokens=8192, temperature=0.25,
