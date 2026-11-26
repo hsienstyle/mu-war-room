@@ -10,13 +10,13 @@
 const WAR_ROOM_URL = "https://hsienstyle.github.io/mu-war-room/";
 
 const PORTFOLIO = {
-  totalShares: 850,           // MUU 總股數 (850核心 + 0游擊，11/20+11/23共減碼400股抽回$4,637現金，11/24撥4.4萬買00981A 2張)
-  avgCost: 45.349,            // 整體實質均價 (USD)
-  totalCost: 38546.91,        // 總投入淨成本 (USD)
+  totalShares: 400,           // MUU 總股數 (400核心 + 0游擊，11/25~26減碼400股均價$8.60，現金池 NT$278,300 預備轉入 1X MU)
+  avgCost: 86.405,            // 帳面扣抵均價 (USD)
+  totalCost: 34561.91,        // 剩餘淨成本 (USD)
   swingShares: 0,             // 游擊倉股數 (0股)
   swingCost: 0,               // 游擊倉均價
-  muDefense: 666.66,          // MU 11/23 雙底短線防守
-  muResistance1: 720.00       // MU 200MA / Gamma Flip 反壓
+  muDefense: 585.25,          // MU 前低收盤硬底線
+  muResistance1: 780.00       // MU Stage 2 轉倉 1X 目標
 };
 
 const FALLBACK_DATA = {
