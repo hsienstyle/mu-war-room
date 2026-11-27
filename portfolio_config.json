@@ -25,13 +25,13 @@
     "avg_cost_twd": 21
   },
   "tw00631l": {
-    "shares": 1000,
-    "total_cost_twd": 25000,
-    "avg_cost_twd": 25
+    "shares": 0,
+    "total_cost_twd": 0,
+    "avg_cost_twd": 0
   },
   "capital": {
     "initial_capital_twd": 1662029,
-    "cash_pool_twd": 253300
+    "cash_pool_twd": 278500
   },
   "levels": {
     "mu_defense": 666.66,
