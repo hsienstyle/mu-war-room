@@ -1,64 +1,64 @@
 {
-  "updated_at": "2026-11-26 16:37:49+08:00",
+  "updated_at": "2026-11-27 16:37:50+08:00",
   "stock_no": "2059",
   "stock_name": "川湖",
   "latest": {
-    "trade_date": "2026-11-26",
+    "trade_date": "2026-11-27",
     "price": {
-      "close": 7155.0,
-      "prev_close": 6505.0,
-      "change": 650.0,
-      "change_pct": 9.99,
-      "open": 7080.0,
-      "high": 7155.0,
-      "low": 6840.0,
-      "volume_shares": 559306,
-      "volume_lots": 559.3,
-      "vol_change_pct": -64.7,
-      "ma5": 6170.0,
-      "ma20": 7541.0
+      "close": 7025.0,
+      "prev_close": 7155.0,
+      "change": -130.0,
+      "change_pct": -1.82,
+      "open": 7250.0,
+      "high": 7385.0,
+      "low": 6940.0,
+      "volume_shares": 992089,
+      "volume_lots": 992.1,
+      "vol_change_pct": 77.4,
+      "ma5": 6505.0,
+      "ma20": 7409.75
     },
     "t86_latest": {
-      "date": "2026-11-26",
-      "foreign_shares": -161124,
-      "trust_shares": 30000,
-      "dealer_shares": -4562,
-      "total_shares": -135686,
-      "foreign_lots": -161,
-      "trust_lots": 30,
-      "dealer_lots": -4.6,
-      "total_lots": -136
+      "date": "2026-11-27",
+      "foreign_shares": -212783,
+      "trust_shares": 72650,
+      "dealer_shares": -14325,
+      "total_shares": -154458,
+      "foreign_lots": -213,
+      "trust_lots": 73,
+      "dealer_lots": -14,
+      "total_lots": -154
     },
     "t86_5d": {
       "days": 5,
-      "foreign_lots": -646,
-      "trust_lots": 403,
-      "dealer_lots": -17,
-      "total_lots": -259
+      "foreign_lots": -900,
+      "trust_lots": 464,
+      "dealer_lots": -47,
+      "total_lots": -483
     },
     "streaks": {
       "foreign": [
         "連賣",
-        4
+        5
       ],
       "trust": [
         "連買",
-        2
+        3
       ]
     },
     "margin": {
-      "margin_prev": 306,
-      "margin_balance": 318,
-      "margin_change": 12,
-      "short_prev": 0,
-      "short_balance": 2,
-      "short_change": 2,
-      "short_margin_ratio": 0.63
+      "margin_prev": 318,
+      "margin_balance": 381,
+      "margin_change": 63,
+      "short_prev": 2,
+      "short_balance": 1,
+      "short_change": -1,
+      "short_margin_ratio": 0.26
     },
     "sbl": null,
     "day_trade": null
   },
-  "insight": "1. 【三大法人與土洋結構】：外資雖連四賣但今日賣壓顯著收斂，投信則連二買展現護盤決心。自營商僅微幅調節4.6張，屬ETF申贖之被動避險造市，非方向性看空。近5日投信累計買超403張，正積極承接外資籌碼，土洋對作下籌碼正由短線浮額轉向長線法人，結構趨於沉澱。\n\n2. 【融資券與借券空方壓力】：今日融資僅微增12張，餘額處於318張之極低水位，顯示散戶並未因漲停而盲目追價，籌碼極其安定。成交量大幅萎縮六成卻強勢鎖漲停，代表賣盤竭盡且無借券空方刻意打壓。在融資未失控暴增前，無須擔心散戶斷頭賣壓，有利於後續展開無量噴出之報復性反彈。\n\n3. 【硬底線與 10 股波段指令】：現有10股川湖嚴格執行「不破底、不碎賣」鐵律。唯一守備硬底線定於5,900元，只要收盤未跌破，嚴禁因今日漲停而產生處置效應。目前股價正脫離底部，首要目標為收復8,000元月線失土，在未達萬元回本路徑前，核心倉位保持抱牢不動，無視短線震盪。",
+  "insight": "1. 【三大法人與土洋結構】：外資連五日調節九百張，屬GB300量產前夕的短線獲利了結，並非基本面轉向。投信連三日逆勢加碼，顯示內資法人正趁回檔積極佈局明年Vera Rubin導軌換代紅利。自營商僅微幅賣出14張，多為ETF申贖之被動避險，並無方向性看空意圖，籌碼正由外資流向內資長線大戶。\n\n2. 【融資券與借券空方壓力】：今日融資雖小增63張，但整體餘額僅381張，處於極低水位，散戶浮額並未失控。借券賣出數據雖待公布，但從今日量增價跌卻未破前低來看，空方力道已在消化中。目前券資比極低，籌碼沉澱度優於多數AI伺服器股，只要融資不出現千張以上暴增，籌碼結構依然有利於多方築底。\n\n3. 【硬底線與 10 股波段指令】：現有10股川湖核心倉位嚴禁因短線震盪碎賣。唯一防守硬底線鎖定5,900元，只要收盤未跌破，皆視為重返月線8,000元前的正常洗盤。目前股價距月線僅約14%空間，在營收暴增191%的強勁基本面支撐下，上檔修復目標直指萬元大關，中間波動請抱牢不動，拒絕處置效應。",
   "history": [
     {
       "date": "2026-11-18",
@@ -168,6 +168,22 @@
       "margin_change": 12,
       "margin_balance": 318,
       "short_change": 2,
+      "sbl_change_lots": null,
+      "sbl_balance_lots": null,
+      "day_trade_ratio": null
+    },
+    {
+      "date": "2026-11-27",
+      "close": 7025.0,
+      "change_pct": -1.82,
+      "volume_lots": 992.1,
+      "foreign_lots": -213,
+      "trust_lots": 73,
+      "dealer_lots": -14,
+      "inst_total_lots": -154,
+      "margin_change": 63,
+      "margin_balance": 381,
+      "short_change": -1,
       "sbl_change_lots": null,
       "sbl_balance_lots": null,
       "day_trade_ratio": null
